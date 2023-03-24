@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Sailor {
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  username     String       @unique
+  email        String       @unique
+  passwordHash String
+  submissions  Submission[]
+}
+
+model Sheet {
+  id       String @id @default(cuid())
+  title    String
+  subtitle String
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  propositions Proposition[]
+  submissions  Submission[]
+}
+
+model Proposition {
+  id       String @id @default(cuid())
+  title    String
+  subtitle String
+  order    Int
+
+  sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sheetId String
+
+  options PropositionOption[]
+
+  @@unique([order, sheetId])
+}
+
+model PropositionOption {
+  id       String @id @default(cuid())
+  title    String
+  subtitle String
+
+  proposition   Proposition            @relation(fields: [propositionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  propositionId String
+  selections    PropositionSelection[]
+}
+
+model Submission {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sheetId String
+
+  sailor   Sailor @relation(fields: [sailorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sailorId String
+
+  selections PropositionSelection[]
+}
+
+model PropositionSelection {
+  id String @id @default(cuid())
+
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  submissionId String
+
+  option   PropositionOption @relation(fields: [optionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  optionId String
+}
