@@ -4,6 +4,11 @@ on:
     branches:
       - master
 jobs:
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm install && npm test
   deploy:
     name: 🚀 Deploy app
     runs-on: ubuntu-latest
