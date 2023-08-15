@@ -7,7 +7,6 @@ primary_region = "yyz"
 processes = []
 
 [env]
-  DATABASE_URL = "file:/data/sqlite.db"
   PORT = "8080"
 
 [experimental]

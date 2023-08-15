@@ -92,6 +92,82 @@ const propositions = [
       },
     ],
   },
+  {
+    title:
+      "Will the winner of the tournament be Rory McIlroy, Jon Rahm or Scottie Scheffler or will it be someone else?",
+    subtitle: "",
+    order: 6,
+    options: [
+      {
+        title: "On of the favourites.",
+        subtitle: "-",
+      },
+      {
+        title: "Someone else",
+        subtitle: "-",
+      },
+    ],
+  },
+  {
+    title: "Will Max Homa get an eagle at any point during the Masters?",
+    subtitle: "",
+    order: 7,
+    options: [
+      {
+        title: "Yes",
+        subtitle: "-",
+      },
+      {
+        title: "No",
+        subtitle: "-",
+      },
+    ],
+  },
+  {
+    title: "Will the best round on Sunday be over or under -5.5?",
+    subtitle: "",
+    order: 8,
+    options: [
+      {
+        title: "Over -5.5",
+        subtitle: "-",
+      },
+      {
+        title: "Under -5.5",
+        subtitle: "-",
+      },
+    ],
+  },
+  {
+    title: "Will a LIV player win the Masters this year?",
+    subtitle: "",
+    order: 9,
+    options: [
+      {
+        title: "Hell yah",
+        subtitle: "-",
+      },
+      {
+        title: "Nope",
+        subtitle: "-",
+      },
+    ],
+  },
+  {
+    title: "Scottie scheffler over under 4.5 birdies or better in round one ",
+    subtitle: "First mate question from Matt smith",
+    order: 10,
+    options: [
+      {
+        title: "Over 4.5",
+        subtitle: "-",
+      },
+      {
+        title: "Under 4.5",
+        subtitle: "-",
+      },
+    ],
+  },
 ];
 
 const _seedSailor = async () => {
