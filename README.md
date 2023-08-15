@@ -15,6 +15,28 @@ npm test # one off
 npm run test:watch # using watcher
 ```
 
+## Database
+
+### local
+```sh
+npx prisma db push
+```
+
+### hosted
+
+#### create db
+```sh
+fly postgres connect -a betpirate-db
+CREATE DATABASE betpirate;
+```
+
+#### connect from local
+
+```sh
+fly proxy 5432 -a betpirate-db
+```
+then connect using sql client with username and pass from secret
+
 ## Deployment
 
 ```sh
