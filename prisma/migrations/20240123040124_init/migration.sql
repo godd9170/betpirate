@@ -3,18 +3,29 @@ CREATE TABLE "Sailor" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "username" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "passwordHash" TEXT NOT NULL,
+    "username" TEXT,
+    "phone" TEXT NOT NULL,
 
     CONSTRAINT "Sailor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SMS" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "to" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "response" JSONB NOT NULL,
+
+    CONSTRAINT "SMS_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Sheet" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "subtitle" TEXT NOT NULL,
+    "subtitle" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -25,7 +36,7 @@ CREATE TABLE "Sheet" (
 CREATE TABLE "Proposition" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "subtitle" TEXT NOT NULL,
+    "subtitle" TEXT,
     "order" INTEGER NOT NULL,
     "sheetId" TEXT NOT NULL,
 
@@ -36,7 +47,7 @@ CREATE TABLE "Proposition" (
 CREATE TABLE "PropositionOption" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "subtitle" TEXT NOT NULL,
+    "subtitle" TEXT,
     "propositionId" TEXT NOT NULL,
 
     CONSTRAINT "PropositionOption_pkey" PRIMARY KEY ("id")
@@ -66,7 +77,7 @@ CREATE TABLE "PropositionSelection" (
 CREATE UNIQUE INDEX "Sailor_username_key" ON "Sailor"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Sailor_email_key" ON "Sailor"("email");
+CREATE UNIQUE INDEX "Sailor_phone_key" ON "Sailor"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Proposition_order_sheetId_key" ON "Proposition"("order", "sheetId");

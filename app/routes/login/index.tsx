@@ -1,98 +1,34 @@
 import { ActionArgs, json, LoaderArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import Logo from "~/components/Logo";
+import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
-import { getSession } from "~/services/session.server";
+import PhoneNumberForm from "./components/PhoneNumberForm";
+import MagicLinkConfirmation from "./components/MagicLinkConfirmation";
+import { sessionStorage } from "~/services/session.server";
 
 export const action = async ({ request }: ActionArgs) => {
-  // we call the method with the name of the strategy we want to use and the
-  // request object, optionally we pass an object with the URLs we want the user
-  // to be redirected to after a success or a failure
-  return await authenticator.authenticate("email-password", request, {
-    successRedirect: "/",
+  // The success redirect is required in this action, this is where the user is
+  // going to be redirected after the magic link is sent, note that here the
+  // user is not yet authenticated, so you can't send it to a private page.
+  await authenticator.authenticate("sms-link", request, {
+    successRedirect: "/login",
     failureRedirect: "/login",
-    context: { type: "login" },
   });
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  await authenticator.isAuthenticated(request, {
-    successRedirect: "/",
+  await authenticator.isAuthenticated(request, { successRedirect: "/sheets" });
+  let session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  return json({
+    magicLinkSent: session.has("auth:magiclink"),
+    magicLinkPhone: session.get("auth:phone"),
   });
-  let session = await getSession(request.headers.get("cookie"));
-  let error = session.get(authenticator.sessionErrorKey);
-  return json({ error });
 };
 
 export default () => {
-  const { error } = useLoaderData<typeof loader>();
-  return (
-    <>
-      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <Logo height={80} />
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Ahoy Matey!
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in or if yer new{" "}
-            <Link to="/register" className="underline decoration-solid">
-              register here
-            </Link>
-          </p>
-        </div>
-      </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" method="POST">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="pl-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Password
-              </label>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="pl-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-slate-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
-              >
-                Sign in
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
+  let { magicLinkSent, magicLinkPhone } = useLoaderData<typeof loader>();
+  return magicLinkSent ? (
+    <MagicLinkConfirmation phone={magicLinkPhone} />
+  ) : (
+    <PhoneNumberForm />
   );
 };

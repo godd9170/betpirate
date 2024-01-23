@@ -18,8 +18,15 @@ npm run test:watch # using watcher
 ## Database
 
 ### local
+
+To apply changes to the schema locally for development
 ```sh
 npx prisma db push
+```
+
+To create a migration
+```sh
+npx prisma migrate deploy
 ```
 
 ### hosted
@@ -45,4 +52,23 @@ fly deploy
 
 ## todo
 
-move `"esbuild-register": "^3.4.2"` back to dev deps when no longer seeding in prod.
+
+### tech debt
+- move `"esbuild-register": "^3.4.2"` back to dev deps when no longer seeding in prod.
+
+### feature
+- collect username + emoji (maybe image?)
+- ability to mark answers
+    - super user
+    - special answer key sheet
+    - 
+- leaderboard (polling refresh?)
+- prop images
+- mobile first
+- normalize phone numbers on input
+- text results
+- prop short names
+- prop answer short names
+- ability to close sheet to new submissions
+- ability to mark sheet with a winner
+- 
