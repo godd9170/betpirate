@@ -11,19 +11,27 @@ datasource db {
 }
 
 model Sailor {
-  id           String       @id @default(cuid())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  username     String       @unique
-  email        String       @unique
-  passwordHash String
-  submissions  Submission[]
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  username    String?      @unique
+  phone       String       @unique
+  submissions Submission[]
+}
+
+model SMS {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  to        String
+  body      String
+  response  Json
 }
 
 model Sheet {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
-  subtitle String
+  subtitle String?
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -32,27 +40,33 @@ model Sheet {
 }
 
 model Proposition {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
-  subtitle String
+  subtitle String?
   order    Int
 
   sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sheetId String
 
-  options PropositionOption[]
+  options PropositionOption[] @relation(name: "options")
+
+  answer   PropositionOption? @relation(fields: [answerId], references: [id])
+  answerId String?            @unique
 
   @@unique([order, sheetId])
 }
 
 model PropositionOption {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
-  subtitle String
+  subtitle String?
 
-  proposition   Proposition            @relation(fields: [propositionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  proposition   Proposition @relation(name: "options", fields: [propositionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   propositionId String
-  selections    PropositionSelection[]
+
+  selections PropositionSelection[]
+
+  answer Proposition?
 }
 
 model Submission {

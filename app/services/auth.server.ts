@@ -1,38 +1,39 @@
 import { Authenticator } from "remix-auth";
-import { login, register, sessionStorage } from "~/services/session.server";
-import { FormStrategy } from "remix-auth-form";
+import { sessionStorage } from "~/services/session.server";
 import { Sailor } from "@prisma/client";
-import invariant from "tiny-invariant";
+import { sendSMS } from "./sms.server";
+import { SMSLinkStrategy } from "~/lib/remix-auth-sms-link";
+import { createSailor, readSailorByPhone } from "~/models/sailor.server";
+
+// This secret is used to encrypt the token sent in the magic link and the
+// session used to validate someone else is not trying to sign-in as another
+// user.
+let secret = "supersecretkey"; //process.env.MAGIC_LINK_SECRET
+if (!secret) throw new Error("Missing MAGIC_LINK_SECRET env variable.");
 
 export let authenticator = new Authenticator<Sailor>(sessionStorage, {
   sessionKey: "sailor",
 });
 
+const verifyCallback = async ({
+  phone,
+  form,
+  magicLinkVerify,
+}: {
+  phone: string;
+  form: FormData;
+  magicLinkVerify: boolean;
+}) => {
+  let sailor = await readSailorByPhone(phone);
+
+  if (!sailor) sailor = await createSailor({ phone }); // register if new
+
+  return sailor;
+};
+
 authenticator.use(
-  new FormStrategy(async ({ form, context }) => {
-    let email = form.get("email");
-    let password = form.get("password");
-    invariant(typeof email === "string", "email must be a string");
-    invariant(email.length > 0, "email must not be empty");
-    invariant(typeof password === "string", "password must be a string");
-    invariant(password.length > 0, "password must not be empty");
-    switch (context?.type) {
-      case "login":
-        const existingSailor = await login(email, password);
-        invariant(
-          existingSailor != null,
-          "Ye made a mistake, or ye be unregistered"
-        );
-        return existingSailor;
-      case "register":
-        let username = form.get("username");
-        invariant(typeof username === "string", "username must be a string");
-        const newSailor = await register(username, email, password);
-        invariant(newSailor != null, "Ye be unable to register");
-        return newSailor;
-      default:
-        invariant(false, "missing login context. Must be login or register");
-    }
-  }),
-  "email-password"
+  new SMSLinkStrategy(
+    { sendSMS, secret, callbackURL: "/magic" },
+    verifyCallback
+  )
 );

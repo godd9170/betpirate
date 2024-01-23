@@ -1,9 +1,8 @@
 import { db } from "~/utils/db.server";
 
 type NewSailor = {
-  username: string;
-  email: string;
-  passwordHash: string;
+  username?: string;
+  phone: string;
 };
 
 export const createSailor = (data: NewSailor) => {
@@ -14,8 +13,8 @@ export const readSailor = (id: string) => {
   return db.sailor.findUnique({ where: { id } });
 };
 
-export const readSailorByEmail = (email: string) => {
-  return db.sailor.findUnique({ where: { email } });
+export const readSailorByPhone = (phone: string) => {
+  return db.sailor.findUnique({ where: { phone } });
 };
 
 export const readSailorWithSubmissions = (id: string) => {
