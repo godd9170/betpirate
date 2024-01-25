@@ -1,4 +1,4 @@
-import { loader } from "..";
+import { loader } from "../route";
 
 describe("login loader", () => {
   it("should return a response", async () => {

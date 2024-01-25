@@ -1,7 +1,7 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "~/services/session.server";
 import { Sailor } from "@prisma/client";
-import { sendSMS } from "./sms.server";
+import { sendSMS } from "~/services/dummysms.server"; //"./sms.server";
 import { SMSLinkStrategy } from "~/lib/remix-auth-sms-link";
 import { createSailor, readSailorByPhone } from "~/models/sailor.server";
 

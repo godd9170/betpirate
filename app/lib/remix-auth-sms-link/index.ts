@@ -1,6 +1,7 @@
 import type { SessionStorage } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import crypto from "crypto-js";
+import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
 import type { AuthenticateOptions, StrategyVerifyCallback } from "remix-auth";
 import { Strategy } from "remix-auth";
 
@@ -14,15 +15,6 @@ export type SendSMSOptions<User> = {
 
 export type SendSMSFunction<User> = {
   (options: SendSMSOptions<User>): Promise<void>;
-};
-
-/**
- * Validate the phone number the user is trying to use to login.
- * This can be useful to ensure it conforms to a certain region.
- * @param phone The email address to validate
- */
-export type VerifyPhoneFunction = {
-  (phone: string): Promise<void>;
 };
 
 /**
@@ -62,14 +54,6 @@ export type SMSLinkStrategyOptions<User> = {
    * The value of the Promise will be ignored.
    */
   sendSMS: SendSMSFunction<User>;
-  /**
-   * A function to validate the email address. This function should receive the
-   * email address as a string and return a Promise. The value of the Promise
-   * will be ignored, in case of error throw an error.
-   *
-   * By default it only test the email against the RegExp `/.+@.+/`.
-   */
-  verifyPhone?: VerifyPhoneFunction;
   /**
    * A secret string used to encrypt and decrypt the token and magic link.
    */
@@ -126,12 +110,6 @@ export type SMSLinkStrategyVerifyParams = {
   magicLinkVerify: boolean;
 };
 
-const verifyPhone: VerifyPhoneFunction = async (phone) => {
-  // if (!/^[(]?[0-9]{3}[)]?[ ,-]?[0-9]{3}[ ,-]?[0-9]{4}$/u.test(phone)) {
-  //   throw new Error("A valid phone number is required.");
-  // }
-};
-
 export class SMSLinkStrategy<User> extends Strategy<
   User,
   SMSLinkStrategyVerifyParams
@@ -143,8 +121,6 @@ export class SMSLinkStrategy<User> extends Strategy<
   private readonly callbackURL: string;
 
   private readonly sendSMS: SendSMSFunction<User>;
-
-  private readonly validatePhone: VerifyPhoneFunction;
 
   private readonly secret: string;
 
@@ -170,7 +146,6 @@ export class SMSLinkStrategy<User> extends Strategy<
     this.secret = options.secret;
     this.sessionErrorKey = options.sessionErrorKey ?? "auth:error";
     this.sessionMagicLinkKey = options.sessionMagicLinkKey ?? "auth:magiclink";
-    this.validatePhone = options.verifyPhone ?? verifyPhone;
     this.phoneField = options.phoneField ?? this.phoneField;
     this.magicLinkSearchParam = options.magicLinkSearchParam ?? "token";
     this.linkExpirationTime = options.linkExpirationTime ?? 1000 * 60 * 30; // 30 minutes
@@ -220,11 +195,22 @@ export class SMSLinkStrategy<User> extends Strategy<
       }
 
       try {
-        // Validate the phone number
-        await this.validatePhone(phone);
+        // validate the phone number
+        if (!isValidPhoneNumber(phone, "CA")) {
+          throw new Error(
+            `Invalid Phone Number. Must be a real Canadian number of format (555) 666-7777`
+          );
+        }
+
+        // normalize the phone number
+        const normalizedPhoneNumber = parsePhoneNumber(phone, "CA").number;
 
         const domainUrl = this.getDomainURL(request);
-        const magicLink = await this.sendToken(phone, domainUrl, formData);
+        const magicLink = await this.sendToken(
+          normalizedPhoneNumber,
+          domainUrl,
+          formData
+        );
 
         session.set(this.sessionMagicLinkKey, await this.encrypt(magicLink));
         session.set(this.sessionPhoneKey, phone);
