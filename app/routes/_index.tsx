@@ -1,8 +1,8 @@
-import { LoaderArgs, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { readLatestSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sailor = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });

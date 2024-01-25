@@ -1,10 +1,10 @@
-import { json, LoaderArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheetWithSubmissions } from "~/models/sheet.server";
 import Button from "~/components/Button";
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.sheetId, `params.sheetId is required`);
   const sheet = await readSheetWithSubmissions(params.sheetId);
   return json({ sheet });

@@ -1,7 +1,7 @@
-import { LoaderArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
 
-export let loader = async ({ request }: LoaderArgs) => {
+export let loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticator.authenticate("sms-link", request, {
     // If the user was authenticated, we redirect them to their profile page
     // This redirect is optional, if not defined the user will be returned by

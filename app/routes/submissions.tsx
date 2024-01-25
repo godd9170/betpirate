@@ -1,10 +1,10 @@
-import { LoaderArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { readSailorWithSubmissions } from "~/models/sailor.server";
 
 import { authenticator } from "~/services/auth.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const authSailor = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });

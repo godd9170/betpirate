@@ -1,4 +1,9 @@
-import { json, LoaderArgs, ActionArgs, redirect } from "@remix-run/node";
+import {
+  json,
+  LoaderFunctionArgs,
+  ActionFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheet } from "~/models/sheet.server";
@@ -7,13 +12,13 @@ import { authenticator } from "~/services/auth.server";
 import PropositionCard from "./components/PropositionCard";
 import Button from "~/components/Button";
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.sheetId, `params.sheetId is required`);
   const sheet = await readSheet(params.sheetId);
   return json({ sheet });
 };
 
-export const action = async ({ params, request }: ActionArgs) => {
+export const action = async ({ params, request }: ActionFunctionArgs) => {
   const sailor = await authenticator.isAuthenticated(request);
   invariant(sailor != null, `login to submit yer sheet`);
   invariant(params.sheetId, `params.sheetId is required`);

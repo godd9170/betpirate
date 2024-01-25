@@ -1,9 +1,10 @@
-import { LoaderArgs, json, LinksFunction } from "@remix-run/node";
+import { json, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
   Meta,
   LiveReload,
   Outlet,
+  Scripts,
   useLoaderData,
 } from "@remix-run/react";
 import { authenticator } from "./services/auth.server";
@@ -14,7 +15,7 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sailor = await authenticator.isAuthenticated(request);
   return json({ sailor });
 };
@@ -43,6 +44,7 @@ export default () => {
       </header>
       <body className="container mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50">
         <Outlet />
+        <Scripts />
         <LiveReload />
       </body>
     </html>

@@ -1,10 +1,10 @@
-import { json, LoaderArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Button from "~/components/Button";
 import { readSubmission } from "~/models/submission.server";
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.submissionId, `params.submissionId is required`);
   const submission = await readSubmission(params.submissionId);
   return json({ submission });
