@@ -5,10 +5,10 @@ import { readSailorWithSubmissions } from "~/models/sailor.server";
 import { authenticator } from "~/services/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const authSailor = await authenticator.isAuthenticated(request, {
+  const sailorId = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-  const sailor = await readSailorWithSubmissions(authSailor.id);
+  const sailor = await readSailorWithSubmissions(sailorId);
   return json({ sailor });
 };
 

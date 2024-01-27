@@ -20,11 +20,13 @@ npm run test:watch # using watcher
 ### local
 
 To apply changes to the schema locally for development
+
 ```sh
 npx prisma db push
 ```
 
 To create a migration
+
 ```sh
 npx prisma migrate deploy
 ```
@@ -60,7 +62,7 @@ fly deploy
 - collect username 
     - + emoji (maybe image?)
 - ability to mark answers
-    - super user
+    - super user ✅
     - special answer key sheet
     - edit prop names/descriptions
     - 
@@ -69,8 +71,9 @@ fly deploy
 - mobile first
 - normalize phone numbers on input ✅
 - text results
-- prop short names
-- prop answer short names
+- prop short names ✅
+- prop answer short names ✅
 - ability to close sheet to new submissions
 - ability to mark sheet with a winner
 - can auth from different device
+- sheet statuses

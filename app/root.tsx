@@ -10,19 +10,33 @@ import {
 import { authenticator } from "./services/auth.server";
 import stylesheet from "~/styles/tailwind.css";
 import Logo from "./components/Logo";
+import { readSailor } from "./models/sailor.server";
+import { Sailor } from "@prisma/client";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
+const emptySailor: Sailor = {
+  id: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  username: null,
+  phone: "",
+  admin: false,
+};
+
+// maybe we should use a root sailor if we end up requesting it everywhere
+// https://www.jacobparis.com/content/remix-route-loader-data
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const sailor = await authenticator.isAuthenticated(request);
+  const sailorId = await authenticator.isAuthenticated(request);
+  if (!sailorId) return json({ sailor: emptySailor }); // return empty sailor if none
+  const sailor = await readSailor(sailorId);
   return json({ sailor });
 };
 
 // https://remix.run/docs/en/1.14.3/route/meta#md-global-meta
 export default () => {
-  const { sailor } = useLoaderData<typeof loader>();
   return (
     <html lang="en">
       <head>
@@ -32,16 +46,6 @@ export default () => {
         <Meta />
         <Links />
       </head>
-      <header className="flex">
-        {sailor?.id && (
-          <>
-            <div className="flex-grow">
-              <Logo height={40} />
-            </div>
-            <div className="text-slate self-center">👤 {sailor?.username}</div>
-          </>
-        )}
-      </header>
       <body className="container mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50">
         <Outlet />
         <Scripts />

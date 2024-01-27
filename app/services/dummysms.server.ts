@@ -1,8 +1,7 @@
 import type { SendSMSFunction } from "~/lib/remix-auth-sms-link";
-import type { Sailor } from "@prisma/client";
 import { createSMS } from "~/models/sms.server";
 
-export let sendSMS: SendSMSFunction<Sailor> = async (options) => {
+export let sendSMS: SendSMSFunction<SailorId> = async (options) => {
   try {
     console.log(`Sign in link: ${options.magicLink}`);
     await createSMS({

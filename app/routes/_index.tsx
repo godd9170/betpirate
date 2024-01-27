@@ -1,19 +1,15 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { readLatestSheet } from "~/models/sheet.server";
+import invariant from "tiny-invariant";
+import { readSailor } from "~/models/sailor.server";
 import { authenticator } from "~/services/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const sailor = await authenticator.isAuthenticated(request, {
+  let sailorId = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-
-  if (!sailor.username) return redirect("/register"); // let's get this sailor a name
-
-  // todo: should we hardcode LVIII sheet?
-  const latestSheet = await readLatestSheet();
-  const redirectRoute = !!latestSheet
-    ? `/sheets/${latestSheet.id}`
-    : "/submissions";
-
-  return redirect(redirectRoute);
+  const sailor = await readSailor(sailorId);
+  invariant(sailor !== null, "No such sailor");
+  console.log("INDEX USERNAME: ", sailor.username);
+  if (!sailor.username) return redirect("/onboard");
+  return redirect(`/sheets/${process.env.DEFAULT_SHEET_ID}`);
 };

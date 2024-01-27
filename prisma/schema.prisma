@@ -17,6 +17,7 @@ model Sailor {
   username    String?      @unique
   phone       String       @unique
   submissions Submission[]
+  admin       Boolean      @default(false)
 }
 
 model SMS {
@@ -40,10 +41,11 @@ model Sheet {
 }
 
 model Proposition {
-  id       String  @id @default(cuid())
-  title    String
-  subtitle String?
-  order    Int
+  id         String  @id @default(cuid())
+  title      String
+  subtitle   String?
+  shortTitle String?
+  order      Int
 
   sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sheetId String
@@ -57,9 +59,10 @@ model Proposition {
 }
 
 model PropositionOption {
-  id       String  @id @default(cuid())
-  title    String
-  subtitle String?
+  id         String  @id @default(cuid())
+  title      String
+  subtitle   String?
+  shortTitle String?
 
   proposition   Proposition @relation(name: "options", fields: [propositionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   propositionId String
