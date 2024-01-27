@@ -5,8 +5,20 @@ type NewSailor = {
   phone: string;
 };
 
+type UpdateSailor = {
+  username?: string;
+  phone?: string;
+};
+
 export const createSailor = (data: NewSailor) => {
   return db.sailor.create({ data });
+};
+
+export const updateSailor = (id: string, data: UpdateSailor) => {
+  return db.sailor.update({
+    where: { id },
+    data,
+  });
 };
 
 export const readSailor = (id: string) => {

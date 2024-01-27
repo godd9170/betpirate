@@ -13,7 +13,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticator.isAuthenticated(request, { successRedirect: "/sheets" });
+  await authenticator.isAuthenticated(request, { successRedirect: "/" });
   let session = await sessionStorage.getSession(request.headers.get("Cookie"));
 
   return json(
