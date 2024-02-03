@@ -5,7 +5,7 @@ export default ({ height = 80 }: { height: number }) => {
       version="1.1"
       viewBox="-20 -20 140 140"
       height={height}
-      fill="#000000"
+      className="fill-primary"
     >
       <switch>
         <g>

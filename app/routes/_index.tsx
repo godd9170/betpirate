@@ -9,7 +9,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
   const sailor = await readSailor(sailorId);
   invariant(sailor !== null, "No such sailor");
-  console.log("INDEX USERNAME: ", sailor.username);
   if (!sailor.username) return redirect("/onboard");
   return redirect(`/sheets/${process.env.DEFAULT_SHEET_ID}`);
 };

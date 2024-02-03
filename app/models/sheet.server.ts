@@ -1,4 +1,21 @@
+import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+
+type UpdateSheet = {
+  title?: string;
+  subTitle?: string;
+  status?: "DRAFT" | "OPEN" | "CLOSED";
+};
+
+export type SheetWithPropositions = Prisma.SheetGetPayload<{
+  include: {
+    propositions: {
+      include: {
+        options: true;
+      };
+    };
+  };
+}>;
 
 export const readSheets = () => {
   return db.sheet.findMany({
@@ -25,6 +42,9 @@ export const readSheet = (id: string) => {
     where: { id },
     include: {
       propositions: {
+        orderBy: {
+          order: "asc",
+        },
         include: {
           options: true,
         },
@@ -53,5 +73,32 @@ export const readSheetWithSubmissions = (id: string) => {
         },
       },
     },
+  });
+};
+
+export const readSheetLeaders = (sheetId: string) => {
+  return db.$queryRaw`
+    select 
+    su.id as "submissionId",
+    sa.id as "sailorId",
+    sa.username as "username", 
+    COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
+    RANK () OVER ( 
+      ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
+    )::integer ranking
+    from "PropositionSelection" ps
+    join "PropositionOption" po on ps."optionId" = po.id
+    join "Proposition" p on po."propositionId" = p.id
+    join "Submission" su on ps."submissionId" = su.id
+    join "Sailor" sa on su."sailorId" = sa.id
+    where su."sheetId" = ${sheetId}
+    group by su.id, sa.id, sa.username
+  `;
+};
+
+export const updateSheet = (id: string, data: UpdateSheet) => {
+  return db.sheet.update({
+    where: { id },
+    data,
   });
 };

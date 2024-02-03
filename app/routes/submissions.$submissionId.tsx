@@ -3,14 +3,18 @@ import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Button from "~/components/Button";
 import { readSubmission } from "~/models/submission.server";
+import { authenticator } from "~/services/auth.server";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
   invariant(params.submissionId, `params.submissionId is required`);
   const submission = await readSubmission(params.submissionId);
   return json({ submission });
 };
 
-export default () => {
+export default function Submission() {
   const { submission } = useLoaderData<typeof loader>();
   return (
     <>
@@ -41,4 +45,4 @@ export default () => {
       </Link>
     </>
   );
-};
+}

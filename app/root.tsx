@@ -12,6 +12,7 @@ import stylesheet from "~/styles/tailwind.css";
 import Logo from "./components/Logo";
 import { readSailor } from "./models/sailor.server";
 import { Sailor } from "@prisma/client";
+import ThemeToggle from "./components/ThemeToggle";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -34,9 +35,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sailor = await readSailor(sailorId);
   return json({ sailor });
 };
-
+// className="container mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50"
 // https://remix.run/docs/en/1.14.3/route/meta#md-global-meta
-export default () => {
+export default function Root() {
   return (
     <html lang="en">
       <head>
@@ -46,11 +47,11 @@ export default () => {
         <Meta />
         <Links />
       </head>
-      <body className="container mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <body className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Outlet />
-        <Scripts />
         <LiveReload />
+        <Scripts />
       </body>
     </html>
   );
-};
+}

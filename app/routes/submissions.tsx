@@ -12,7 +12,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ sailor });
 };
 
-export default () => {
+export default function Submissions() {
   const { sailor } = useLoaderData<typeof loader>();
   return (
     <>
@@ -22,4 +22,4 @@ export default () => {
       })}
     </>
   );
-};
+}
