@@ -57,15 +57,15 @@ fly deploy
 
 ### tech debt
 - move `"esbuild-register": "^3.4.2"` back to dev deps when no longer seeding in prod.
+- in models, infer parameter types from prisma and <exclude> ids accordingly
 
 ### feature
-- collect username 
+- collect username ✅
     - + emoji (maybe image?)
 - ability to mark answers
     - super user ✅
     - special answer key sheet
-    - edit prop names/descriptions
-    - 
+    - edit prop names/descriptions ✅
 - leaderboard (polling refresh?)
 - prop images
 - mobile first
@@ -73,7 +73,10 @@ fly deploy
 - text results
 - prop short names ✅
 - prop answer short names ✅
-- ability to close sheet to new submissions
+- ability to close sheet to new submissions ✅
 - ability to mark sheet with a winner
 - can auth from different device
-- sheet statuses
+- sheet statuses ✅
+- aggregate correct answers in prisma method ✅
+    - count submission proposition selections where proposition selection option's the answer ✅
+- tiebreaker score

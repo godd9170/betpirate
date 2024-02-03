@@ -1,8 +1,7 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import LeaderBoard from "~/components/LeaderBoard";
-import { readSheet, readSheetLeaders } from "~/models/sheet.server";
+import { readSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -17,16 +16,17 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sheet = await readSheet(sheetId);
   invariant(!!sheet, "No sheet exists with this id");
 
-  if (sheet.status === "OPEN")
-    return redirect(`/sheets/${sheetId}/submissions`);
-
-  const leaders = await readSheetLeaders(sheetId);
-
-  return json({ sheet, leaders });
+  return json({ sheet });
 };
 
 export default function Sheet() {
-  const { sheet, leaders } = useLoaderData<typeof loader>();
-  if (sheet.status === "DRAFT") return <p>Sheets not ready</p>;
-  return <LeaderBoard sheet={sheet} leaders={leaders} />;
+  const { sheet } = useLoaderData<typeof loader>();
+  return (
+    <div>
+      <Link to={`/sheets/${sheet.id}`}>
+        <h1 className="text-xl font-black text-center">{sheet.title}</h1>
+      </Link>
+      <Outlet />
+    </div>
+  );
 }
