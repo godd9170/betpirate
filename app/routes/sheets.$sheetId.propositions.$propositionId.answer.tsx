@@ -14,7 +14,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
   const answer = parse(formData, { schema });
-  console.log("ANSWERRR!!!!!!!!!!!!!!!", answer);
+
   if (!answer.value || answer.intent !== "submit") {
     return json(answer);
   }
