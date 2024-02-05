@@ -8,7 +8,7 @@ const sheet = {
 };
 
 const seed = async () => {
-  // await db.sheet.create({ data: sheet });
+  await db.sheet.create({ data: sheet });
 };
 
 seed();
