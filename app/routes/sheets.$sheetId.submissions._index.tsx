@@ -40,9 +40,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(sailorId != null, `login to submit yer sheet`);
   invariant(params.sheetId, `params.sheetId is required`);
   const form = await request.formData();
-  Array.from(form).forEach((e) => console.log("E: ", e));
   const selections = _formToSelections(form);
-  console.log("SELECTIONS: ", selections);
   const submission = await createSubmission({
     sheetId: params.sheetId,
     sailorId,
@@ -51,6 +49,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   return json({ submission });
 };
 
+// todo: use zod to convert this to a writable sheet
 const _formToSelections = (form: FormData) =>
   Array.from(form).map(([_, optionId]) => ({ optionId: optionId.toString() }));
 

@@ -64,9 +64,9 @@ fly deploy
     - + emoji (maybe image?)
 - ability to mark answers
     - super user ✅
-    - special answer key sheet
+    - special answer key sheet ✅
     - edit prop names/descriptions ✅
-- leaderboard (polling refresh?)
+- leaderboard (polling refresh?) ✅
 - prop images
 - mobile first
 - normalize phone numbers on input ✅
