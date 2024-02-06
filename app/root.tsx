@@ -43,7 +43,7 @@ export default function Root() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Betpirate - Weekly Prop Sheets</title>
+        <title>Bet Pirate - Superbowl XVIII Prop Sheet</title>
         <Meta />
         <Links />
       </head>

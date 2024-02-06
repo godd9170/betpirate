@@ -1,8 +1,6 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import CreatePropositionCard from "~/routes/sheets.$sheetId.admin/components/CreatePropositionCard";
-import EditPropositionCard from "~/routes/sheets.$sheetId.admin/components/EditPropositionCard";
 import { readSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 import StatusSelector from "./components/StatusSelector";

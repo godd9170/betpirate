@@ -23,9 +23,11 @@ export default function Sheet() {
   const { sheet } = useLoaderData<typeof loader>();
   return (
     <div>
-      <Link to={`/sheets/${sheet.id}`}>
-        <h1 className="text-xl font-black text-center">{sheet.title}</h1>
-      </Link>
+      <header className="mb-2">
+        <Link to={`/sheets/${sheet.id}`}>
+          <h1 className="text-xl font-black text-center py-4">{sheet.title}</h1>
+        </Link>
+      </header>
       <Outlet />
     </div>
   );

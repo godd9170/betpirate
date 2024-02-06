@@ -39,3 +39,25 @@ export const updateProposition = (id: string, data: Proposition) => {
     data,
   });
 };
+
+export const updatePropositionOption = (
+  id: string,
+  data: PropositionOption
+) => {
+  return db.propositionOption.update({
+    where: { id },
+    data,
+  });
+};
+
+export const createPropositionOption = (
+  propositionId: string,
+  data: PropositionOption
+) => {
+  return db.propositionOption.create({
+    data: {
+      propositionId,
+      ...data,
+    },
+  });
+};
