@@ -9,13 +9,20 @@ export default function PropositionCard({
 }) {
   const [selectedOption, setSelectedOption] = useState<PropositionOption>();
   return (
-    <div className="card card-compact w-full bg-base-100 shadow-xl">
-      {/* <figure>
-        <img
-          src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-          alt="Shoes"
-        />
-      </figure> */}
+    <div
+      id={`proposition-${proposition?.order}`}
+      className="card card-compact w-full bg-base-100 shadow-xl mb-4 first:mt-4"
+    >
+      <figure>
+        <img src="https://iili.io/J12Ni0B.md.webp" alt="J12Ni0B.md.webp" />
+      </figure>
+      <span className="absolute inset-3">
+        <div className="flex justify-end">
+          <div className="inline-flex items-center px-2 py-1 rounded-full text-md font-semibold leading-4 bg-primary text-primary-content">
+            {`#${proposition.order}`}
+          </div>
+        </div>
+      </span>
       <div className="card-body">
         <h2 className="card-title">{proposition.title}</h2>
         <p>{proposition.subtitle}</p>

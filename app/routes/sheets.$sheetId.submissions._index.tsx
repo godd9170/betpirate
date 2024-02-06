@@ -13,6 +13,7 @@ import {
 } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
 import PropositionCard from "~/components/PropositionCard";
+import { createPortal } from "react-dom";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -56,13 +57,17 @@ const _formToSelections = (form: FormData) =>
 export default function Sheet() {
   const { sheet } = useLoaderData<typeof loader>();
   return (
-    <Form method="post">
-      {sheet?.propositions.map((proposition) => (
-        <PropositionCard key={proposition.id} proposition={proposition} />
-      ))}
-      <button className="btn btn-primary w-full" type="submit">
-        Lock it in
-      </button>
-    </Form>
+    <div className="h-screen">
+      <Form method="post">
+        {sheet?.propositions.map((proposition) => (
+          <PropositionCard key={proposition.id} proposition={proposition} />
+        ))}
+        <footer className="sticky bottom-0">
+          <button className="btn btn-primary w-full mb-4" type="submit">
+            Lock it in
+          </button>
+        </footer>
+      </Form>
+    </div>
   );
 }

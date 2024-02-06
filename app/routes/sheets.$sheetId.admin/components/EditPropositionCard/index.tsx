@@ -40,6 +40,12 @@ export default function EditPropositionCard({
               <div className="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
                 <input
                   type="text"
+                  hidden
+                  name="options[0].id"
+                  value={proposition.options[0]?.id}
+                />
+                <input
+                  type="text"
                   name="options[0].title"
                   className="input input-ghost input-sm w-full"
                   defaultValue={proposition.options[0]?.title || undefined}
@@ -55,6 +61,12 @@ export default function EditPropositionCard({
               </div>
               <div className="divider divider-horizontal">OR</div>
               <div className="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
+                <input
+                  type="text"
+                  hidden
+                  name="options[1].id"
+                  value={proposition.options[1]?.id}
+                />
                 <input
                   type="text"
                   name="options[1].title"

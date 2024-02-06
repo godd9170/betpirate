@@ -1,13 +1,24 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { parse } from "@conform-to/zod";
 import { z } from "zod";
-import { updateProposition } from "~/models/proposition.server";
+import {
+  createPropositionOption,
+  updateProposition,
+  updatePropositionOption,
+} from "~/models/proposition.server";
 import invariant from "tiny-invariant";
 
 export const schema = z.object({
   title: z.string(),
   subtitle: z.string(),
   shortTitle: z.string(),
+  options: z.array(
+    z.object({
+      id: z.string().optional(),
+      title: z.string(),
+      shortTitle: z.string(),
+    })
+  ),
 });
 
 // extract the inferred type
@@ -17,10 +28,19 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const { sheetId, propositionId } = params;
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
-  const proposition = parse(formData, { schema });
-  if (!proposition.value || proposition.intent !== "submit") {
-    return json(proposition);
+  const parsedForm = parse(formData, { schema });
+  if (!parsedForm.value || parsedForm.intent !== "submit") {
+    return json(parsedForm);
   }
-  await updateProposition(propositionId, proposition.value);
+  const { options, ...proposition } = parsedForm.value;
+  await updateProposition(propositionId, proposition);
+
+  // todo: there must be a way to do this nested, or we should
+  // at least move this into the model
+  await options.forEach(async ({ id, ...option }) => {
+    if (!!id) await updatePropositionOption(id, option);
+    else await createPropositionOption(propositionId, option);
+  });
+
   return "success";
 };

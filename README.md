@@ -80,3 +80,10 @@ fly deploy
 - aggregate correct answers in prisma method ✅
     - count submission proposition selections where proposition selection option's the answer ✅
 - tiebreaker score
+
+- Add payment explanation, payment before 6pm
+- countdown
+- tiebreaker
+- gatorade multi
+- load test
+- pod monday

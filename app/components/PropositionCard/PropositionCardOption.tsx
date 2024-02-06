@@ -20,8 +20,8 @@ export default function PropositionCardOption({
         onChange={() => handleSelect()}
       />
       <div
-        className={`grid h-20 flex-grow card bg-base-300 rounded-box place-items-center cursor-pointer  ${
-          selected ? "bg-white" : ""
+        className={`grid h-20 flex-grow card bg-base-200 rounded-box place-items-center cursor-pointer  ${
+          selected ? "bg-accent" : ""
         }`}
       >
         {option?.title}
