@@ -4,8 +4,10 @@ import { useState } from "react";
 
 export default function PropositionCard({
   proposition,
+  onSelection,
 }: {
   proposition: Proposition & { options: PropositionOption[] };
+  onSelection: Function;
 }) {
   const [selectedOption, setSelectedOption] = useState<PropositionOption>();
   return (
@@ -29,20 +31,14 @@ export default function PropositionCard({
         <h2 className="card-title">{proposition.title}</h2>
         <p>{proposition.subtitle}</p>
         <div className="card-actions pt-2">
-          <div className="flex w-full">
-            <PropositionCardOption
-              propositionId={proposition?.id}
-              option={proposition?.options[0]}
-              selected={proposition?.options[0]?.id === selectedOption?.id}
-              handleSelect={() => setSelectedOption(proposition?.options[0])}
-            />
-            <div className="divider divider-horizontal">OR</div>
-            <PropositionCardOption
-              propositionId={proposition?.id}
-              option={proposition?.options[1]}
-              selected={proposition?.options[1]?.id === selectedOption?.id}
-              handleSelect={() => setSelectedOption(proposition?.options[1])}
-            />
+          <div className="flex w-full space-x-1">
+            {proposition.options.map((option) => (
+              <PropositionCardOption
+                propositionId={proposition?.id}
+                option={option}
+                onChange={() => onSelection(proposition?.id, option?.id)}
+              />
+            ))}
           </div>
         </div>
       </div>

@@ -6,14 +6,14 @@ import {
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { readSheet, readSheetWithSubmissions } from "~/models/sheet.server";
+import { readSheet } from "~/models/sheet.server";
 import {
   createSubmission,
   readSheetSubmission,
 } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
 import PropositionCard from "~/components/PropositionCard";
-import { createPortal } from "react-dom";
+import { useState } from "react";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -56,15 +56,34 @@ const _formToSelections = (form: FormData) =>
 
 export default function Sheet() {
   const { sheet } = useLoaderData<typeof loader>();
+  const [selections, setSelections] = useState<object>({});
+  const propositionCount = sheet.propositions.length;
+  const selectionCount = Object.keys(selections).length;
+  const disabled = propositionCount != selectionCount;
   return (
     <div className="h-screen">
       <Form method="post">
         {sheet?.propositions.map((proposition) => (
-          <PropositionCard key={proposition.id} proposition={proposition} />
+          <PropositionCard
+            key={proposition.id}
+            proposition={proposition}
+            onSelection={(propositionId: string, optionId: string) =>
+              setSelections((prev) => ({ ...prev, [propositionId]: optionId }))
+            }
+          />
         ))}
         <footer className="sticky bottom-0">
-          <button className="btn btn-primary w-full mb-4" type="submit">
-            Lock it in
+          <progress
+            className="progress sticky top-0"
+            value={selectionCount}
+            max={propositionCount}
+          ></progress>
+          <button
+            className="btn btn-primary w-full mb-4"
+            type="submit"
+            disabled={disabled}
+          >
+            Submit your picks!
           </button>
         </footer>
       </Form>

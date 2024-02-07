@@ -32,12 +32,9 @@ export default function MarkProposition({ proposition }: Props) {
           onChange={(event) => fetcher.submit(event.currentTarget.form)}
         >
           <option>-</option>
-          <option value={proposition.options[0]?.id}>
-            {proposition.options[0]?.shortTitle}
-          </option>
-          <option value={proposition.options[1]?.id}>
-            {proposition.options[1]?.shortTitle}
-          </option>
+          {proposition.options.map((option) => (
+            <option value={option?.id}>{option?.shortTitle}</option>
+          ))}
         </select>
       </div>
     </fetcher.Form>

@@ -25,7 +25,7 @@ export default function Submission() {
   const { submission } = useLoaderData<typeof loader>();
   return (
     <>
-      <h1>{submission?.sailor.username}'s Sheet</h1>
+      <h1 className="text-center font-bold">{submission?.sailor.username}</h1>
       <SubmissionTable submission={submission} />
     </>
   );
