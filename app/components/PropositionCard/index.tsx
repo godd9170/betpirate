@@ -13,9 +13,11 @@ export default function PropositionCard({
       id={`proposition-${proposition?.order}`}
       className="card card-compact w-full bg-base-100 shadow-xl mb-4 first:mt-4"
     >
-      <figure>
-        <img src="https://iili.io/J12Ni0B.md.webp" alt="J12Ni0B.md.webp" />
-      </figure>
+      {!!proposition?.imageUrl && (
+        <figure>
+          <img src={proposition.imageUrl} alt={proposition?.shortTitle || ""} />
+        </figure>
+      )}
       <span className="absolute inset-3">
         <div className="flex justify-end">
           <div className="inline-flex items-center px-2 py-1 rounded-full text-md font-semibold leading-4 bg-primary text-primary-content">

@@ -53,6 +53,7 @@ model Proposition {
   subtitle   String?
   shortTitle String?
   order      Int?
+  imageUrl   String?
 
   sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sheetId String
