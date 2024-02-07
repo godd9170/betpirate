@@ -10,18 +10,18 @@ export default function PropositionCardOption({
   handleSelect: Function;
 }) {
   return (
-    <label className={`block w-full`}>
+    <label className={`block w-full text-center`}>
       <input
         type="radio"
         name={propositionId}
         value={option?.id}
-        className="invisible"
         checked={selected}
+        className="absolute invisible"
         onChange={() => handleSelect()}
       />
       <div
         className={`grid h-20 flex-grow card bg-base-200 rounded-box place-items-center cursor-pointer  ${
-          selected ? "bg-accent" : ""
+          selected ? "bg-error" : ""
         }`}
       >
         {option?.title}

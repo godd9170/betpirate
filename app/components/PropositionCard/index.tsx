@@ -28,7 +28,7 @@ export default function PropositionCard({
       <div className="card-body">
         <h2 className="card-title">{proposition.title}</h2>
         <p>{proposition.subtitle}</p>
-        <div className="card-actions justify-end">
+        <div className="card-actions pt-2">
           <div className="flex w-full">
             <PropositionCardOption
               propositionId={proposition?.id}
