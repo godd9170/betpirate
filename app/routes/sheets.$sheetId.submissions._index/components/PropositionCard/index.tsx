@@ -5,9 +5,11 @@ import { useState } from "react";
 export default function PropositionCard({
   proposition,
   onSelection,
+  propositionIndex,
 }: {
   proposition: Proposition & { options: PropositionOption[] };
   onSelection: Function;
+  propositionIndex: number;
 }) {
   const [selectedOption, setSelectedOption] = useState<PropositionOption>();
   return (
@@ -34,9 +36,10 @@ export default function PropositionCard({
           <div className="flex w-full space-x-1">
             {proposition.options.map((option) => (
               <PropositionCardOption
-                propositionId={proposition?.id}
+                key={option?.id}
                 option={option}
                 onChange={() => onSelection(proposition?.id, option?.id)}
+                index={propositionIndex}
               />
             ))}
           </div>

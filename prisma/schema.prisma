@@ -36,10 +36,11 @@ model SMS {
 }
 
 model Sheet {
-  id       String      @id @default(cuid())
-  title    String
-  subtitle String?
-  status   SheetStatus @default(DRAFT)
+  id                 String      @id @default(cuid())
+  title              String
+  subtitle           String?
+  status             SheetStatus @default(DRAFT)
+  tieBreakerQuestion String?
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -91,6 +92,8 @@ model Submission {
   sailorId String
 
   selections PropositionSelection[]
+
+  tieBreaker Int
 }
 
 model PropositionSelection {
