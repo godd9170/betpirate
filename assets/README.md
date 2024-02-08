@@ -1,0 +1,1 @@
+We are cheap. Image hosting is not free. So lets just make a static directory of images here.
