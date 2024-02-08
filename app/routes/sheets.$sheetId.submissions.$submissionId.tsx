@@ -35,7 +35,7 @@ export default function Submission() {
         </span>
       </div>
       <h2 className="text-center font-bold pt-3">
-        Tie Breaker: {submission?.tieBreaker}
+        Tie Breaker: {submission?.sheet?.tieBreakerQuestion}
       </h2>
       <SubmissionTable submission={submission} />
     </>
