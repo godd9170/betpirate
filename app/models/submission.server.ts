@@ -65,6 +65,7 @@ export const readSubmission = (id: string) => {
   return db.submission.findUnique({
     where: { id },
     include: {
+      sheet: true,
       sailor: true,
       selections: {
         orderBy: {
