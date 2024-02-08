@@ -26,6 +26,9 @@ export default function Submission() {
   return (
     <>
       <h1 className="text-center font-bold">{submission?.sailor.username}</h1>
+      <h2 className="text-center font-bold">
+        Tie Breaker: {submission?.tieBreaker}
+      </h2>
       <SubmissionTable submission={submission} />
     </>
   );

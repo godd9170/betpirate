@@ -12,7 +12,7 @@ export default function PhoneNumberForm({ error }: { error: any }) {
         <h1 className="text-xl font-black pb-4">Superbowl Prop Picks</h1>
         <img
           className="rounded"
-          src="https://media.canva.com/1/image-resize/1/800_670_100_PNG_F/czM6Ly9tZWRpYS1wcml2YXRlLmNhbnZhLmNvbS9tY24tby9NQUY4RHJtY24tby8xL3AucG5n?osig=AAAAAAAAAAAAAAAAAAAAANqSs9FZyxKsuGvgxy5TuyShPXMj1EZAMTp74JaJDtdD&exp=1707299776&x-canva-quality=screen&csig=AAAAAAAAAAAAAAAAAAAAABwzhztgd51sk0D6OhIramE-9yaBAfwBGD8_dkGM-gBQ"
+          src="https://raw.githubusercontent.com/godd9170/betpirate/master/assets/img/Bet%20Pirate%20Promo.png"
         />
       </div>
       <div>
