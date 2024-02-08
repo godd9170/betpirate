@@ -9,6 +9,7 @@ type NewSubmission = {
   sheetId: string;
   sailorId: string;
   selections: Selection[];
+  tieBreaker: number;
 };
 
 export type SubmissionWithPropositionSelections = Prisma.SubmissionGetPayload<{
@@ -43,11 +44,13 @@ export const createSubmission = ({
   sheetId,
   sailorId,
   selections = [],
+  tieBreaker,
 }: NewSubmission) => {
   return db.submission.create({
     data: {
       sheetId,
       sailorId,
+      tieBreaker,
       selections: {
         create: selections,
       },

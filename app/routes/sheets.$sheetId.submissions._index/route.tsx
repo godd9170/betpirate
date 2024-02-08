@@ -12,8 +12,16 @@ import {
   readSheetSubmission,
 } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
-import PropositionCard from "~/components/PropositionCard";
+import PropositionCard from "./components/PropositionCard";
 import { useState } from "react";
+import TiebreakerCard from "./components/TiebreakerCard";
+import { z } from "zod";
+import { parse } from "@conform-to/zod";
+
+export const schema = z.object({
+  selections: z.array(z.object({ optionId: z.string() })),
+  tieBreaker: z.number(),
+});
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -41,18 +49,19 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(sailorId != null, `login to submit yer sheet`);
   invariant(params.sheetId, `params.sheetId is required`);
   const form = await request.formData();
-  const selections = _formToSelections(form);
+
+  const submissionParse = parse(form, { schema });
+
+  invariant(!!submissionParse.value?.selections, "Missing selections");
+
   const submission = await createSubmission({
     sheetId: params.sheetId,
     sailorId,
-    selections,
+    selections: submissionParse.value.selections,
+    tieBreaker: submissionParse.value.tieBreaker,
   });
   return json({ submission });
 };
-
-// todo: use zod to convert this to a writable sheet
-const _formToSelections = (form: FormData) =>
-  Array.from(form).map(([_, optionId]) => ({ optionId: optionId.toString() }));
 
 export default function Sheet() {
   const { sheet } = useLoaderData<typeof loader>();
@@ -63,15 +72,17 @@ export default function Sheet() {
   return (
     <div className="h-screen">
       <Form method="post">
-        {sheet?.propositions.map((proposition) => (
+        {sheet?.propositions.map((proposition, index) => (
           <PropositionCard
             key={proposition.id}
+            propositionIndex={index}
             proposition={proposition}
             onSelection={(propositionId: string, optionId: string) =>
               setSelections((prev) => ({ ...prev, [propositionId]: optionId }))
             }
           />
         ))}
+        <TiebreakerCard tieBreakerQuestion={sheet.tieBreakerQuestion} />
         <footer className="sticky bottom-0">
           <progress
             className="progress sticky top-0"

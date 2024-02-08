@@ -1,12 +1,12 @@
 import { ChangeEventHandler } from "react";
 
 export default function PropositionCardOption({
-  propositionId,
   option,
+  index,
   onChange,
 }: {
-  propositionId: string;
   option: any;
+  index: number;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }) {
   return (
@@ -14,7 +14,7 @@ export default function PropositionCardOption({
       <input
         type="radio"
         id={option?.id}
-        name={propositionId}
+        name={`selections[${index}].optionId`}
         value={option?.id}
         className="peer absolute invisible"
         onChange={onChange}
