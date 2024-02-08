@@ -22,6 +22,8 @@ model Sailor {
   updatedAt   DateTime     @updatedAt
   username    String?      @unique
   phone       String       @unique
+  firstName   String?
+  lastName    String?
   submissions Submission[]
   admin       Boolean      @default(false)
 }
