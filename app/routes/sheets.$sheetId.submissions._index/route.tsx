@@ -4,7 +4,7 @@ import {
   ActionFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheet } from "~/models/sheet.server";
 import {
@@ -66,9 +66,12 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function Sheet() {
   const { sheet } = useLoaderData<typeof loader>();
   const [selections, setSelections] = useState<object>({});
+  const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
   const selectionCount = Object.keys(selections).length;
-  const disabled = propositionCount != selectionCount;
+  const isSubmitting =
+    navigation.formAction === `/sheets/${sheet.id}/submissions?index`;
+  const disabled = propositionCount != selectionCount || isSubmitting;
   return (
     <div className="h-screen">
       <Form method="post">
