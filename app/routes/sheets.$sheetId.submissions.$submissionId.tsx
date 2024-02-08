@@ -25,8 +25,16 @@ export default function Submission() {
   const { submission } = useLoaderData<typeof loader>();
   return (
     <>
-      <h1 className="text-center font-bold">{submission?.sailor.username}</h1>
-      <h2 className="text-center font-bold">
+      <h1 className="text-center font-bold pb-2">
+        {submission?.sailor.username}
+      </h1>
+      <div role="alert" className="alert alert-info">
+        <span>
+          Please e-transfer $10 to Hayz_149@hotmail.com or your submission will
+          not be counted!
+        </span>
+      </div>
+      <h2 className="text-center font-bold pt-3">
         Tie Breaker: {submission?.tieBreaker}
       </h2>
       <SubmissionTable submission={submission} />
