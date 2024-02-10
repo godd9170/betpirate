@@ -96,6 +96,7 @@ model Submission {
   selections PropositionSelection[]
 
   tieBreaker Int
+  isPaid     Boolean @default(false)
 }
 
 model PropositionSelection {

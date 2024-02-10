@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheet } from "~/models/sheet.server";
@@ -6,25 +6,30 @@ import { authenticator } from "~/services/auth.server";
 import StatusSelector from "./components/StatusSelector";
 import EditSheet from "./components/EditSheet";
 import MarkSheet from "./components/MarkSheet";
+import { readSailor } from "~/models/sailor.server";
+import SheetStats from "./components/SheetStats";
+import { readSheetSubmissions } from "~/models/submission.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  await authenticator.isAuthenticated(request, {
+  const sailorId = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
   invariant(params.sheetId, `params.sheetId is required`);
-  // todo: redirect if not an admin
+  const sailor = await readSailor(sailorId);
+  if (!sailor || !sailor.admin) return redirect("/");
   const sheet = await readSheet(params.sheetId);
+  const submissions = await readSheetSubmissions(params.sheetId);
   invariant(!!sheet, "No such sheet");
-  return json({ sheet });
+  return json({ sheet, submissions });
 };
 
 export default function SheetEdit() {
-  const { sheet } = useLoaderData<typeof loader>();
+  const { sheet, submissions } = useLoaderData<typeof loader>();
   return (
     <>
       <StatusSelector sheet={sheet} />
       {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
-      {sheet.status === "OPEN" && <span>Currently accepting submissions</span>}
+      {sheet.status === "OPEN" && <SheetStats submissions={submissions} />}
       {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
     </>
   );
