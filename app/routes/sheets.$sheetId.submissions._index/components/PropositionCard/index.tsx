@@ -11,7 +11,6 @@ export default function PropositionCard({
   onSelection: Function;
   propositionIndex: number;
 }) {
-  const [selectedOption, setSelectedOption] = useState<PropositionOption>();
   return (
     <div
       id={`proposition-${proposition?.order}`}
@@ -22,15 +21,11 @@ export default function PropositionCard({
           <img src={proposition.imageUrl} alt={proposition?.shortTitle || ""} />
         </figure>
       )}
-      <span className="absolute inset-3">
-        <div className="flex justify-end">
-          <div className="inline-flex items-center px-2 py-1 rounded-full text-md font-semibold leading-4 bg-primary text-primary-content">
-            {`#${proposition.order}`}
-          </div>
-        </div>
-      </span>
       <div className="card-body">
-        <h2 className="card-title">{proposition.title}</h2>
+        <h2 className="card-title inline-block">
+          <span className="text-md font-semibold text-primary-content bg-primary rounded-sm text-sm mr-2 px-1 py-0.5 align-text-bottom">{`#${proposition.order}`}</span>
+          {proposition.title}
+        </h2>
         <p>{proposition.subtitle}</p>
         <div className="card-actions pt-2">
           <div className="flex w-full space-x-1">
