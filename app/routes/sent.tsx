@@ -5,7 +5,7 @@ export default function Sent() {
         Yarrr, we texted you a link!
       </h1>
       <p className="pt-6 text-center">
-        Check your text messages and click the link we sent to fill our your
+        Check your text messages and click the link we sent to fill out your
         sheet!
       </p>
     </>
