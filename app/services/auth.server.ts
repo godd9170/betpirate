@@ -1,6 +1,7 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "~/services/session.server";
-import { sendSMS } from "./sms.server"; // todo: use locally "~/services/dummysms.server"; //
+import { sendSMS } from "~/services/sms.server"; // todo: use locally "~/services/dummysms.server"; //
+import { sendSMS as sendDummySMS } from "~/services/dummysms.server";
 import { SMSLinkStrategy } from "~/lib/remix-auth-sms-link";
 import { createSailor, readSailorByPhone } from "~/models/sailor.server";
 
@@ -32,7 +33,11 @@ const verifyCallback = async ({
 
 authenticator.use(
   new SMSLinkStrategy(
-    { sendSMS, secret, callbackURL: "/magic" },
+    {
+      sendSMS: process.env.NODE_ENV === "development" ? sendDummySMS : sendSMS,
+      secret,
+      callbackURL: "/magic",
+    },
     verifyCallback
   )
 );
