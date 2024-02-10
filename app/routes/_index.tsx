@@ -8,7 +8,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     failureRedirect: "/login",
   });
   const sailor = await readSailor(sailorId);
-  invariant(sailor !== null, "No such sailor");
+
+  if (sailor === null) {
+    await authenticator.logout(request, { redirectTo: "/login" });
+    return;
+  }
+
   if (!sailor.username) return redirect("/onboard");
   return redirect(`/sheets/${process.env.DEFAULT_SHEET_ID}`);
 };
