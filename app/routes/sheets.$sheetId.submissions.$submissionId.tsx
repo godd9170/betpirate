@@ -18,26 +18,30 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   invariant(!!submissionId, `params.submissionId is required`);
 
   const submission = await readSubmission(submissionId);
-  return json({ submission });
+  return json({ sailorId, submission });
 };
 
 export default function Submission() {
-  const { submission } = useLoaderData<typeof loader>();
+  const { sailorId, submission } = useLoaderData<typeof loader>();
+  const showPaymentRequired =
+    submission?.sailorId === sailorId && !submission?.isPaid;
   return (
     <>
       <h1 className="text-center font-bold pb-2">
         {submission?.sailor.username}
       </h1>
-      <div role="alert" className="alert alert-info">
-        <span>
-          Please e-transfer $10 to Hayz_149@hotmail.com or your submission will
-          not be counted!
-        </span>
-      </div>
+      {showPaymentRequired && (
+        <div role="alert" className="alert alert-info">
+          <span>
+            Please e-transfer $10 to Hayz_149@hotmail.com or your submission
+            will not be counted!
+          </span>
+        </div>
+      )}
+      <SubmissionTable submission={submission} />
       <h2 className="text-center font-bold pt-3">
         Tie Breaker: {submission?.tieBreaker}
       </h2>
-      <SubmissionTable submission={submission} />
     </>
   );
 }

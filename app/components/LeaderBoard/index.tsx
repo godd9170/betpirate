@@ -22,14 +22,15 @@ export default function LeaderBoard({
           {leaders.map((leader) => (
             <tr key={leader.submissionId}>
               <th>{leader.ranking}</th>
+              <td>{leader.username}</td>
               <td>
                 <Link
+                  className="underline"
                   to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
                 >
-                  {leader.username}
+                  {leader.correct}
                 </Link>
               </td>
-              <td>{leader.correct}</td>
             </tr>
           ))}
         </tbody>
