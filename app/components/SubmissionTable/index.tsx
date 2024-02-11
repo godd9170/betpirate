@@ -4,9 +4,13 @@ import {
 } from "~/models/submission.server";
 
 function Mark({ selection }: { selection: SelectionWithPropositionOption }) {
-  if (!selection.option.proposition.answerId) return null;
-  if (selection.option.proposition.answerId === selection.optionId) return "✅";
-  return "❌";
+  let color = "text-base";
+  if (!selection.option.proposition.answerId) color = "text-base";
+  else if (selection.option.proposition.answerId === selection.optionId)
+    color = "text-success";
+  else color = "text-error";
+
+  return <span className={color}>{selection.option.shortTitle}</span>;
 }
 
 export default function SubmissionTable({
@@ -29,7 +33,6 @@ export default function SubmissionTable({
             <tr>
               <td>{selection.option.proposition.shortTitle}</td>
               <td>
-                {selection.option.shortTitle}
                 <Mark selection={selection} />
               </td>
             </tr>

@@ -7,7 +7,7 @@ import StatusSelector from "./components/StatusSelector";
 import EditSheet from "./components/EditSheet";
 import MarkSheet from "./components/MarkSheet";
 import { readSailor } from "~/models/sailor.server";
-import SheetStats from "./components/SheetStats";
+import Submissions from "./components/Submissions";
 import { readSheetSubmissions } from "~/models/submission.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -29,8 +29,13 @@ export default function SheetEdit() {
     <>
       <StatusSelector sheet={sheet} />
       {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
-      {sheet.status === "OPEN" && <SheetStats submissions={submissions} />}
-      {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
+      {sheet.status === "OPEN" && <Submissions submissions={submissions} />}
+      {sheet.status === "CLOSED" && (
+        <>
+          <MarkSheet sheet={sheet} />
+          <Submissions submissions={submissions} />
+        </>
+      )}
     </>
   );
 }

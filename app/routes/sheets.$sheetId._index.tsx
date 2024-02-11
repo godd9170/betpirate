@@ -28,5 +28,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 export default function Sheet() {
   const { sheet, leaders } = useLoaderData<typeof loader>();
   if (sheet.status === "DRAFT") return <p>Sheets not ready</p>;
-  return <LeaderBoard sheet={sheet} leaders={leaders} />;
+
+  return (
+    <>
+      <LeaderBoard sheet={sheet} leaders={leaders} />
+    </>
+  );
 }
