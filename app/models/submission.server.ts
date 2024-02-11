@@ -61,6 +61,13 @@ export const createSubmission = ({
   });
 };
 
+export const setSubmissionPaid = (id: string, isPaid: boolean) => {
+  return db.submission.update({
+    where: { id },
+    data: { isPaid },
+  });
+};
+
 export const readSubmission = (id: string) => {
   return db.submission.findUnique({
     where: { id },
@@ -120,5 +127,10 @@ export const readSheetSubmissions = (sheetId: string) => {
         },
       },
     },
+    orderBy: [
+      {
+        createdAt: "desc",
+      },
+    ],
   });
 };

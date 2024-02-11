@@ -1,25 +1,33 @@
+import SubmissionRow from "./SubmissionRow";
+
 export default function SheetStats({ submissions }) {
   return (
     <>
-      <p>Total Submissions: {submissions.length}</p>
+      <div className="flex">
+        <div className="stat">
+          <div className="stat-title">Total Submissions</div>
+          <div className="stat-value">{submissions.length}</div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Paid</div>
+          <div className="stat-value">
+            {submissions.filter((s) => s.isPaid).length}/{submissions.length}
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="table">
           <thead>
             <tr>
-              <th>username</th>
-              <th>name</th>
               <th>paid</th>
-              <th>submitted at</th>
+              <th>name</th>
+              <th>created</th>
             </tr>
           </thead>
           <tbody>
             {submissions.map((submission) => (
-              <tr key={submission.id}>
-                <th>{submission?.sailor?.username}</th>
-                <th>{`${submission?.sailor?.firstName} ${submission?.sailor?.lastName}`}</th>
-                <th>{submission.isPaid ? "✅" : "❌"}</th>
-                <th>{submission.createdAt}</th>
-              </tr>
+              <SubmissionRow submission={submission} />
             ))}
           </tbody>
         </table>
