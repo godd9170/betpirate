@@ -10,6 +10,7 @@ export let sessionStorage = createCookieSessionStorage({
     httpOnly: true, // for security reasons, make this cookie http only
     secrets: ["s3cr3t"], // replace this with an actual secret
     secure: process.env.NODE_ENV === "production", // enable this in prod only
+    maxAge: 604800,
   },
 });
 
