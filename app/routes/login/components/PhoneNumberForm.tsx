@@ -1,7 +1,6 @@
 import { Form } from "@remix-run/react";
 import { E164Number, isPossiblePhoneNumber } from "libphonenumber-js";
 import { useState } from "react";
-import Logo from "~/components/Logo";
 import PhoneNumberInput from "~/components/PhoneNumberInput";
 
 export default function PhoneNumberForm({ error }: { error: any }) {

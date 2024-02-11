@@ -1,18 +1,9 @@
 import { json, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import {
-  Links,
-  Meta,
-  LiveReload,
-  Outlet,
-  Scripts,
-  useLoaderData,
-} from "@remix-run/react";
+import { Links, Meta, LiveReload, Outlet, Scripts } from "@remix-run/react";
 import { authenticator } from "./services/auth.server";
 import stylesheet from "~/styles/tailwind.css";
-import Logo from "./components/Logo";
 import { readSailor } from "./models/sailor.server";
 import { Sailor } from "@prisma/client";
-import ThemeToggle from "./components/ThemeToggle";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
