@@ -6,7 +6,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 export async function sendSMS(
   to = "+16139211286",
-  body = "🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️"
+  body = "🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️🏴‍☠️"
 ): Promise<MessageInstance> {
   const client = twilio(accountSid, authToken);
   return await client.messages.create({
