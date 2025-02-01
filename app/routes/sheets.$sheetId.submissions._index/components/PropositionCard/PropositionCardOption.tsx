@@ -20,10 +20,9 @@ export default function PropositionCardOption({
         onChange={onChange}
       />
       <label
-        className="block w-full grid h-20 flex-grow card rounded-box place-items-center cursor-pointer 
-             bg-base-200 text-center border border-transparent transition-all 
-             peer-checked:bg-gray-500 peer-checked:border-white peer-checked:text-white 
-             peer-checked:shadow-lg peer-checked:shadow-gray-500/50"
+        className="w-full grid h-20 flex-grow card rounded-box place-items-center cursor-pointer 
+             bg-base-200 text-center border border-transparent transition-all peer-checked:bg-primary 
+             peer-checked:text-primary-content hover:border-primary"
         htmlFor={option?.id}
       >
         {option?.title}

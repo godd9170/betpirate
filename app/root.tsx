@@ -26,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sailor = await readSailor(sailorId);
   return json({ sailor });
 };
-// className="container mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50"
+
 // https://remix.run/docs/en/1.14.3/route/meta#md-global-meta
 export default function Root() {
   return (
@@ -38,7 +38,7 @@ export default function Root() {
         <Meta />
         <Links />
       </head>
-      <body className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <body className="container mx-auto bg-base-100">
         <Outlet />
         <LiveReload />
         <Scripts />
