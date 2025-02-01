@@ -1,20 +1,21 @@
 import { Proposition, PropositionOption } from "@prisma/client";
 import PropositionCardOption from "./PropositionCardOption";
-import { useState } from "react";
 
-export default function PropositionCard({
-  proposition,
-  onSelection,
-  propositionIndex,
-}: {
-  proposition: Proposition & { options: PropositionOption[] };
-  onSelection: Function;
-  propositionIndex: number;
-}) {
+import React, { forwardRef } from "react";
+
+const PropositionCard = forwardRef<
+  HTMLDivElement,
+  {
+    proposition: Proposition & { options: PropositionOption[] };
+    onSelection: Function;
+    propositionIndex: number;
+  }
+>(({ proposition, onSelection, propositionIndex }, ref) => {
   return (
     <div
-      id={`proposition-${proposition?.order}`}
+      id={proposition.id}
       className="card card-compact w-full bg-base-100 shadow-xl mb-4 first:mt-4"
+      ref={ref}
     >
       {!!proposition?.imageUrl && (
         <figure>
@@ -42,4 +43,6 @@ export default function PropositionCard({
       </div>
     </div>
   );
-}
+});
+
+export default PropositionCard;

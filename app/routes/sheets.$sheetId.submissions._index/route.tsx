@@ -13,10 +13,11 @@ import {
 } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
 import PropositionCard from "./components/PropositionCard";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import TiebreakerCard from "./components/TiebreakerCard";
 import { z } from "zod";
 import { parse } from "@conform-to/zod";
+import SheetInstructions from "./components/SheetInstructions";
 
 export const schema = z.object({
   selections: z.array(z.object({ optionId: z.string() })),
@@ -34,6 +35,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const submission = await readSheetSubmission(sheetId, sailorId);
   if (!!submission)
+    // if user has already submitted, redirect them to their submission
     return redirect(`/sheets/${sheetId}/submissions/${submission.id}`);
 
   const sheet = await readSheet(sheetId);
@@ -72,26 +74,44 @@ export default function Sheet() {
   const isSubmitting =
     navigation.formAction === `/sheets/${sheet.id}/submissions?index`;
   const disabled = propositionCount != selectionCount || isSubmitting;
+  const propositionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const scrollToProposition = (index: number) => {
+    const element = propositionRefs.current[index];
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <div className="h-screen">
+      <SheetInstructions />
       <Form method="post">
+        <progress
+          className="progress sticky top-0 z-10"
+          value={selectionCount}
+          max={propositionCount}
+        ></progress>
         {sheet?.propositions.map((proposition, index) => (
           <PropositionCard
             key={proposition.id}
+            ref={(el) => (propositionRefs.current[index] = el)}
             propositionIndex={index}
             proposition={proposition}
-            onSelection={(propositionId: string, optionId: string) =>
-              setSelections((prev) => ({ ...prev, [propositionId]: optionId }))
-            }
+            onSelection={(propositionId: string, optionId: string) => {
+              setSelections((prev) => ({
+                ...prev,
+                [propositionId]: optionId,
+              }));
+              scrollToProposition(index + 1);
+            }}
           />
         ))}
         <TiebreakerCard tieBreakerQuestion={sheet.tieBreakerQuestion} />
         <footer className="sticky bottom-0">
-          <progress
-            className="progress sticky top-0"
-            value={selectionCount}
-            max={propositionCount}
-          ></progress>
           <button
             className="btn btn-primary w-full mb-4"
             type="submit"
