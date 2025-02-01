@@ -5,8 +5,12 @@ import PhoneNumberForm from "./components/PhoneNumberForm";
 import { commitSession, sessionStorage } from "~/services/session.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  await authenticator.authenticate("sms-link", request, {
-    successRedirect: "/sent",
+  // await authenticator.authenticate("sms-link", request, {
+  //   successRedirect: "/sent",
+  //   failureRedirect: "/login",
+  // });
+  await authenticator.authenticate("phone-number", request, {
+    successRedirect: "/",
     failureRedirect: "/login",
   });
 };
@@ -18,8 +22,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json(
     {
       error: session.get(authenticator.sessionErrorKey),
-      magicLinkSent: session.has("auth:magiclink"),
-      magicLinkPhone: session.get("auth:phone"),
+      // magicLinkSent: session.has("auth:magiclink"),
+      phone: session.get("auth:phone"),
     },
     {
       headers: {
