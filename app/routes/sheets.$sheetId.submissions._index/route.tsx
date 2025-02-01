@@ -18,6 +18,7 @@ import TiebreakerCard from "./components/TiebreakerCard";
 import { z } from "zod";
 import { parse } from "@conform-to/zod";
 import SheetInstructions from "./components/SheetInstructions";
+import { readSailor } from "~/models/sailor.server";
 
 export const schema = z.object({
   selections: z.array(z.object({ optionId: z.string() })),
@@ -29,6 +30,13 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     failureRedirect: "/login",
   });
   invariant(!!sailorId, `sailorId is required`);
+
+  const sailor = await readSailor(sailorId);
+
+  if (sailor === null) {
+    await authenticator.logout(request, { redirectTo: "/login" });
+    return;
+  }
 
   const sheetId = params.sheetId;
   invariant(sheetId, `params.sheetId is required`);
@@ -43,7 +51,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   if (sheet.status === "CLOSED") return redirect(`/sheets/${sheetId}`);
 
-  return json({ sheet });
+  return json({ sheet, sailor });
 };
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
@@ -66,7 +74,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 };
 
 export default function Sheet() {
-  const { sheet } = useLoaderData<typeof loader>();
+  const { sheet, sailor } = useLoaderData<typeof loader>();
   const [selections, setSelections] = useState<object>({});
   const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
@@ -88,7 +96,7 @@ export default function Sheet() {
 
   return (
     <div className="h-screen">
-      <SheetInstructions />
+      <SheetInstructions sailor={sailor} count={propositionCount} />
       <Form method="post">
         <progress
           className="progress sticky top-0 z-10"
