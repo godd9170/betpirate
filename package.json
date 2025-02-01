@@ -43,7 +43,7 @@
     "@types/node": "^18.15.8",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
-    "daisyui": "^4.6.0",
+    "daisyui": "^4.12.23",
     "dotenv-cli": "^7.1.0",
     "esbuild-register": "^3.4.2",
     "eslint": "^8.27.0",
