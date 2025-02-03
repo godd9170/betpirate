@@ -60,30 +60,11 @@ fly deploy
 - in models, infer parameter types from prisma and <exclude> ids accordingly
 
 ### feature
-- collect username ✅
-    - + emoji (maybe image?)
-- ability to mark answers
-    - super user ✅
-    - special answer key sheet ✅
-    - edit prop names/descriptions ✅
-- leaderboard (polling refresh?) ✅
-- prop images
-- mobile first
-- normalize phone numbers on input ✅
-- text results
-- prop short names ✅
-- prop answer short names ✅
-- ability to close sheet to new submissions ✅
-- ability to mark sheet with a winner
-- can auth from different device
-- sheet statuses ✅
-- aggregate correct answers in prisma method ✅
-    - count submission proposition selections where proposition selection option's the answer ✅
-- tiebreaker score
-
-- Add payment explanation, payment before 6pm
-- countdown
-- tiebreaker
-- gatorade multi
-- load test
-- pod monday
+- encoded link login (ditch the sms)
+    - Still have user give their username
+    - Multiple submissions per user?
+- Text a user a confirmation that their submission was received
+- support image upload
+- Make leaderboard sexier
+    show all the props across the top, with check marks
+- photo upload??
