@@ -7,13 +7,7 @@ export default function PhoneNumberForm({ error }: { error: any }) {
   const [phone, setPhone] = useState<E164Number | undefined>("");
   return (
     <>
-      <div className="py-10 flex flex-col items-center justify-items-center w-full">
-        <h1 className="text-xl font-black pb-4">Superbowl Prop Picks</h1>
-        <img
-          className="rounded"
-          src="https://raw.githubusercontent.com/godd9170/betpirate/master/assets/img/Bet%20Pirate%20Promo.png"
-        />
-      </div>
+      <h1 className="text-xl font-black pb-4">Superbowl Prop Picks</h1>
       <div>
         <div>
           {JSON.stringify(error)}

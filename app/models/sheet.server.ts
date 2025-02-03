@@ -17,6 +17,14 @@ export type SheetWithPropositions = Prisma.SheetGetPayload<{
   };
 }>;
 
+export type SheetLeader = {
+  submissionId: string;
+  sailorId: string;
+  username: string;
+  correct: number;
+  ranking: number;
+};
+
 export const readSheets = () => {
   return db.sheet.findMany({
     orderBy: [
@@ -76,8 +84,10 @@ export const readSheetWithSubmissions = (id: string) => {
   });
 };
 
-export const readSheetLeaders = (sheetId: string) => {
-  return db.$queryRaw`
+export const readSheetLeaders = async (
+  sheetId: string
+): Promise<SheetLeader[]> => {
+  return db.$queryRaw<SheetLeader[]>`
     select 
     su.id as "submissionId",
     sa.id as "sailorId",

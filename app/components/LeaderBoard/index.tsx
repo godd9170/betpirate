@@ -1,12 +1,13 @@
 import { Sheet } from "@prisma/client";
 import { Link } from "@remix-run/react";
+import { SheetLeader } from "~/models/sheet.server";
 
 export default function LeaderBoard({
   sheet,
   leaders,
 }: {
-  sheet: any;
-  leaders: any[];
+  sheet: Sheet;
+  leaders: SheetLeader[];
 }) {
   return (
     <div className="overflow-x-auto">
