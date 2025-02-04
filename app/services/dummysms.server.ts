@@ -3,7 +3,6 @@ import { createSMS } from "~/models/sms.server";
 
 export let sendSMS: SendSMSFunction<SailorId> = async (options) => {
   try {
-    console.log(`Sign in link: ${options.magicLink}`);
     await createSMS({
       to: options.phone,
       body: "",

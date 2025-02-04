@@ -23,6 +23,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   return json({ sheet, submissions });
 };
 
+// Allows designated 'admin' sailors to alter the sheet
 export default function SheetEdit() {
   const { sheet, submissions } = useLoaderData<typeof loader>();
   return (

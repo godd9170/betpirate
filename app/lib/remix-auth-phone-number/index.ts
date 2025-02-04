@@ -6,7 +6,10 @@ import {
 } from "remix-auth";
 import { parse } from "@conform-to/zod";
 import { z } from "zod";
-import { isValidPhoneNumber } from "libphonenumber-js";
+import {
+  isValidPhoneNumber,
+  parsePhoneNumberWithError,
+} from "libphonenumber-js";
 
 /**
  * This interface declares what the developer will receive from the strategy
@@ -90,12 +93,13 @@ export class PhoneNumberStrategy<User> extends Strategy<
     }
 
     // todo: normalize phone number for storage
+    const normalizedPhoneNumber = parsePhoneNumberWithError(phone, "CA").number;
 
     // we store the phone number in the session
-    await session.set("auth:phone", phone);
+    await session.set("auth:phone", normalizedPhoneNumber);
 
     // we call the verify function to authenticate the user
-    let user = await this.verify({ phone });
+    let user = await this.verify({ phone: normalizedPhoneNumber });
 
     // if no success redirect, we'll just return
     if (!options.successRedirect) {
