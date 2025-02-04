@@ -37,3 +37,17 @@ export const readSailorWithSubmissions = (id: string) => {
     },
   });
 };
+
+export const readSailorWithSheetSubmissions = (
+  sailorId: string,
+  sheetId: string
+) => {
+  return db.sailor.findUnique({
+    where: { id: sailorId },
+    include: {
+      submissions: {
+        where: { sheetId },
+      },
+    },
+  });
+};
