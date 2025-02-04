@@ -60,10 +60,9 @@ fly deploy
 - in models, infer parameter types from prisma and <exclude> ids accordingly
 
 ### feature
-- encoded link login (ditch the sms)
-    - Still have user give their username
-    - Multiple submissions per user?
 - Text a user a confirmation that their submission was received
-- support image upload
+- Welcome screen, when user has no submissions
 - Make leaderboard sexier
     show all the props across the top, with check marks
+- images on props
+- actually show the position on the submission

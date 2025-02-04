@@ -1,7 +1,7 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { readSailorWithSubmissions } from "~/models/sailor.server";
+import { readSailorWithSheetSubmissions } from "~/models/sailor.server";
 import { readSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 import SubmissionsList from "./components/SubmissionsList";
@@ -14,14 +14,14 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   });
   invariant(sailorId, `sailorId is required`);
 
-  const sailor = await readSailorWithSubmissions(sailorId);
+  const sheetId = params.sheetId;
+  invariant(sheetId, `sheetId is required`);
+
+  const sailor = await readSailorWithSheetSubmissions(sailorId, sheetId);
   if (sailor === null) {
     await authenticator.logout(request, { redirectTo: "/login" });
     return;
   }
-
-  const sheetId = params.sheetId;
-  invariant(sheetId, `sheetId is required`);
 
   const sheet = await readSheet(sheetId);
   invariant(!!sheet, "No sheet exists with this id");
