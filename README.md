@@ -67,4 +67,3 @@ fly deploy
 - support image upload
 - Make leaderboard sexier
     show all the props across the top, with check marks
-- photo upload??

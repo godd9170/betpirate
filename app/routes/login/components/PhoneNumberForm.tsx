@@ -4,11 +4,11 @@ import { useState } from "react";
 import PhoneNumberInput from "~/components/PhoneNumberInput";
 
 export default function PhoneNumberForm({ error }: { error: any }) {
-  const [phone, setPhone] = useState<E164Number | undefined>("");
+  const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   return (
-    <>
-      <h1 className="text-xl font-black pb-4">Superbowl Prop Picks</h1>
-      <div>
+    <div className="card bg-base-200 card-compact w-96">
+      <div className="card-body">
+        <div className="card-title">Superbowl LIX</div>
         <div>
           {JSON.stringify(error)}
           <Form
@@ -17,7 +17,21 @@ export default function PhoneNumberForm({ error }: { error: any }) {
             className="flex flex-col space-y-4"
           >
             <div>
-              <label htmlFor="phone">Enter your phone number to begin</label>
+              <ul>
+                <li>
+                  ✔ <strong>$10.00</strong> per sheet
+                </li>
+                <li>
+                  ✔ <strong>26</strong> Prop Questions
+                </li>
+                <li>
+                  ✔ <strong>1</strong> Winner
+                </li>
+              </ul>
+              <div className="divider" />
+              <p className="text-center">
+                Enter your phone number to get started
+              </p>
               <div className="mt-2">
                 <PhoneNumberInput
                   placeholder="(416)-867-5309"
@@ -33,12 +47,12 @@ export default function PhoneNumberForm({ error }: { error: any }) {
                 disabled={!isPossiblePhoneNumber(phone || "")}
                 type="submit"
               >
-                Text me!
+                Let's Go!
               </button>
             </div>
           </Form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

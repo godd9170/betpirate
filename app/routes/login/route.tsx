@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
 import PhoneNumberForm from "./components/PhoneNumberForm";
 import { commitSession, sessionStorage } from "~/services/session.server";
+import Logo from "~/components/Logo";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   // await authenticator.authenticate("sms-link", request, {
@@ -35,5 +36,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default () => {
   let { error } = useLoaderData<typeof loader>();
-  return <PhoneNumberForm error={error} />;
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="h-24 w-96">
+        <Logo />
+      </div>
+      <PhoneNumberForm error={error} />
+    </div>
+  );
 };
