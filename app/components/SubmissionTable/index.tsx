@@ -31,7 +31,7 @@ export default function SubmissionTable({
         <tbody>
           {submission.selections.map((selection) => (
             <tr>
-              <td>{selection.option.proposition.shortTitle}</td>
+              <td>{selection.option.proposition.title}</td>
               <td>
                 <Mark selection={selection} />
               </td>
