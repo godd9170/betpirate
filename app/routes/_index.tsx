@@ -1,5 +1,4 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import invariant from "tiny-invariant";
 import { readSailor } from "~/models/sailor.server";
 import { authenticator } from "~/services/auth.server";
 
