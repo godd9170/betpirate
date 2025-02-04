@@ -24,47 +24,12 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 };
 
 export default function Submission() {
-  const [copied, setCopied] = useState(false);
   const { sailorId, submission } = useLoaderData<typeof loader>();
-  const showPaymentRequired =
-    submission?.sailorId === sailorId && !submission?.isPaid;
-
-  const copyText = async () => {
-    try {
-      await navigator.clipboard.writeText("hayz_149@hotmail.com");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset copied state after 2s
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
-  };
 
   return (
     <>
-      {showPaymentRequired && (
-        <div role="alert" className="alert alert-warning" onClick={copyText}>
-          <IoIosWarning />
-          <span>
-            Unpaid Submission: Please e-transfer <strong>$10.00</strong> to{" "}
-            <span className="cursor-pointer font-extrabold underline">
-              {copied ? (
-                "Copied!"
-              ) : (
-                <span>
-                  Hayz_149
-                  <wbr />
-                  @hotmail
-                  <wbr />
-                  .com
-                </span>
-              )}
-            </span>{" "}
-            or your submission will not be counted!
-          </span>
-        </div>
-      )}
       <SubmissionTable submission={submission} />
-      <h2 className="text-center font-bold pt-3">
+      <h2 className="text-center font-bold pt-3 pb-5">
         Tie Breaker: {submission?.tieBreaker}
       </h2>
     </>

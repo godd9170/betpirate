@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSailor } from "~/models/sailor.server";
@@ -29,7 +29,7 @@ export default function Sheet() {
   const SUBMISSIONS_LINK = `/sheets/${sheet.id}/submissions`;
   const LEADERBOARD_LINK = `/sheets/${sheet.id}/leaders`;
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <header className="mb-2 relative">
         <Link to={`/sheets/${sheet.id}`}>
           <h1 className="text-xl font-black text-center py-4">{sheet.title}</h1>
@@ -43,23 +43,27 @@ export default function Sheet() {
           </Link>
         )}
       </header>
-      <Outlet />
-      <div className="btm-nav">
-        <Link
-          to={SUBMISSIONS_LINK}
-          className={location.pathname === SUBMISSIONS_LINK ? "active" : ""}
-        >
-          <IoMdListBox size={24} />
-          <span className="btm-nav-label">Submissions</span>
-        </Link>
-        <Link
-          to={LEADERBOARD_LINK}
-          className={location.pathname === LEADERBOARD_LINK ? "active" : ""}
-        >
-          <IoIosPodium size={24} />
-          <span className="btm-nav-label">Leaderboard</span>
-        </Link>
-      </div>
+      <main className="pb-16">
+        <Outlet />
+      </main>
+      {!location.pathname.includes("new") && (
+        <nav className="btm-nav">
+          <Link
+            to={SUBMISSIONS_LINK}
+            className={location.pathname === SUBMISSIONS_LINK ? "active" : ""}
+          >
+            <IoMdListBox size={24} />
+            <span className="btm-nav-label">Submissions</span>
+          </Link>
+          <Link
+            to={LEADERBOARD_LINK}
+            className={location.pathname === LEADERBOARD_LINK ? "active" : ""}
+          >
+            <IoIosPodium size={24} />
+            <span className="btm-nav-label">Leaderboard</span>
+          </Link>
+        </nav>
+      )}
     </div>
   );
 }
