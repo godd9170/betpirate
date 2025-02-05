@@ -14,7 +14,7 @@ export default function StatusSelector({ sheet }: Props) {
       <select
         name="status"
         defaultValue={sheet.status}
-        className="select select-bordered select-lg w-full max-w-xs"
+        className="select select-bordered select-lg w-full"
         onChange={(event) => fetcher.submit(event.currentTarget.form)}
       >
         <option>DRAFT</option>

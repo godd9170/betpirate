@@ -27,16 +27,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 export default function SheetEdit() {
   const { sheet, submissions } = useLoaderData<typeof loader>();
   return (
-    <>
+    <div className="mx-2">
       <StatusSelector sheet={sheet} />
       {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
-      {sheet.status === "OPEN" && <Submissions submissions={submissions} />}
-      {sheet.status === "CLOSED" && (
-        <>
-          <MarkSheet sheet={sheet} />
-          <Submissions submissions={submissions} />
-        </>
-      )}
-    </>
+      {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
+      {sheet.status !== "DRAFT" && <Submissions submissions={submissions} />}
+    </div>
   );
 }

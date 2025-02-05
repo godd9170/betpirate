@@ -3,7 +3,6 @@ import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
 import PhoneNumberForm from "./components/PhoneNumberForm";
 import { commitSession, sessionStorage } from "~/services/session.server";
-import Logo from "~/components/Logo";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   await authenticator.authenticate("phone-number", request, {

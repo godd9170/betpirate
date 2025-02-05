@@ -25,7 +25,6 @@ export default function SubmissionsList({ sailor }: { sailor: any }) {
 
   return (
     <div role="alert" className="alert alert-warning my-4" onClick={copyText}>
-      <IoIosWarning size={24} />
       <span>
         Unpaid Submissions: Please e-transfer <strong>{amountOwed}</strong> to{" "}
         <span className="cursor-pointer font-extrabold underline">
