@@ -1,11 +1,10 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useState } from "react";
 import invariant from "tiny-invariant";
-import SubmissionTable from "~/components/SubmissionTable";
+import SubmissionTable from "./components/SubmissionTable";
 import { readSubmission } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
-import { IoIosWarning } from "react-icons/io";
+import SubmissionTotals from "./components/SubmissionTotals";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -28,6 +27,7 @@ export default function Submission() {
 
   return (
     <>
+      <SubmissionTotals submission={submission} />
       <SubmissionTable submission={submission} />
       <h2 className="text-center font-bold pt-3 pb-5">
         Tie Breaker: {submission?.tieBreaker}

@@ -29,14 +29,16 @@ const PropositionCard = forwardRef<
         </h2>
         <p>{proposition.subtitle}</p>
         <div className="card-actions pt-2">
-          <div className="flex w-full space-x-1">
+          <div className="grid grid-cols-2 gap-2 w-full">
             {proposition.options.map((option) => (
-              <PropositionCardOption
-                key={option?.id}
-                option={option}
-                onChange={() => onSelection(proposition?.id, option?.id)}
-                index={propositionIndex}
-              />
+              <div className="col-span-1">
+                <PropositionCardOption
+                  key={option?.id}
+                  option={option}
+                  onChange={() => onSelection(proposition?.id, option?.id)}
+                  index={propositionIndex}
+                />
+              </div>
             ))}
           </div>
         </div>
