@@ -5,6 +5,7 @@ import LeaderBoard from "~/components/LeaderBoard";
 import { readSailorWithSubmissions } from "~/models/sailor.server";
 import { readSheet, readSheetLeaders } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
+import Countdown from "./components/Countdown";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -32,5 +33,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 // A leaderboard of all the submissions for the sheet
 export default function Leaders() {
   const { sailor, sheet, leaders } = useLoaderData<typeof loader>();
+  if (sheet.status !== "CLOSED") return <Countdown />;
   return <LeaderBoard sheet={sheet} leaders={leaders} />;
 }

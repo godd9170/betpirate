@@ -66,3 +66,4 @@ fly deploy
     show all the props across the top, with check marks
 - images on props
 - actually show the position on the submission
+- get a date for sheet closure from the sheet itself
