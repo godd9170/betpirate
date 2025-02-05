@@ -7,6 +7,7 @@ import { authenticator } from "~/services/auth.server";
 import SubmissionsList from "./components/SubmissionsList";
 import { IoAddCircle } from "react-icons/io5";
 import PaymentWarning from "./components/PaymentWarning";
+import NewSubmissionButton from "./components/NewSubmissionButton";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -36,12 +37,7 @@ export default function Submissions() {
   return (
     <div className="flex flex-col items-center">
       <PaymentWarning sailor={sailor} />
-      <Link
-        className="btn btn-accent"
-        to={`/sheets/${sheet.id}/submissions/new`}
-      >
-        <IoAddCircle size={24} /> New Submission
-      </Link>
+      <NewSubmissionButton sheet={sheet} />
       <SubmissionsList submissions={sailor.submissions} />
     </div>
   );

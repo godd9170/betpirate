@@ -28,7 +28,7 @@ export default function MarkProposition({ proposition }: Props) {
         <select
           name="answerId"
           defaultValue={proposition.answerId || undefined}
-          className="select select-bordered w-full max-w-xs"
+          className="select select-bordered w-full"
           onChange={(event) => fetcher.submit(event.currentTarget.form)}
         >
           <option>-</option>

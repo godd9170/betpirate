@@ -1,7 +1,7 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import LeaderBoard from "~/components/LeaderBoard";
+import LeaderBoard from "./components/LeaderBoard";
 import { readSailorWithSubmissions } from "~/models/sailor.server";
 import { readSheet, readSheetLeaders } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";

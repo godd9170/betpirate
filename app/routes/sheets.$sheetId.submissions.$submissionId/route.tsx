@@ -26,12 +26,13 @@ export default function Submission() {
   const { sailorId, submission } = useLoaderData<typeof loader>();
 
   return (
-    <>
+    <div className="flex flex-col items-center">
+      <h1 className="text-xl font-black">{`${submission?.sailor.username}'s Picks`}</h1>
       <SubmissionTotals submission={submission} />
       <SubmissionTable submission={submission} />
       <h2 className="text-center font-bold pt-3 pb-5">
         Tie Breaker: {submission?.tieBreaker}
       </h2>
-    </>
+    </div>
   );
 }
