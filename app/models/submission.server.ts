@@ -134,3 +134,37 @@ export const readSheetSubmissions = (sheetId: string) => {
     ],
   });
 };
+
+export const readSheetSubmissionRanking = async (submissionId: string) => {
+  let result = await db.$queryRaw`
+  WITH SubmissionScores AS (
+    SELECT 
+        s.id AS "submissionId",
+        CAST(COUNT(ps.id) AS INT) AS "correctCount"
+    FROM "Submission" s
+    JOIN "PropositionSelection" ps ON ps."submissionId" = s.id
+    JOIN "PropositionOption" po ON po.id = ps."optionId"
+    JOIN "Proposition" p ON p.id = po."propositionId"
+    WHERE p."answerId" = ps."optionId"
+    GROUP BY s.id
+  ),
+  RankedSubmissions AS (
+    SELECT 
+        "submissionId",
+        "correctCount",
+        CAST(RANK() OVER (ORDER BY "correctCount" DESC) AS INT) AS "rank"
+    FROM SubmissionScores
+  )
+  SELECT 
+      rs."correctCount",
+      (SELECT CAST(COUNT(*) - 1 AS INT) 
+       FROM RankedSubmissions rs2 
+       WHERE rs2."correctCount" = rs."correctCount") AS "tieCount",
+      rs."rank"
+  FROM RankedSubmissions rs
+  WHERE rs."submissionId" = ${submissionId};
+  `;
+  return (
+    result as { correctCount: number; tieCount: number; rank: number }[]
+  )[0];
+};
