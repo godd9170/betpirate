@@ -61,6 +61,13 @@ export const readSheet = (id: string) => {
   });
 };
 
+export const updateSheet = (id: string, data: UpdateSheet) => {
+  return db.sheet.update({
+    where: { id },
+    data,
+  });
+};
+
 export const readSheetWithSubmissions = (id: string) => {
   return db.sheet.findUnique({
     where: { id },
@@ -106,9 +113,24 @@ export const readSheetLeaders = async (
   `;
 };
 
-export const updateSheet = (id: string, data: UpdateSheet) => {
-  return db.sheet.update({
-    where: { id },
-    data,
+export const readSheetSummary = async (
+  id: string
+): Promise<{ totalPropositions: number; answeredPropositions: number }> => {
+  const propositionCounts = await db.proposition.aggregate({
+    where: {
+      sheetId: id, // Filters only propositions for this sheet
+    },
+    _count: {
+      _all: true, // Total propositions in this sheet
+      answerId: true, // Propositions in this sheet with an answer
+    },
   });
+  const result: {
+    totalPropositions: number;
+    answeredPropositions: number;
+  } = {
+    totalPropositions: propositionCounts._count._all,
+    answeredPropositions: propositionCounts._count.answerId,
+  };
+  return result;
 };

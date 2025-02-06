@@ -1,32 +1,47 @@
+import { Sheet } from "@prisma/client";
 import { SubmissionWithPropositionSelections } from "~/models/submission.server";
 
 export default function SubmissionTotals({
-  submission,
+  sheetSummary,
+  submissionRank,
 }: {
-  submission: SubmissionWithPropositionSelections;
+  sheetSummary: { totalPropositions: number; answeredPropositions: number };
+  submissionRank: { correctCount: number; tieCount: number; rank: number };
 }) {
-  const correctSelections = submission.selections.filter(
-    (selection) => selection.optionId === selection.option.proposition.answerId
-  ).length;
-  const totalSelections = submission.selections.filter(
-    (selection) => !!selection.option.proposition.answerId
-  ).length;
+  const ranking = `${submissionRank.tieCount > 1 ? "T" : ""}${
+    submissionRank.rank
+  }`;
+
+  const accuracyPercentage =
+    sheetSummary.answeredPropositions === 0
+      ? "-"
+      : (
+          (submissionRank.correctCount / sheetSummary.answeredPropositions) *
+          100
+        ).toFixed(2);
 
   return (
     <div className="flex w-full">
-      <div className="stat">
-        <div className="stat-title">Ranking</div>
-        <div className="stat-value">{`T1`}</div>
-        <div className="stat-desc">{`12/122`}</div>
-      </div>
-      <div className="stat">
-        <div className="stat-title">Correct</div>
-        <div className="stat-value">{`${correctSelections}/${totalSelections}`}</div>
+      <div className="stat text-center">
+        <div className="stat-title">Rank</div>
+        <div className="stat-value">{ranking}</div>
         <div className="stat-desc">
-          {totalSelections === 0
-            ? "-"
-            : `${((correctSelections / totalSelections) * 100).toFixed(2)}%`}
+          {submissionRank.tieCount
+            ? `with ${submissionRank.tieCount} others`
+            : ""}
         </div>
+      </div>
+      <div className="stat text-center">
+        <div className="stat-title">Correct</div>
+        <div className="stat-value">{`${submissionRank.correctCount}/${sheetSummary.answeredPropositions}`}</div>
+        <div className="stat-desc">{`${accuracyPercentage}% Accuracy`}</div>
+      </div>
+      <div className="stat text-center">
+        <div className="stat-title">Remaining</div>
+        <div className="stat-value">
+          {sheetSummary.totalPropositions - sheetSummary.answeredPropositions}
+        </div>
+        <div className="stat-desc">{`${sheetSummary.totalPropositions} Total`}</div>
       </div>
     </div>
   );
