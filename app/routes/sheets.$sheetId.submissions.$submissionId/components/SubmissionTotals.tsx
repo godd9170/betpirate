@@ -1,6 +1,3 @@
-import { Sheet } from "@prisma/client";
-import { SubmissionWithPropositionSelections } from "~/models/submission.server";
-
 export default function SubmissionTotals({
   sheetSummary,
   submissionRank,
@@ -8,15 +5,16 @@ export default function SubmissionTotals({
   sheetSummary: { totalPropositions: number; answeredPropositions: number };
   submissionRank: { correctCount: number; tieCount: number; rank: number };
 }) {
-  const ranking = `${submissionRank.tieCount > 1 ? "T" : ""}${
-    submissionRank.rank
-  }`;
+  const ranking =
+    sheetSummary.answeredPropositions === 0
+      ? "-"
+      : `${submissionRank?.tieCount > 1 ? "T" : ""}${submissionRank?.rank}`;
 
   const accuracyPercentage =
     sheetSummary.answeredPropositions === 0
       ? "-"
       : (
-          (submissionRank.correctCount / sheetSummary.answeredPropositions) *
+          (submissionRank?.correctCount / sheetSummary?.answeredPropositions) *
           100
         ).toFixed(2);
 

@@ -26,8 +26,11 @@ export default function SubmissionsList({ sailor }: { sailor: any }) {
   return (
     <div role="alert" className="alert alert-warning my-4" onClick={copyText}>
       <span>
-        Unpaid Submissions: Please e-transfer <strong>{amountOwed}</strong> to{" "}
-        <span className="cursor-pointer font-extrabold underline">
+        <div>
+          Please e-transfer{" "}
+          <span className="font-extrabold text-lg">{amountOwed}</span> to{" "}
+        </div>
+        <div className="text-xl cursor-pointer font-extrabold underline">
           {copied ? (
             "Copied!"
           ) : (
@@ -39,8 +42,8 @@ export default function SubmissionsList({ sailor }: { sailor: any }) {
               .com
             </span>
           )}
-        </span>{" "}
-        or your submission(s) will not be counted!
+        </div>
+        <div> Include your username in the memo.</div>
       </span>
     </div>
   );

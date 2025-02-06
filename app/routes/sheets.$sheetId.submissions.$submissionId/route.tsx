@@ -36,15 +36,15 @@ export default function Submission() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-xl font-black">{`${submission?.sailor.username}'s Picks`}</h1>
+      <h1 className="text-3xl font-black">{`${submission?.sailor.username}'s Picks`}</h1>
       <SubmissionTotals
         sheetSummary={sheetSummary}
         submissionRank={submissionRank}
-      />
-      <SubmissionTable submission={submission} />
+      />{" "}
       <h2 className="text-center font-bold pt-3 pb-5">
         Tie Breaker: {submission?.tieBreaker}
       </h2>
+      <SubmissionTable submission={submission} />
     </div>
   );
 }
