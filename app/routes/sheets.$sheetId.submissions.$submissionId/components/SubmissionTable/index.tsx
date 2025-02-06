@@ -2,15 +2,25 @@ import {
   SelectionWithPropositionOption,
   SubmissionWithPropositionSelections,
 } from "~/models/submission.server";
-
 function Mark({ selection }: { selection: SelectionWithPropositionOption }) {
   let color = "text-base";
-  if (!selection.option.proposition.answerId) color = "text-base";
-  else if (selection.option.proposition.answerId === selection.optionId)
-    color = "text-success";
-  else color = "text-error";
+  let status = "Pending";
 
-  return <span className={color}>{selection.option.shortTitle}</span>;
+  if (selection.option.proposition.answerId) {
+    if (selection.option.proposition.answerId === selection.optionId) {
+      color = "text-success";
+      status = "Correct";
+    } else {
+      color = "text-error";
+      status = "Incorrect";
+    }
+  }
+
+  return (
+    <span className={color}>
+      {selection.option.shortTitle} ({status})
+    </span>
+  );
 }
 
 export default function SubmissionTable({
@@ -19,26 +29,17 @@ export default function SubmissionTable({
   submission: SubmissionWithPropositionSelections;
 }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="table">
-        {/* head */}
-        <thead>
-          <tr>
-            <th>Prop</th>
-            <th>Selection</th>
-          </tr>
-        </thead>
-        <tbody>
-          {submission.selections.map((selection) => (
-            <tr>
-              <td>{selection.option.proposition.title}</td>
-              <td>
-                <Mark selection={selection} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      {submission.selections.map((selection) => (
+        <div className="card w-full bg-base-100 shadow-md mb-4 overflow-x-auto">
+          <div className="card-body">
+            <h2 className="card-title">{selection.option.proposition.title}</h2>
+            <p>
+              <Mark selection={selection} />
+            </p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

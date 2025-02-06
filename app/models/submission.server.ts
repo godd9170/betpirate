@@ -136,16 +136,17 @@ export const readSheetSubmissions = (sheetId: string) => {
 };
 
 export const readSheetSubmissionRanking = async (submissionId: string) => {
-  let result = await db.$queryRaw`
+  let result: { correctCount: number; tieCount: number; rank: number }[] =
+    (await db.$queryRaw`
   WITH SubmissionScores AS (
     SELECT 
         s.id AS "submissionId",
         CAST(COUNT(ps.id) AS INT) AS "correctCount"
     FROM "Submission" s
-    JOIN "PropositionSelection" ps ON ps."submissionId" = s.id
-    JOIN "PropositionOption" po ON po.id = ps."optionId"
-    JOIN "Proposition" p ON p.id = po."propositionId"
-    WHERE p."answerId" = ps."optionId"
+    LEFT JOIN "PropositionSelection" ps ON ps."submissionId" = s.id
+    LEFT JOIN "PropositionOption" po ON po.id = ps."optionId"
+    LEFT JOIN "Proposition" p ON p.id = po."propositionId"
+    WHERE p."answerId" = ps."optionId" OR ps."optionId" IS NULL
     GROUP BY s.id
   ),
   RankedSubmissions AS (
@@ -157,13 +158,16 @@ export const readSheetSubmissionRanking = async (submissionId: string) => {
   )
   SELECT 
       rs."correctCount",
-      (SELECT CAST(COUNT(*) - 1 AS INT) 
-       FROM RankedSubmissions rs2 
-       WHERE rs2."correctCount" = rs."correctCount") AS "tieCount",
+      (SELECT CAST(COUNT(*) AS INT) 
+       FROM RankedSubmissions) - 1 AS "tieCount",
       rs."rank"
   FROM RankedSubmissions rs
   WHERE rs."submissionId" = ${submissionId};
-  `;
+  `) || [];
+
+  if (result.length === 0) {
+    result = [{ correctCount: 0, tieCount: 0, rank: 1 }];
+  }
   return (
     result as { correctCount: number; tieCount: number; rank: number }[]
   )[0];

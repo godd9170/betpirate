@@ -63,7 +63,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     tieBreaker: submissionParse.value.tieBreaker,
   });
 
-  return redirect(`/sheets/${params.sheetId}/submissions/${submission.id}`);
+  return redirect(`/sheets/${params.sheetId}/submissions`);
 };
 
 export default function Sheet() {
