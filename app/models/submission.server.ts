@@ -61,10 +61,9 @@ export const createSubmission = ({
   });
 };
 
-export const setSubmissionPaid = (id: string, isPaid: boolean) => {
-  return db.submission.update({
+export const deleteSubmission = (id: string) => {
+  return db.submission.delete({
     where: { id },
-    data: { isPaid },
   });
 };
 
@@ -139,6 +138,7 @@ export const readSheetSubmissionRanking = async (
   sheetId: string,
   submissionId: string
 ) => {
+  console.log("SHEETIDL ", sheetId);
   let result: { correctCount: number; tieCount: number; rank: number }[] =
     (await db.$queryRaw`
   WITH SubmissionScores AS (
@@ -149,7 +149,7 @@ export const readSheetSubmissionRanking = async (
     LEFT JOIN "PropositionSelection" ps ON ps."submissionId" = s.id
     LEFT JOIN "PropositionOption" po ON po.id = ps."optionId"
     LEFT JOIN "Proposition" p ON p.id = po."propositionId"
-    WHERE p."answerId" = ps."optionId" OR ps."optionId" IS NULL
+    WHERE (p."answerId" = ps."optionId" OR ps."optionId" IS NULL)
     AND s."sheetId" = ${sheetId}
     GROUP BY s.id
   ),
@@ -163,16 +163,28 @@ export const readSheetSubmissionRanking = async (
   SELECT 
       rs."correctCount",
       (SELECT CAST(COUNT(*) AS INT) 
-       FROM RankedSubmissions) - 1 AS "tieCount",
+       FROM RankedSubmissions r2 
+       WHERE r2."correctCount" = rs."correctCount" AND r2."submissionId" != rs."submissionId") AS "tieCount",
       rs."rank"
   FROM RankedSubmissions rs
-  WHERE rs."submissionId" = ${submissionId};
+  WHERE rs."submissionId" = ${submissionId}
+  UNION ALL
+  SELECT 0 AS "correctCount", 0 AS "tieCount", (SELECT CAST(COUNT(*) AS INT) FROM RankedSubmissions) + 1 AS "rank"
+  WHERE NOT EXISTS (SELECT 1 FROM RankedSubmissions WHERE "submissionId" = ${submissionId});
   `) || [];
 
   if (result.length === 0) {
     result = [{ correctCount: 0, tieCount: 0, rank: 1 }];
   }
+  console.log(">>>>>>>>RESULT: ", result);
   return (
     result as { correctCount: number; tieCount: number; rank: number }[]
   )[0];
+};
+
+export const setSubmissionPaid = (id: string, isPaid: boolean) => {
+  return db.submission.update({
+    where: { id },
+    data: { isPaid },
+  });
 };

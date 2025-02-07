@@ -1,8 +1,9 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import SubmissionTable from "./components/SubmissionTable";
 import {
+  deleteSubmission,
   readSheetSubmissionRanking,
   readSubmission,
 } from "~/models/submission.server";
@@ -31,6 +32,19 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   );
 
   return json({ sailorId, submission, submissionRank, sheetSummary });
+};
+
+export const action = async ({ params, request }: ActionFunctionArgs) => {
+  const { sheetId, submissionId } = params;
+  invariant(!!sheetId, "missing sheet id");
+  invariant(!!submissionId, "missing submission id");
+
+  if (request.method === "DELETE") {
+    await deleteSubmission(submissionId);
+  }
+
+  //todo: support updates
+  return "success";
 };
 
 export default function Submission() {
