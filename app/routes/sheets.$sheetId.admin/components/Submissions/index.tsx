@@ -27,7 +27,7 @@ export default function SheetStats({ submissions }) {
           </thead>
           <tbody>
             {submissions.map((submission) => (
-              <SubmissionRow submission={submission} />
+              <SubmissionRow key={submission.id} submission={submission} />
             ))}
           </tbody>
         </table>
