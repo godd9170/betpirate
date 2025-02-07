@@ -135,7 +135,10 @@ export const readSheetSubmissions = (sheetId: string) => {
   });
 };
 
-export const readSheetSubmissionRanking = async (submissionId: string) => {
+export const readSheetSubmissionRanking = async (
+  sheetId: string,
+  submissionId: string
+) => {
   let result: { correctCount: number; tieCount: number; rank: number }[] =
     (await db.$queryRaw`
   WITH SubmissionScores AS (
@@ -147,6 +150,7 @@ export const readSheetSubmissionRanking = async (submissionId: string) => {
     LEFT JOIN "PropositionOption" po ON po.id = ps."optionId"
     LEFT JOIN "Proposition" p ON p.id = po."propositionId"
     WHERE p."answerId" = ps."optionId" OR ps."optionId" IS NULL
+    AND s."sheetId" = ${sheetId}
     GROUP BY s.id
   ),
   RankedSubmissions AS (
