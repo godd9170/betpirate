@@ -31,7 +31,10 @@ export default function SubmissionTable({
   return (
     <div>
       {submission.selections.map((selection) => (
-        <div className="card w-full bg-base-100 shadow-md mb-4 overflow-x-auto">
+        <div
+          key={selection.id}
+          className="card w-full bg-base-100 shadow-md mb-4 overflow-x-auto"
+        >
           <div className="card-body">
             <h2 className="card-title">{selection.option.proposition.title}</h2>
             <p>

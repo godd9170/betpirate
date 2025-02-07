@@ -29,15 +29,17 @@ export default function Sheet() {
   const SUBMISSIONS_LINK = `/sheets/${sheet.id}/submissions`;
   const LEADERBOARD_LINK = `/sheets/${sheet.id}/leaders`;
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen container mx-auto">
       <header className="mb-2 relative">
         <Link to={`/sheets/${sheet.id}`}>
-          <h1 className="text-xl font-black text-center py-4">{sheet.title}</h1>
+          <h1 className="text-2xl font-black text-center py-4">
+            {sheet.title}
+          </h1>
         </Link>
         {!!sailor?.admin && (
           <Link
             to={`/sheets/${sheet.id}/admin`}
-            className="absolute top-4 right-2"
+            className="absolute top-5 right-5"
           >
             <IoMdSettings size={24} />
           </Link>
