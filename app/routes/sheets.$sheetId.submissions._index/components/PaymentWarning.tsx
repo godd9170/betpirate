@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { IoIosWarning } from "react-icons/io";
 
 export default function SubmissionsList({ sailor }: { sailor: any }) {
   const [copied, setCopied] = useState(false);
@@ -24,27 +23,30 @@ export default function SubmissionsList({ sailor }: { sailor: any }) {
   if (outstandingPayments === 0) return null;
 
   return (
-    <div role="alert" className="alert alert-warning my-4" onClick={copyText}>
-      <span>
-        <div>
-          Please e-transfer{" "}
-          <span className="font-extrabold text-lg">{amountOwed}</span> to{" "}
-        </div>
-        <div className="text-xl cursor-pointer font-extrabold underline">
-          {copied ? (
-            "Copied!"
-          ) : (
-            <span>
-              Hayz_149
-              <wbr />
-              @hotmail
+    <div
+      role="alert"
+      className="alert alert-warning my-4 cursor-pointer"
+      onClick={copyText}
+      onTouchStart={copyText}
+    >
+      {copied ? (
+        <span className="text-xl font-extrabold">Copied to clipboard!</span>
+      ) : (
+        <span>
+          <span>
+            Please e-transfer{" "}
+            <span className="font-extrabold text-lg">{amountOwed}</span> to{" "}
+          </span>
+          <span className="text-xl font-extrabold">
+            <>
+              hayz_149@hotmail
               <wbr />
               .com
-            </span>
-          )}
-        </div>
-        <div> Include your username in the memo.</div>
-      </span>
+            </>
+          </span>
+          <span> and include your username in the memo.</span>
+        </span>
+      )}
     </div>
   );
 }

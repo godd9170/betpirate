@@ -25,7 +25,13 @@ export default function SubmissionsList({
             </span>
           </div>
         </h2>
-        <p>{`Current Position: T1`}</p>
+        <p>{`Submit: ${new Date(submission.createdAt).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}`}</p>
         <p>{`Tie Breaker: ${submission.tieBreaker}`}</p>
       </Link>
     </div>

@@ -33,6 +33,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 // A leaderboard of all the submissions for the sheet
 export default function Leaders() {
   const { sailor, sheet, leaders } = useLoaderData<typeof loader>();
-  if (sheet.status !== "CLOSED") return <Countdown />;
+  if (sheet.status !== "CLOSED") return <Countdown leaders={leaders} />;
   return <LeaderBoard sheet={sheet} leaders={leaders} />;
 }

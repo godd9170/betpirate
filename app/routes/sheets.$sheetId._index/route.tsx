@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  // this component's only job is to send a user to the right
-  // page within the sheet, depending on the status of the sheet.
+  // this component's only job is to ensure a user landing on /sheet/id gets
+  // forwarded to the submissions.
   return redirect(`/sheets/${params.sheetId}/submissions`);
 };

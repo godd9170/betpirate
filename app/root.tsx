@@ -38,7 +38,7 @@ export default function Root() {
         <Meta />
         <Links />
       </head>
-      <body className="container mx-auto bg-base-100">
+      <body className="bg-base-100">
         <Outlet />
         <LiveReload />
         <Scripts />

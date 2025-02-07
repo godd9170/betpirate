@@ -88,8 +88,13 @@ export default function Sheet() {
   };
 
   return (
-    <div className="h-screen">
-      <SheetInstructions sailor={sailor} count={propositionCount} />
+    <div className="h-screen flex flex-col">
+      <SheetInstructions
+        sailor={sailor}
+        count={propositionCount}
+        start={() => scrollToProposition(0)}
+      />
+
       <Form method="post">
         <progress
           className="progress sticky top-0 z-10"
