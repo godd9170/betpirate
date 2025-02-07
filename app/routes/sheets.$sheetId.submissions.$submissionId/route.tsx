@@ -25,7 +25,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const submission = await readSubmission(submissionId);
 
   const sheetSummary = await readSheetSummary(sheetId);
-  const submissionRank = await readSheetSubmissionRanking(submissionId);
+  const submissionRank = await readSheetSubmissionRanking(
+    sheetId,
+    submissionId
+  );
 
   return json({ sailorId, submission, submissionRank, sheetSummary });
 };
