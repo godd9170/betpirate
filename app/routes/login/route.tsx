@@ -31,7 +31,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default () => {
   let { error } = useLoaderData<typeof loader>();
   return (
-    <div className="flex flex-col items-center justify-center max-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <PhoneNumberForm error={error} />
     </div>
   );

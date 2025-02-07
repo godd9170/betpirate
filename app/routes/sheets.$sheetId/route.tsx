@@ -6,6 +6,7 @@ import { readSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 import { IoMdSettings } from "react-icons/io";
 import { IoIosPodium, IoMdListBox } from "react-icons/io";
+import Logo from "~/components/Logo";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -29,23 +30,25 @@ export default function Sheet() {
   const SUBMISSIONS_LINK = `/sheets/${sheet.id}/submissions`;
   const LEADERBOARD_LINK = `/sheets/${sheet.id}/leaders`;
   return (
-    <div className="flex flex-col min-h-screen container mx-auto">
-      <header className="mb-2 relative">
-        <Link to={`/sheets/${sheet.id}`}>
-          <h1 className="text-2xl font-black text-center py-4">
-            {sheet.title}
-          </h1>
-        </Link>
-        {!!sailor?.admin && (
-          <Link
-            to={`/sheets/${sheet.id}/admin`}
-            className="absolute top-5 right-5"
-          >
-            <IoMdSettings size={24} />
+    <div className="flex flex-col">
+      <header className="w-full flex items-center justify-between p-4">
+        <div className="w-12">
+          <Link to={`/sheets/${sheet.id}`}>
+            <Logo size={"40px"} />
           </Link>
-        )}
+        </div>
+        <Link to={`/sheets/${sheet.id}`}>
+          <h1 className="text-2xl font-black text-center">{sheet.title}</h1>
+        </Link>
+        <div className="w-12">
+          {!!sailor?.admin && (
+            <Link to={`/sheets/${sheet.id}/admin`}>
+              <IoMdSettings size={24} />
+            </Link>
+          )}
+        </div>
       </header>
-      <main className="pb-16">
+      <main className="pb-16 min-h-[calc(100vh-4rem)] container mx-auto">
         <Outlet />
       </main>
       {!location.pathname.includes("new") && (

@@ -1,14 +1,14 @@
 import { Form } from "@remix-run/react";
 import { E164Number, isPossiblePhoneNumber } from "libphonenumber-js";
 import { useState } from "react";
+import Logo from "~/components/Logo";
 import PhoneNumberInput from "~/components/PhoneNumberInput";
 
 export default function PhoneNumberForm({ error }: { error: any }) {
   const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   return (
-    <div className="card bg-base-200 card-compact w-96">
+    <div className="card card-compact w-96">
       <div className="card-body">
-        <div className="card-title">Superbowl LIX</div>
         <div>
           {JSON.stringify(error)}
           <Form
@@ -17,17 +17,15 @@ export default function PhoneNumberForm({ error }: { error: any }) {
             className="flex flex-col space-y-4"
           >
             <div>
-              <ul>
-                <li>
-                  ✔ <strong>$10.00</strong> per sheet
-                </li>
-                <li>
-                  ✔ <strong>26</strong> Prop Questions
-                </li>
-                <li>
-                  ✔ <strong>1</strong> Winner
-                </li>
-              </ul>
+              <div className="flex justify-center">
+                <Logo size="80px" />
+              </div>
+              <div className="text-center text-2xl font-extrabold">
+                Welcome to BetPirate!
+              </div>
+              <div className="text-center text-lg font-extrabold">
+                Superbowl LIX Prop Sheet
+              </div>
               <div className="divider" />
               <p className="text-center">
                 Enter your phone number to get started
@@ -47,7 +45,7 @@ export default function PhoneNumberForm({ error }: { error: any }) {
                 disabled={!isPossiblePhoneNumber(phone || "")}
                 type="submit"
               >
-                Let's Go!
+                Set Sail
               </button>
             </div>
           </Form>
