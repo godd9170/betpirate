@@ -134,3 +134,51 @@ export const readSheetSummary = async (
   };
   return result;
 };
+
+// todo: combine this with readSheetLeaders
+export const readSheetDashboard = async (
+  sheetId: string
+): Promise<
+  (SheetLeader & {
+    selections: { optionId: string }[];
+  })[]
+> => {
+  const leaders = await db.$queryRaw<SheetLeader[]>`
+    select 
+    su.id as "submissionId",
+    sa.id as "sailorId",
+    sa.username as "username", 
+    COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
+    RANK () OVER ( 
+      ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
+    )::integer ranking
+    from "PropositionSelection" ps
+    join "PropositionOption" po on ps."optionId" = po.id
+    join "Proposition" p on po."propositionId" = p.id
+    join "Submission" su on ps."submissionId" = su.id
+    join "Sailor" sa on su."sailorId" = sa.id
+    where su."sheetId" = ${sheetId}
+    group by su.id, sa.id, sa.username
+  `;
+
+  const leaderIds = leaders.map((leader) => leader.submissionId);
+
+  const selections = await db.propositionSelection.findMany({
+    where: {
+      submissionId: {
+        in: leaderIds,
+      },
+    },
+    select: {
+      submissionId: true,
+      optionId: true,
+    },
+  });
+
+  return leaders.map((leader) => ({
+    ...leader,
+    selections: selections.filter(
+      (selection) => selection.submissionId === leader.submissionId
+    ),
+  }));
+};

@@ -1,16 +1,20 @@
-import { Sheet } from "@prisma/client";
+import { Sailor, Sheet } from "@prisma/client";
 import { Link } from "@remix-run/react";
+import { IoChevronForwardCircle } from "react-icons/io5";
+import Ordinal from "~/components/Ordinal";
 import { SheetLeader } from "~/models/sheet.server";
 
 export default function LeaderBoard({
+  sailor,
   sheet,
   leaders,
 }: {
+  sailor: Sailor;
   sheet: Sheet;
   leaders: SheetLeader[];
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto mx-2">
       {leaders
         .reduce((acc, leader) => {
           const rankingGroup = acc.find(
@@ -30,24 +34,30 @@ export default function LeaderBoard({
         .map((group) => (
           <div key={group.ranking} className="card">
             <div className="card-header">
-              <h2 className="card-title">Ranking: {group.ranking}</h2>
+              <h2 className="card-title flex justify-center sm:justify-start">
+                <Ordinal number={group.ranking} />
+                <span className="text-sm font-light text-secondary">
+                  ({group.correct} Correct)
+                </span>
+              </h2>
             </div>
             <div className="card-body">
               {group.leaders.map((leader) => (
-                <div key={leader.submissionId} className="card card-compact">
-                  <div className="card-body">
-                    <h5 className="card-title">{leader.username}</h5>
-                    <p className="card-text">
-                      Correct Picks:{" "}
-                      <Link
-                        className="underline"
-                        to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
-                      >
-                        {leader.correct}
-                      </Link>
-                    </p>
-                  </div>
-                </div>
+                <ul key={leader.submissionId}>
+                  <Link
+                    to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
+                  >
+                    <li className="flex font-semibold items-center">
+                      <span className="pr-2">
+                        {leader.username}
+                        {sailor.id === leader.sailorId && (
+                          <span className="font-bold">{` (you)`}</span>
+                        )}
+                      </span>
+                      <IoChevronForwardCircle />
+                    </li>
+                  </Link>
+                </ul>
               ))}
             </div>
           </div>

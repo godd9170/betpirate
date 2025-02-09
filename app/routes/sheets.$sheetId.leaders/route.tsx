@@ -34,5 +34,5 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 export default function Leaders() {
   const { sailor, sheet, leaders } = useLoaderData<typeof loader>();
   if (sheet.status !== "CLOSED") return <Countdown leaders={leaders} />;
-  return <LeaderBoard sheet={sheet} leaders={leaders} />;
+  return <LeaderBoard sailor={sailor} sheet={sheet} leaders={leaders} />;
 }

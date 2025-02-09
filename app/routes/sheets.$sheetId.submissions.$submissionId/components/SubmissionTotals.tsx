@@ -1,3 +1,5 @@
+import Ordinal from "~/components/Ordinal";
+
 export default function SubmissionTotals({
   sheetSummary,
   submissionRank,
@@ -5,11 +7,6 @@ export default function SubmissionTotals({
   sheetSummary: { totalPropositions: number; answeredPropositions: number };
   submissionRank: { correctCount: number; tieCount: number; rank: number };
 }) {
-  const ranking =
-    sheetSummary.answeredPropositions === 0
-      ? "-"
-      : `${submissionRank?.tieCount > 1 ? "T" : ""}${submissionRank?.rank}`;
-
   const accuracyPercentage =
     sheetSummary.answeredPropositions === 0
       ? "-"
@@ -22,7 +19,10 @@ export default function SubmissionTotals({
     <div className="flex w-full">
       <div className="stat text-center">
         <div className="stat-title">Rank</div>
-        <div className="stat-value">{ranking}</div>
+        <div className="stat-value">
+          {submissionRank?.tieCount > 1 ? "T" : ""}
+          <Ordinal number={submissionRank?.rank} />
+        </div>
         <div className="stat-desc">
           {submissionRank.tieCount
             ? `with ${submissionRank.tieCount} others`
