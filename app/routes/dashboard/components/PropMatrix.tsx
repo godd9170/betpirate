@@ -22,8 +22,6 @@ export default function PropMatrix({
   sheet: any;
   leaders: any;
 }) {
-  console.log("SHEET:", sheet);
-  console.log("leaders: ", leaders);
   const options = sheet.propositions.reduce((acc, proposition) => {
     proposition.options.forEach((option) => {
       acc[option.id] = {
@@ -34,7 +32,6 @@ export default function PropMatrix({
     });
     return acc;
   }, {});
-  console.log("OPTIONS: ", options);
   return (
     <div>
       <table className="w-full border-collapse">
@@ -52,12 +49,10 @@ export default function PropMatrix({
                   style={{
                     transform: "rotate(-90deg)",
                     whiteSpace: "nowrap",
-                    transformOrigin: "center", //"bottom left",
+                    transformOrigin: "center",
                     width: "auto",
                     display: "inline-block",
                     width: "10px",
-                    // bottom: 0,
-                    // left: "10px",
                   }}
                 >
                   {proposition.shortTitle}
