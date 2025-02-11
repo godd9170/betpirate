@@ -36,7 +36,7 @@ export default function LeaderBoard({
             <div className="card-header">
               <h2 className="card-title flex justify-center sm:justify-start">
                 <Ordinal number={group.ranking} />
-                <span className="text-sm font-light text-secondary">
+                <span className="text-sm font-light">
                   ({group.correct} Correct)
                 </span>
               </h2>
