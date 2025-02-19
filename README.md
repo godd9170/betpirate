@@ -84,4 +84,4 @@ fly deploy
 - Offline mode - print a sheet out, tick the options off, then upload a picture of it by scanning a QR code?
     - Leave a stack of the prop sheets at a bar
 - Sponsor prizes, donated prizes with advertisements in exchange for physical prizes we can give away
-- 
+- height: 100dvh; /* Ensures proper height even with browser UI */
