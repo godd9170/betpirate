@@ -29,7 +29,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
   const parsedForm = parseWithZod(formData, { schema });
-  if (parsedForm.status !== 'success' || parsedForm.intent !== "submit") {
+  if (parsedForm.status !== 'success') {
     return json(parsedForm);
   }
   const { options, ...proposition } = parsedForm.value;

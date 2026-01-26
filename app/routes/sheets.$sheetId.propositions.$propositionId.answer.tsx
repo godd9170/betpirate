@@ -15,7 +15,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const answer = parseWithZod(formData, { schema });
 
-  if (answer.status !== 'success' || answer.intent !== "submit") {
+  if (answer.status !== 'success') {
     return json(answer);
   }
 

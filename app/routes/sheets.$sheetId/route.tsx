@@ -52,20 +52,20 @@ export default function Sheet() {
         <Outlet />
       </main>
       {!location.pathname.includes("new") && (
-        <nav className="btm-nav">
+        <nav className="dock">
           <Link
             to={SUBMISSIONS_LINK}
             className={location.pathname === SUBMISSIONS_LINK ? "active" : ""}
           >
             <IoMdListBox size={24} />
-            <span className="btm-nav-label">Submissions</span>
+            <span className="dock-label">Submissions</span>
           </Link>
           <Link
             to={LEADERBOARD_LINK}
             className={location.pathname === LEADERBOARD_LINK ? "active" : ""}
           >
             <IoIosPodium size={24} />
-            <span className="btm-nav-label">Leaderboard</span>
+            <span className="dock-label">Leaderboard</span>
           </Link>
         </nav>
       )}
