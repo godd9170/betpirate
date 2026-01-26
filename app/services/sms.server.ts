@@ -1,8 +1,12 @@
-import type { SendSMSFunction } from "~/lib/remix-auth-sms-link";
 import { sendSMS as sendTwilioSMS } from "./twilio.server";
 import { createSMS } from "~/models/sms.server";
 
-export let sendSMS: SendSMSFunction<SailorId> = async (options) => {
+type SendSMSOptions = {
+  phone: string;
+  magicLink: string;
+};
+
+export let sendSMS = async (options: SendSMSOptions) => {
   let body = options.magicLink;
   try {
     const response = await sendTwilioSMS(options.phone, body);

@@ -14,7 +14,7 @@ const PropositionCard = forwardRef<
   return (
     <div
       id={proposition.id}
-      className="card card-compact bg-base-100 m-4"
+      className="card card-sm bg-base-100 m-4"
       ref={ref}
     >
       {!!proposition?.imageUrl && (

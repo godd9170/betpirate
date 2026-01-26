@@ -7,7 +7,7 @@ import PhoneNumberInput from "~/components/PhoneNumberInput";
 export default function PhoneNumberForm({ error }: { error: any }) {
   const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   return (
-    <div className="card card-compact w-96">
+    <div className="card card-sm w-96">
       <div className="card-body">
         <div>
           {JSON.stringify(error)}

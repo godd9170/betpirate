@@ -10,7 +10,7 @@ export default function SheetInstructions({
   start: () => void;
 }) {
   return (
-    <div className="card card-compact m-4 border-lg bg-base-200">
+    <div className="card card-sm m-4 border-lg bg-base-200">
       <div className="card-body">
         <div className="card-title">Ahoy {sailor.username}!</div>
         <p>

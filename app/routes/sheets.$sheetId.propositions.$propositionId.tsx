@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { parse } from "@conform-to/zod";
+import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import {
   createPropositionOption,
@@ -28,8 +28,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const { sheetId, propositionId } = params;
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
-  const parsedForm = parse(formData, { schema });
-  if (!parsedForm.value || parsedForm.intent !== "submit") {
+  const parsedForm = parseWithZod(formData, { schema });
+  if (parsedForm.status !== 'success' || parsedForm.intent !== "submit") {
     return json(parsedForm);
   }
   const { options, ...proposition } = parsedForm.value;
