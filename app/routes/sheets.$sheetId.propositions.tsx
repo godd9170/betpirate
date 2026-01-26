@@ -23,7 +23,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(!!sheetId, "missing sheet id");
   const formData = await request.formData();
   const proposition = parseWithZod(formData, { schema });
-  if (proposition.status !== 'success' || proposition.intent !== "submit") {
+  if (proposition.status !== 'success') {
     return json(proposition);
   }
   await createProposition({ sheetId, ...proposition.value });
