@@ -1,5 +1,5 @@
 import { json, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { Links, Meta, LiveReload, Outlet, Scripts } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 import { authenticator } from "./services/auth.server";
 import stylesheet from "~/styles/tailwind.css";
 import { readSailor } from "./models/sailor.server";
@@ -15,6 +15,8 @@ const emptySailor: Sailor = {
   updatedAt: new Date(),
   username: null,
   phone: "",
+  firstName: null,
+  lastName: null,
   admin: false,
 };
 
@@ -40,7 +42,6 @@ export default function Root() {
       </head>
       <body className="bg-base-100">
         <Outlet />
-        <LiveReload />
         <Scripts />
       </body>
     </html>

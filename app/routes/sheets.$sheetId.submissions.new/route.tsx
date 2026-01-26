@@ -13,7 +13,7 @@ import PropositionCard from "./components/PropositionCard";
 import { useRef, useState } from "react";
 import TiebreakerCard from "./components/TiebreakerCard";
 import { z } from "zod";
-import { parse } from "@conform-to/zod";
+import { parseWithZod } from "@conform-to/zod";
 import SheetInstructions from "./components/SheetInstructions";
 import { readSailor } from "~/models/sailor.server";
 
@@ -52,9 +52,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(params.sheetId, `params.sheetId is required`);
   const form = await request.formData();
 
-  const submissionParse = parse(form, { schema });
+  const submissionParse = parseWithZod(form, { schema });
 
-  invariant(!!submissionParse.value?.selections, "Missing selections");
+  invariant(submissionParse.status === 'success', "Missing selections");
 
   const submission = await createSubmission({
     sheetId: params.sheetId,

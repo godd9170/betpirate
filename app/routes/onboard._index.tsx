@@ -1,4 +1,4 @@
-import { parse } from "@conform-to/zod";
+import { parseWithZod } from "@conform-to/zod";
 import {
   ActionFunctionArgs,
   json,
@@ -33,9 +33,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   });
 
   const formData = await request.formData();
-  const sailorForm = parse(formData, { schema });
+  const sailorForm = parseWithZod(formData, { schema });
 
-  invariant(!!sailorForm.value, `missing required parameters`);
+  invariant(sailorForm.status === 'success', `missing required parameters`);
 
   await updateSailor(sailorId, sailorForm.value);
 
@@ -47,7 +47,7 @@ export default function OnBoard() {
   const [username, setUsername] = useState<string>();
   return (
     <div className="container mx-auto">
-      <div className="card card-compact">
+      <div className="card card-sm">
         <Form
           className="flex flex-col space-y-4 card-body"
           action="/onboard?index"

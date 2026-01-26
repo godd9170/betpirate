@@ -4,7 +4,7 @@ import {
   Strategy,
   StrategyVerifyCallback,
 } from "remix-auth";
-import { parse } from "@conform-to/zod";
+import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import {
   isValidPhoneNumber,
@@ -65,8 +65,7 @@ export class PhoneNumberStrategy<User> extends Strategy<
 
     // get the phone number from the request
     const formData = await request.formData();
-    const payload = parse(formData, { schema: payloadSchema });
-    const phone = payload.value?.phone;
+    const payload = parseWithZod(formData, { schema: payloadSchema });
 
     const handleFailureRedirect = async (message: string) => {
       if (!options.failureRedirect) {
@@ -79,12 +78,14 @@ export class PhoneNumberStrategy<User> extends Strategy<
       });
     };
 
-    // if the phone number is not present, we failure redirect
-    if (!phone) {
-      console.log("No Phone :(: ", phone);
+    // if the phone number is not present or validation failed, we failure redirect
+    if (payload.status !== 'success' || !payload.value.phone) {
+      console.log("No Phone or validation failed");
       await handleFailureRedirect("No phone number provided");
       throw new Error(""); // tell .ts that phone will be safe below
     }
+
+    const phone = payload.value.phone;
 
     // if the phone number is not a valid format, we failure redirect
     if (!isValidPhoneNumber(phone, "CA")) {

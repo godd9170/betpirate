@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import { parse } from "@conform-to/zod";
+import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import invariant from "tiny-invariant";
 import { updateProposition } from "~/models/proposition.server";
@@ -13,9 +13,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(!!sheetId, "missing sheet id");
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
-  const answer = parse(formData, { schema });
+  const answer = parseWithZod(formData, { schema });
 
-  if (!answer.value || answer.intent !== "submit") {
+  if (answer.status !== 'success' || answer.intent !== "submit") {
     return json(answer);
   }
 

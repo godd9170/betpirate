@@ -11,7 +11,7 @@ export default function TiebreakerCard({
   const randBetween = Math.floor(Math.random() * (MAX - MIN + 1) + MIN);
   const [value, setValue] = useState<number>(randBetween);
   return (
-    <div className="card card-compact w-full bg-base-100 shadow-xl mb-4 first:mt-4">
+    <div className="card card-sm w-full bg-base-100 shadow-xl mb-4 first:mt-4">
       <div className="card-body">
         <h2 className="card-title">Tie Breaker: {tieBreakerQuestion}</h2>
         <div className="card-actions pt-2 flex flex-col items-center">

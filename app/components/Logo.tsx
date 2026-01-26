@@ -8,7 +8,6 @@ export default function Logo({ size = "50px" }: { size: string }) {
       className="my-icon"
       fill="currentColor"
       style={{
-        enableBackground: "new 0 0 100 100",
         width: size,
         height: size,
         display: "block",

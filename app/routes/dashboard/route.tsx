@@ -20,7 +20,7 @@ export default function Dashboard() {
   const { sheet, leaders } = useLoaderData<typeof loader>();
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 p-6">
       <PropMatrix sheet={sheet} leaders={leaders} />
     </div>
   );
