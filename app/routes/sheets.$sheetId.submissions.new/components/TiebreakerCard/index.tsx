@@ -10,21 +10,94 @@ export default function TiebreakerCard({
   const MAX = 500;
   const randBetween = Math.floor(Math.random() * (MAX - MIN + 1) + MIN);
   const [value, setValue] = useState<number>(randBetween);
+
   return (
-    <div className="card card-sm w-full bg-base-100 shadow-xl mb-4 first:mt-4">
+    <div className="card card-bordered bg-accent/10 shadow-xl scroll-mt-24">
       <div className="card-body">
-        <h2 className="card-title">Tie Breaker: {tieBreakerQuestion}</h2>
-        <div className="card-actions pt-2 flex flex-col items-center">
-          <div className="stat-value">{value}</div>
-          <input
-            type="range"
-            min={-10}
-            max="500"
-            value={value}
-            name="tieBreaker"
-            className="range"
-            onChange={(e) => setValue(Number(e.target.value))}
-          />
+        <div className="flex items-center gap-3 mb-4">
+          <div className="badge badge-accent badge-lg font-bold px-4 py-3">
+            ⚔️ TIE BREAKER
+          </div>
+        </div>
+
+        <h2 className="card-title text-xl font-bold mb-6">
+          {tieBreakerQuestion}
+        </h2>
+
+        <div className="bg-base-200 rounded-xl p-6">
+          <div className="flex flex-col items-center mb-6">
+            <div className="stat bg-base-100 rounded-box shadow-lg">
+              <div className="stat-value text-primary text-center">
+                {value}
+              </div>
+              <div className="stat-desc text-center font-semibold">Your Pick</div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm font-semibold opacity-60">
+              <span>Min: {MIN}</span>
+              <span>Max: {MAX}</span>
+            </div>
+            <input
+              type="range"
+              min={MIN}
+              max={MAX}
+              value={value}
+              name="tieBreaker"
+              className="range range-primary range-lg w-full"
+              onChange={(e) => setValue(Number(e.target.value))}
+            />
+            <div className="flex gap-2 justify-center mt-4">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setValue(Math.max(MIN, value - 10))}
+              >
+                -10
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setValue(Math.max(MIN, value - 1))}
+              >
+                -1
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setValue(Math.min(MAX, value + 1))}
+              >
+                +1
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setValue(Math.min(MAX, value + 10))}
+              >
+                +10
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="alert alert-info mt-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="stroke-current shrink-0 w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span className="text-sm">
+            This determines the winner if there's a tie in correct answers!
+          </span>
         </div>
       </div>
     </div>

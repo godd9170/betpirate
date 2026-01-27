@@ -14,26 +14,42 @@ const PropositionCard = forwardRef<
   return (
     <div
       id={proposition.id}
-      className="card card-sm bg-base-100 m-4"
+      className="card card-bordered bg-base-100 shadow-xl hover:shadow-2xl transition-shadow scroll-mt-24"
       ref={ref}
     >
       {!!proposition?.imageUrl && (
-        <figure>
-          <img src={proposition.imageUrl} alt={proposition?.shortTitle || ""} />
+        <figure className="max-h-64">
+          <img
+            src={proposition.imageUrl}
+            alt={proposition?.shortTitle || ""}
+            className="w-full object-cover"
+          />
         </figure>
       )}
       <div className="card-body">
-        <h2 className="card-title inline-block">
-          <span className="text-md font-semibold text-primary-content bg-primary rounded-sm text-sm mr-2 px-1 py-0.5 align-text-bottom">{`#${proposition.order}`}</span>
-          {proposition.title}
-        </h2>
-        <p>{proposition.subtitle}</p>
-        <div className="card-actions pt-2">
-          <div className="grid grid-cols-2 gap-2 w-full">
+        <div className="flex items-start gap-3 mb-3">
+          <div className="badge badge-primary badge-lg font-bold text-lg px-4 py-4">
+            #{proposition.order}
+          </div>
+          <div className="flex-1">
+            <h2 className="card-title text-2xl font-black leading-tight mb-2">
+              {proposition.title}
+            </h2>
+            {proposition.subtitle && (
+              <p className="opacity-70 text-sm leading-relaxed">
+                {proposition.subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="divider my-2"></div>
+
+        <div className="card-actions">
+          <div className="grid grid-cols-2 gap-3 w-full">
             {proposition.options.map((option) => (
-              <div className="col-span-1">
+              <div key={option?.id} className="col-span-1">
                 <PropositionCardOption
-                  key={option?.id}
                   option={option}
                   onChange={() => onSelection(proposition?.id, option?.id)}
                   index={propositionIndex}
