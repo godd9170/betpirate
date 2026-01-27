@@ -28,12 +28,9 @@ export default function PaymentWarning({ sailor }: { sailor: any }) {
     <div className="card bg-warning text-warning-content shadow-xl mb-6 overflow-hidden">
       <div className="card-body">
         <div className="flex items-start gap-4">
-          <div className="text-5xl">
-            <IoWallet />
-          </div>
           <div className="flex-1">
             <h2 className="card-title text-2xl font-black mb-3">
-              Payment Required
+              <IoWallet /> Payment Required
             </h2>
             <div className="space-y-2">
               <p className="text-lg">
@@ -49,7 +46,7 @@ export default function PaymentWarning({ sailor }: { sailor: any }) {
                 onTouchStart={copyText}
                 className="btn btn-lg btn-block bg-warning-content text-warning hover:scale-[1.02] transition-transform border-0 shadow-lg"
               >
-                <span className="font-black text-xl break-all">
+                <span className="font-black text-xl  break-all">
                   hayz_149@hotmail.com
                 </span>
                 {copied ? (
@@ -67,7 +64,9 @@ export default function PaymentWarning({ sailor }: { sailor: any }) {
               )}
 
               <p className="text-sm opacity-90 mt-3">
-                💡 <strong>Important:</strong> Include your username ({sailor.username}) in the memo
+                💡 <strong>Important:</strong> Include your username (
+                {sailor.username}) in the memo. It's not real time, we will mark
+                it paid as soon as we can.
               </p>
             </div>
           </div>

@@ -8,6 +8,9 @@ type NewSailor = {
 type UpdateSailor = {
   username?: string;
   phone?: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: Buffer;
 };
 
 export const createSailor = (data: NewSailor) => {
@@ -40,7 +43,7 @@ export const readSailorWithSubmissions = (id: string) => {
 
 export const readSailorWithSheetSubmissions = (
   sailorId: string,
-  sheetId: string
+  sheetId: string,
 ) => {
   return db.sailor.findUnique({
     where: { id: sailorId },

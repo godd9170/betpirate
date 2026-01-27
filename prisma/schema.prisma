@@ -17,15 +17,16 @@ enum SheetStatus {
 }
 
 model Sailor {
-  id          String       @id @default(cuid())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  username    String?      @unique
-  phone       String       @unique
-  firstName   String?
-  lastName    String?
-  submissions Submission[]
-  admin       Boolean      @default(false)
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  username       String?      @unique
+  phone          String       @unique
+  firstName      String?
+  lastName       String?
+  profilePicture Bytes?
+  submissions    Submission[]
+  admin          Boolean      @default(false)
 }
 
 model SMS {
