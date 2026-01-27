@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 
-export default function TiebreakerCard({
-  tieBreakerQuestion,
-}: {
-  tieBreakerQuestion: string | null;
-}) {
+const TiebreakerCard = forwardRef<
+  HTMLDivElement,
+  {
+    tieBreakerQuestion: string | null;
+    onTouch: () => void;
+  }
+>(({ tieBreakerQuestion, onTouch }, ref) => {
   // todo: get min and max from the sheet
   const MIN = -20;
   const MAX = 500;
   const randBetween = Math.floor(Math.random() * (MAX - MIN + 1) + MIN);
   const [value, setValue] = useState<number>(randBetween);
 
+  const handleChange = (value: number) => {
+    onTouch();
+    setValue(value);
+  };
+
   return (
-    <div className="card card-bordered bg-accent/10 shadow-xl scroll-mt-24">
+    <div
+      className="card card-bordered bg-accent/10 shadow-xl scroll-mt-24"
+      ref={ref}
+    >
       <div className="card-body">
         <div className="flex items-center gap-3 mb-4">
           <div className="badge badge-accent badge-lg font-bold px-4 py-3">
@@ -27,10 +37,10 @@ export default function TiebreakerCard({
         <div className="bg-base-200 rounded-xl p-6">
           <div className="flex flex-col items-center mb-6">
             <div className="stat bg-base-100 rounded-box shadow-lg">
-              <div className="stat-value text-primary text-center">
-                {value}
+              <div className="stat-value text-primary text-center">{value}</div>
+              <div className="stat-desc text-center font-semibold">
+                Your Pick
               </div>
-              <div className="stat-desc text-center font-semibold">Your Pick</div>
             </div>
           </div>
 
@@ -46,34 +56,34 @@ export default function TiebreakerCard({
               value={value}
               name="tieBreaker"
               className="range range-primary range-lg w-full"
-              onChange={(e) => setValue(Number(e.target.value))}
+              onChange={(e) => handleChange(Number(e.target.value))}
             />
             <div className="flex gap-2 justify-center mt-4">
               <button
                 type="button"
                 className="btn btn-sm btn-outline"
-                onClick={() => setValue(Math.max(MIN, value - 10))}
+                onClick={() => handleChange(Math.max(MIN, value - 10))}
               >
                 -10
               </button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline"
-                onClick={() => setValue(Math.max(MIN, value - 1))}
+                onClick={() => handleChange(Math.max(MIN, value - 1))}
               >
                 -1
               </button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline"
-                onClick={() => setValue(Math.min(MAX, value + 1))}
+                onClick={() => handleChange(Math.min(MAX, value + 1))}
               >
                 +1
               </button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline"
-                onClick={() => setValue(Math.min(MAX, value + 10))}
+                onClick={() => handleChange(Math.min(MAX, value + 10))}
               >
                 +10
               </button>
@@ -102,4 +112,6 @@ export default function TiebreakerCard({
       </div>
     </div>
   );
-}
+});
+
+export default TiebreakerCard;

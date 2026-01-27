@@ -1,16 +1,39 @@
 import { Link } from "@remix-run/react";
-import { IoCheckmarkCircle, IoTimeOutline, IoTrophyOutline } from "react-icons/io5";
+import {
+  IoCheckmarkCircle,
+  IoTimeOutline,
+  IoTrophyOutline,
+  IoAmericanFootballOutline,
+} from "react-icons/io5";
 
 export default function SubmissionsList({
   submissions,
+  sheet,
 }: {
   submissions: any[];
+  sheet: { status: string };
 }) {
+  if (submissions.length === 0 && sheet.status === "CLOSED") {
+    return (
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body items-center text-center py-12">
+          <IoAmericanFootballOutline size={64} className="mb-4 text-primary" />
+          <h2 className="card-title text-2xl font-bold">
+            Missed the boat, matey!
+          </h2>
+          <p className="opacity-70">
+            Submissions for this sheet are closed. Better luck next time.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (submissions.length === 0) {
     return (
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body items-center text-center py-12">
-          <IoTrophyOutline size={64} className="opacity-30 mb-4" />
+          <IoTrophyOutline size={64} className="mb-4 text-primary" />
           <h2 className="card-title text-2xl font-bold">No Submissions Yet</h2>
           <p className="opacity-70">
             Get started by submitting your first set of picks!
@@ -75,9 +98,7 @@ export default function SubmissionsList({
                 </div>
               </div>
 
-              <div className="text-4xl opacity-20">
-                →
-              </div>
+              <div className="text-4xl opacity-20">→</div>
             </div>
           </div>
         </Link>

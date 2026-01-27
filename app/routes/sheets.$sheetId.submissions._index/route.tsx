@@ -46,7 +46,7 @@ export default function Submissions() {
         <NewSubmissionButton sheet={sheet} />
 
         <div className="mt-6">
-          <SubmissionsList submissions={sailor.submissions} />
+          <SubmissionsList submissions={sailor.submissions} sheet={sheet} />
         </div>
       </div>
     </div>

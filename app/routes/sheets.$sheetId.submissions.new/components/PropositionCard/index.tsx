@@ -28,9 +28,9 @@ const PropositionCard = forwardRef<
       )}
       <div className="card-body">
         <div className="flex items-start gap-3 mb-3">
-          <div className="badge badge-primary badge-lg font-bold text-lg px-4 py-4">
+          {/* <div className="badge badge-primary badge-lg font-bold text-lg px-4 py-4">
             #{proposition.order}
-          </div>
+          </div> */}
           <div className="flex-1">
             <h2 className="card-title text-2xl font-black leading-tight mb-2">
               {proposition.title}

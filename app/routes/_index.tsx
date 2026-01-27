@@ -13,6 +13,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return;
   }
 
-  if (!sailor.username) return redirect("/onboard");
+  if (!sailor.username || !sailor.profilePicture) return redirect("/onboard");
   return redirect(`/sheets/${process.env.DEFAULT_SHEET_ID}`);
 };

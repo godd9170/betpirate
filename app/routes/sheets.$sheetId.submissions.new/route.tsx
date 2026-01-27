@@ -12,6 +12,7 @@ import { authenticator } from "~/services/auth.server";
 import PropositionCard from "./components/PropositionCard";
 import { useRef, useState } from "react";
 import TiebreakerCard from "./components/TiebreakerCard";
+import ProgressBar from "./components/ProgressBar";
 import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import SheetInstructions from "./components/SheetInstructions";
@@ -54,7 +55,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
   const submissionParse = parseWithZod(form, { schema });
 
-  invariant(submissionParse.status === 'success', "Missing selections");
+  invariant(submissionParse.status === "success", "Missing selections");
 
   const submission = await createSubmission({
     sheetId: params.sheetId,
@@ -70,20 +71,34 @@ export default function Sheet() {
   const { sheet, sailor } = useLoaderData<typeof loader>();
   const [selections, setSelections] = useState<object>({});
   const [hasStarted, setHasStarted] = useState(false);
+  const [tiebreakerTouched, setTiebreakerTouched] = useState(false);
   const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
   const selectionCount = Object.keys(selections).length;
   const isSubmitting =
     navigation.formAction === `/sheets/${sheet.id}/submissions?index`;
-  const disabled = propositionCount != selectionCount || isSubmitting;
+  const allPropositionsSelected = propositionCount === selectionCount;
+  const disabled =
+    !allPropositionsSelected || !tiebreakerTouched || isSubmitting;
   const propositionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tiebreakerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToProposition = (index: number) => {
     const element = propositionRefs.current[index];
     if (element) {
-      // Account for sticky header height (approx 80px)
-      const yOffset = -100;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const yOffset = -120;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  const scrollToTiebreaker = () => {
+    const element = tiebreakerRef.current;
+    if (element) {
+      const yOffset = -120;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
@@ -104,22 +119,11 @@ export default function Sheet() {
       />
 
       <Form method="post" className="relative">
-        {/* Progress bar */}
-        <div className="sticky top-0 z-30 bg-base-100 shadow-lg">
-          <div className="max-w-4xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Your Progress</span>
-              <span className="text-sm font-bold text-primary">
-                {selectionCount} / {propositionCount}
-              </span>
-            </div>
-            <progress
-              className="progress progress-primary w-full h-3"
-              value={selectionCount}
-              max={propositionCount}
-            ></progress>
-          </div>
-        </div>
+        <ProgressBar
+          propositions={sheet.propositions}
+          selections={selections}
+          onPropositionClick={scrollToProposition}
+        />
 
         {/* Propositions container */}
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -130,15 +134,29 @@ export default function Sheet() {
               propositionIndex={index}
               proposition={proposition}
               onSelection={(propositionId: string, optionId: string) => {
-                setSelections((prev) => ({
-                  ...prev,
-                  [propositionId]: optionId,
-                }));
-                scrollToProposition(index + 1);
+                setSelections((prev) => {
+                  const updated = {
+                    ...prev,
+                    [propositionId]: optionId,
+                  };
+
+                  // Check if all propositions are now answered
+                  if (Object.keys(updated).length === propositionCount) {
+                    scrollToTiebreaker();
+                  } else {
+                    scrollToProposition(index + 1);
+                  }
+
+                  return updated;
+                });
               }}
             />
           ))}
-          <TiebreakerCard tieBreakerQuestion={sheet.tieBreakerQuestion} />
+          <TiebreakerCard
+            ref={tiebreakerRef}
+            tieBreakerQuestion={sheet.tieBreakerQuestion}
+            onTouch={() => setTiebreakerTouched(true)}
+          />
         </div>
 
         {/* Sticky footer */}
@@ -156,8 +174,10 @@ export default function Sheet() {
                   <span className="loading loading-spinner"></span>
                   Hoisting the Colors...
                 </>
-              ) : disabled ? (
+              ) : !allPropositionsSelected ? (
                 `Pick ${propositionCount - selectionCount} More to Continue`
+              ) : !tiebreakerTouched ? (
+                "⚔️ Set Your Tie Breaker to Continue"
               ) : (
                 "⚓ Submit Your Picks & Set Sail!"
               )}

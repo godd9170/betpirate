@@ -34,7 +34,7 @@ export default function Sheet() {
       <header className="w-full flex items-center justify-between p-4">
         <div className="w-12">
           <Link to={`/sheets/${sheet.id}`}>
-            <Logo size={"40px"} />
+            <Logo size={"38px"} />
           </Link>
         </div>
         <Link to={`/sheets/${sheet.id}`}>
