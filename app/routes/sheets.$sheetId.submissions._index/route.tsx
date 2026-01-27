@@ -35,10 +35,20 @@ export default function Submissions() {
   const { sailor, sheet } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex flex-col items-center">
-      <PaymentWarning sailor={sailor} />
-      <NewSubmissionButton sheet={sheet} />
-      <SubmissionsList submissions={sailor.submissions} />
+    <div className="min-h-screen bg-base-200">
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-black mb-2">Your Submissions</h1>
+          <p className="opacity-70">Manage your picks for {sheet.title}</p>
+        </div>
+
+        <PaymentWarning sailor={sailor} />
+        <NewSubmissionButton sheet={sheet} />
+
+        <div className="mt-6">
+          <SubmissionsList submissions={sailor.submissions} />
+        </div>
+      </div>
     </div>
   );
 }

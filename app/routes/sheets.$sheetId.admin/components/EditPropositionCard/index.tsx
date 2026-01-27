@@ -84,7 +84,7 @@ export default function EditPropositionCard({
               </div>
             </div>
           </div>
-          <button className="btn btn-primary" type="submit">
+          <button className="btn btn-secondary" type="submit">
             Update
           </button>
         </div>
