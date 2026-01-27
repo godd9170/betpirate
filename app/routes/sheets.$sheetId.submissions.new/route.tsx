@@ -69,6 +69,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function Sheet() {
   const { sheet, sailor } = useLoaderData<typeof loader>();
   const [selections, setSelections] = useState<object>({});
+  const [hasStarted, setHasStarted] = useState(false);
   const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
   const selectionCount = Object.keys(selections).length;
@@ -80,51 +81,88 @@ export default function Sheet() {
   const scrollToProposition = (index: number) => {
     const element = propositionRefs.current[index];
     if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      // Account for sticky header height (approx 80px)
+      const yOffset = -100;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
 
+  const handleStart = () => {
+    setHasStarted(true);
+    // Small delay to allow the instructions card to dismiss before scrolling
+    setTimeout(() => scrollToProposition(0), 100);
+  };
+
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen bg-base-200">
       <SheetInstructions
         sailor={sailor}
         count={propositionCount}
-        start={() => scrollToProposition(0)}
+        hasStarted={hasStarted}
+        start={handleStart}
       />
 
-      <Form method="post">
-        <progress
-          className="progress sticky top-0 z-10"
-          value={selectionCount}
-          max={propositionCount}
-        ></progress>
-        {sheet?.propositions.map((proposition, index) => (
-          <PropositionCard
-            key={proposition.id}
-            ref={(el) => (propositionRefs.current[index] = el)}
-            propositionIndex={index}
-            proposition={proposition}
-            onSelection={(propositionId: string, optionId: string) => {
-              setSelections((prev) => ({
-                ...prev,
-                [propositionId]: optionId,
-              }));
-              scrollToProposition(index + 1);
-            }}
-          />
-        ))}
-        <TiebreakerCard tieBreakerQuestion={sheet.tieBreakerQuestion} />
-        <footer className="sticky bottom-0">
-          <button
-            className="btn btn-primary w-full mb-4"
-            type="submit"
-            disabled={disabled}
-          >
-            Submit your picks!
-          </button>
+      <Form method="post" className="relative">
+        {/* Progress bar */}
+        <div className="sticky top-0 z-30 bg-base-100 shadow-lg">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold">Your Progress</span>
+              <span className="text-sm font-bold text-primary">
+                {selectionCount} / {propositionCount}
+              </span>
+            </div>
+            <progress
+              className="progress progress-primary w-full h-3"
+              value={selectionCount}
+              max={propositionCount}
+            ></progress>
+          </div>
+        </div>
+
+        {/* Propositions container */}
+        <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+          {sheet?.propositions.map((proposition, index) => (
+            <PropositionCard
+              key={proposition.id}
+              ref={(el) => (propositionRefs.current[index] = el)}
+              propositionIndex={index}
+              proposition={proposition}
+              onSelection={(propositionId: string, optionId: string) => {
+                setSelections((prev) => ({
+                  ...prev,
+                  [propositionId]: optionId,
+                }));
+                scrollToProposition(index + 1);
+              }}
+            />
+          ))}
+          <TiebreakerCard tieBreakerQuestion={sheet.tieBreakerQuestion} />
+        </div>
+
+        {/* Sticky footer */}
+        <footer className="sticky bottom-0 z-30 bg-base-100 pt-8 pb-6 shadow-2xl">
+          <div className="max-w-4xl mx-auto px-4">
+            <button
+              className={`btn btn-lg w-full shadow-xl text-lg font-bold ${
+                disabled ? "btn-disabled" : "btn-primary"
+              }`}
+              type="submit"
+              disabled={disabled}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="loading loading-spinner"></span>
+                  Hoisting the Colors...
+                </>
+              ) : disabled ? (
+                `Pick ${propositionCount - selectionCount} More to Continue`
+              ) : (
+                "⚓ Submit Your Picks & Set Sail!"
+              )}
+            </button>
+          </div>
         </footer>
       </Form>
     </div>

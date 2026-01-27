@@ -20,12 +20,17 @@ export default function PropositionCardOption({
         onChange={onChange}
       />
       <label
-        className="w-full grid h-20 flex-grow card rounded-box place-items-center cursor-pointer 
-             bg-base-300 text-center border border-transparent transition-all peer-checked:bg-primary 
-             peer-checked:text-primary-content peer-checked:border-primary-content hover:border-primary"
+        className="btn btn-outline w-full h-24 normal-case text-base font-semibold
+             peer-checked:btn-primary peer-checked:font-bold peer-checked:text-lg
+             transition-all hover:scale-[1.02] peer-checked:scale-[1.03]"
         htmlFor={option?.id}
       >
-        {option?.title}
+        <span className="relative">
+          {option?.title}
+          <span className="absolute -top-3 -right-6 opacity-0 peer-checked:opacity-100 transition-opacity text-2xl">
+            ✓
+          </span>
+        </span>
       </label>
     </div>
   );
