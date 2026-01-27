@@ -1,6 +1,6 @@
 import { Sailor, Sheet } from "@prisma/client";
 import { Link } from "@remix-run/react";
-import { IoChevronForwardCircle } from "react-icons/io5";
+import { IoTrophyOutline } from "react-icons/io5";
 import Ordinal from "~/components/Ordinal";
 import { SheetLeader } from "~/models/sheet.server";
 
@@ -13,55 +13,100 @@ export default function LeaderBoard({
   sheet: Sheet;
   leaders: SheetLeader[];
 }) {
+  const groupedLeaders = leaders.reduce((acc, leader) => {
+    const rankingGroup = acc.find((group) => group.ranking === leader.ranking);
+    if (rankingGroup) {
+      rankingGroup.leaders.push(leader);
+    } else {
+      acc.push({
+        ranking: leader.ranking,
+        correct: leader.correct,
+        leaders: [leader],
+      });
+    }
+    return acc;
+  }, [] as { ranking: number; correct: number; leaders: SheetLeader[] }[]);
+
+  const getRankColor = (ranking: number) => {
+    if (ranking === 1) return "text-warning";
+    if (ranking === 2) return "text-slate-400";
+    if (ranking === 3) return "text-amber-600";
+    return "text-base-content";
+  };
+
+  const getRankBadge = (ranking: number) => {
+    if (ranking === 1) return "badge-warning";
+    if (ranking === 2) return "badge-neutral";
+    if (ranking === 3) return "badge-accent";
+    return "badge-ghost";
+  };
+
   return (
-    <div className="overflow-x-auto mx-2">
-      {leaders
-        .reduce((acc, leader) => {
-          const rankingGroup = acc.find(
-            (group) => group.ranking === leader.ranking
-          );
-          if (rankingGroup) {
-            rankingGroup.leaders.push(leader);
-          } else {
-            acc.push({
-              ranking: leader.ranking,
-              correct: leader.correct,
-              leaders: [leader],
-            });
-          }
-          return acc;
-        }, [] as { ranking: number; correct: number; leaders: SheetLeader[] }[])
-        .map((group) => (
-          <div key={group.ranking} className="card">
-            <div className="card-header">
-              <h2 className="card-title flex justify-center sm:justify-start">
-                <Ordinal number={group.ranking} />
-                <span className="text-sm font-light">
-                  ({group.correct} Correct)
-                </span>
-              </h2>
-            </div>
-            <div className="card-body">
-              {group.leaders.map((leader) => (
-                <ul key={leader.submissionId}>
-                  <Link
-                    to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
+    <div className="min-h-screen bg-base-200">
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-black mb-2 flex items-center gap-2">
+            <IoTrophyOutline className="text-primary" />
+            Leaderboard
+          </h1>
+          <p className="opacity-70">Top performers for {sheet.title}</p>
+        </div>
+
+        <div className="space-y-6">
+          {groupedLeaders.map((group) => (
+            <div key={group.ranking} className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className={`text-4xl font-black ${getRankColor(
+                      group.ranking,
+                    )}`}
                   >
-                    <li className="flex font-semibold items-center">
-                      <span className="pr-2">
-                        {leader.username}
-                        {sailor.id === leader.sailorId && (
-                          <span className="font-bold">{` (you)`}</span>
-                        )}
-                      </span>
-                      <IoChevronForwardCircle />
-                    </li>
-                  </Link>
-                </ul>
-              ))}
+                    <Ordinal number={group.ranking} />
+                  </div>
+                  <div
+                    className={`badge badge-lg ${getRankBadge(
+                      group.ranking,
+                    )} font-bold shadow-md`}
+                  >
+                    {group.correct} Correct
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {group.leaders.map((leader) => (
+                    <Link
+                      key={leader.submissionId}
+                      to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
+                      className="flex items-center gap-4 p-4 rounded-lg bg-base-200 hover:bg-base-300 transition-all hover:scale-[1.01] cursor-pointer shadow-md hover:shadow-lg"
+                    >
+                      <img
+                        src={`/sailors/${leader.sailorId}/profile-picture`}
+                        alt={leader.username}
+                        className="w-12 h-12 rounded-full object-cover ring-2 ring-base-300"
+                      />
+                      <div className="flex-1">
+                        <div className="font-bold text-lg">
+                          {leader.username}
+                          {sailor.id === leader.sailorId && (
+                            <span className="ml-2 text-primary font-black">
+                              (you)
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm opacity-70">
+                          Tie Breaker: {leader.tieBreaker}
+                        </div>
+                      </div>
+                      <div className="text-2xl opacity-20">→</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
