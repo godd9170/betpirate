@@ -73,32 +73,28 @@ export default function LeaderBoard({
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                   {group.leaders.map((leader) => (
                     <Link
                       key={leader.submissionId}
                       to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-base-200 hover:bg-base-300 transition-all hover:scale-[1.01] cursor-pointer shadow-md hover:shadow-lg"
+                      className="flex flex-col items-center gap-3 p-4 rounded-lg bg-base-200 hover:bg-base-300 transition-all hover:scale-105 cursor-pointer shadow-md hover:shadow-xl"
                     >
                       <img
                         src={`/sailors/${leader.sailorId}/profile-picture`}
                         alt={leader.username}
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-base-300"
+                        className="sm:w-20 sm:h-20 w-16 h-16 rounded-full object-cover ring-4 ring-base-300 bg-accent"
                       />
-                      <div className="flex-1">
-                        <div className="font-bold text-lg">
+                      <div className="text-center w-full">
+                        <div className="font-bold text-xs sm:text-sm truncate">
                           {leader.username}
-                          {sailor.id === leader.sailorId && (
-                            <span className="ml-2 text-primary font-black">
-                              (you)
-                            </span>
-                          )}
                         </div>
-                        <div className="text-sm opacity-70">
-                          Tie Breaker: {leader.tieBreaker}
-                        </div>
+                        {sailor.id === leader.sailorId && (
+                          <div className="text-xs text-primary font-black">
+                            (you)
+                          </div>
+                        )}
                       </div>
-                      <div className="text-2xl opacity-20">→</div>
                     </Link>
                   ))}
                 </div>
