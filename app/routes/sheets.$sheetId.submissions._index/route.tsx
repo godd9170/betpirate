@@ -39,7 +39,14 @@ export default function Submissions() {
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-black mb-2">Your Submissions</h1>
-          <p className="opacity-70">Manage your picks for {sheet.title}</p>
+          <p className="opacity-70">{`Manage your picks for ${
+            sheet.title
+          }. You can submit as many as you like, ${(
+            sheet?.entryFee ?? 10
+          ).toLocaleString("en-CA", {
+            style: "currency",
+            currency: "CAD",
+          })} per entry.`}</p>
         </div>
 
         <PaymentWarning sailor={sailor} />

@@ -7,6 +7,7 @@ import { authenticator } from "~/services/auth.server";
 import { IoMdSettings } from "react-icons/io";
 import { IoIosPodium, IoMdListBox } from "react-icons/io";
 import Logo from "~/components/Logo";
+import ThemeToggle from "~/components/ThemeToggle";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -41,11 +42,7 @@ export default function Sheet() {
           <h1 className="text-2xl font-black text-center">{sheet.title}</h1>
         </Link>
         <div className="w-12">
-          {!!sailor?.admin && (
-            <Link to={`/sheets/${sheet.id}/admin`}>
-              <IoMdSettings size={24} />
-            </Link>
-          )}
+          <ThemeToggle />
         </div>
       </header>
       <main className="pb-16 min-h-[calc(100vh-4rem)] container mx-auto">
@@ -67,6 +64,12 @@ export default function Sheet() {
             <IoIosPodium size={24} />
             <span className="dock-label">Leaderboard</span>
           </Link>
+          {!!sailor?.admin && (
+            <Link to={`/sheets/${sheet.id}/admin`}>
+              <IoMdSettings size={24} />
+              <span className="dock-label">Admin</span>
+            </Link>
+          )}
         </nav>
       )}
     </div>
