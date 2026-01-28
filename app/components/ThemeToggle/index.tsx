@@ -1,11 +1,34 @@
+import { useEffect, useState } from "react";
+
 export default function ThemeToggle() {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    const current = document.documentElement.dataset.theme;
+    setChecked(current === "abyss");
+  }, []);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    const nextTheme = isChecked ? "abyss" : "lemonade";
+    document.documentElement.dataset.theme = nextTheme;
+    try {
+      localStorage.setItem("theme", nextTheme);
+    } catch (error) {
+      // ignore storage errors
+    }
+    setChecked(isChecked);
+  };
+
   return (
     <label className="swap swap-rotate">
       {/* this hidden checkbox controls the state */}
       <input
         type="checkbox"
         className="theme-controller hidden"
-        value="light"
+        value="abyss"
+        checked={checked}
+        onChange={handleChange}
       />
 
       {/* sun icon */}

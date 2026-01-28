@@ -10,6 +10,7 @@ import { authenticator } from "./services/auth.server";
 import stylesheet from "~/styles/tailwind.css";
 import { readSailor } from "./models/sailor.server";
 import { Sailor } from "@prisma/client";
+import { themeBootstrapScript } from "~/utils/theme";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -38,7 +39,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 // https://remix.run/docs/en/1.14.3/route/meta#md-global-meta
 export default function Root() {
   return (
-    <html lang="en" data-theme="abyss">
+    <html lang="en" data-theme="lemonade" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta
@@ -46,6 +47,7 @@ export default function Root() {
           content="width=device-width,minimum-scale=1,viewport-fit=cover"
         />
         <title>Bet Pirate - Superbowl LIX Prop Sheet</title>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
         <Meta />
         <Links />
       </head>
