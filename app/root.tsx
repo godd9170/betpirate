@@ -1,5 +1,11 @@
 import { json, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 import { authenticator } from "./services/auth.server";
 import stylesheet from "~/styles/tailwind.css";
 import { readSailor } from "./models/sailor.server";
@@ -35,13 +41,17 @@ export default function Root() {
     <html lang="en" data-theme="abyss">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+        <meta
+          name="viewport"
+          content="width=device-width,minimum-scale=1,viewport-fit=cover"
+        />
         <title>Bet Pirate - Superbowl LIX Prop Sheet</title>
         <Meta />
         <Links />
       </head>
       <body className="bg-base-100">
         <Outlet />
+        <ScrollRestoration />
         <Scripts />
       </body>
     </html>
