@@ -110,7 +110,7 @@ export default function Sheet() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-[100dvh] bg-base-200">
       <SheetInstructions
         sailor={sailor}
         count={propositionCount}
@@ -118,7 +118,10 @@ export default function Sheet() {
         start={handleStart}
       />
 
-      <Form method="post" className="relative">
+      <Form
+        method="post"
+        className="relative pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
+      >
         <ProgressBar
           propositions={sheet.propositions}
           selections={selections}
@@ -160,7 +163,7 @@ export default function Sheet() {
         </div>
 
         {/* Sticky footer */}
-        <footer className="sticky bottom-0 z-30 bg-base-100 pt-8 pb-6 shadow-2xl">
+        <footer className="fixed inset-x-0 bottom-0 z-30 bg-base-100 pt-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl">
           <div className="max-w-4xl mx-auto px-4">
             <button
               className={`btn btn-lg w-full shadow-xl text-lg font-bold ${
