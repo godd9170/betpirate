@@ -1,7 +1,10 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
-import { createProposition, getNextPropositionOrder } from "~/models/proposition.server";
+import {
+  createProposition,
+  getNextPropositionOrder,
+} from "~/models/proposition.server";
 import invariant from "tiny-invariant";
 
 export const schema = z.object({
@@ -14,7 +17,7 @@ export const schema = z.object({
       title: z.string(),
       shortTitle: z.string().optional(),
       imageUrl: z.string().optional(),
-    })
+    }),
   ),
 });
 
@@ -25,7 +28,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(!!sheetId, "missing sheet id");
   const formData = await request.formData();
   const proposition = parseWithZod(formData, { schema });
-  if (proposition.status !== 'success') {
+  if (proposition.status !== "success") {
     return json(proposition);
   }
   const nextOrder = await getNextPropositionOrder(sheetId);

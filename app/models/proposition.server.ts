@@ -39,8 +39,8 @@ export const getNextPropositionOrder = async (sheetId: string) => {
         db.proposition.update({
           where: { id: item.id },
           data: { order: index + 1 },
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -77,7 +77,7 @@ export const updateProposition = (id: string, data: Proposition) => {
 
 export const updatePropositionOption = (
   id: string,
-  data: PropositionOption
+  data: PropositionOption,
 ) => {
   return db.propositionOption.update({
     where: { id },
@@ -87,7 +87,7 @@ export const updatePropositionOption = (
 
 export const createPropositionOption = (
   propositionId: string,
-  data: PropositionOption
+  data: PropositionOption,
 ) => {
   return db.propositionOption.create({
     data: {
@@ -100,7 +100,7 @@ export const createPropositionOption = (
 export const reorderPropositions = async (
   sheetId: string,
   propositionId: string,
-  direction: "up" | "down"
+  direction: "up" | "down",
 ) => {
   const propositions = await db.proposition.findMany({
     where: { sheetId },
@@ -129,8 +129,8 @@ export const reorderPropositions = async (
         tx.proposition.update({
           where: { id },
           data: { order: orderIndex + 1 + 1000 },
-        })
-      )
+        }),
+      ),
     );
 
     await Promise.all(
@@ -138,8 +138,8 @@ export const reorderPropositions = async (
         tx.proposition.update({
           where: { id },
           data: { order: orderIndex + 1 },
-        })
-      )
+        }),
+      ),
     );
   });
 };
