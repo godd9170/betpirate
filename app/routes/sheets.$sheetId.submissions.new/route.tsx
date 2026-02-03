@@ -6,7 +6,7 @@ import {
 } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { readSheet } from "~/models/sheet.server";
+import { readSheet, readOptionSelectionCounts } from "~/models/sheet.server";
 import { createSubmission } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
 import PropositionCard from "./components/PropositionCard";
@@ -44,7 +44,9 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   if (sheet.status === "CLOSED") return redirect(`/sheets/${sheetId}`);
 
-  return json({ sheet, sailor });
+  const optionCounts = await readOptionSelectionCounts(sheetId);
+
+  return json({ sheet, sailor, optionCounts });
 };
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
@@ -68,7 +70,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 };
 
 export default function Sheet() {
-  const { sheet, sailor } = useLoaderData<typeof loader>();
+  const { sheet, sailor, optionCounts } = useLoaderData<typeof loader>();
   const [selections, setSelections] = useState<object>({});
   const [hasStarted, setHasStarted] = useState(false);
   const [tiebreakerTouched, setTiebreakerTouched] = useState(false);
@@ -136,6 +138,7 @@ export default function Sheet() {
               ref={(el) => (propositionRefs.current[index] = el)}
               propositionIndex={index}
               proposition={proposition}
+              optionCounts={optionCounts}
               onSelection={(propositionId: string, optionId: string) => {
                 setSelections((prev) => {
                   const updated = {
