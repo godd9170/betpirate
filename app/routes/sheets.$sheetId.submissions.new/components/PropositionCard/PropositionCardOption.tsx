@@ -24,11 +24,11 @@ export default function PropositionCardOption({
         onChange={onChange}
       />
       <label
-        className={`btn btn-outline w-full normal-case text-base font-semibold ${
-          hasImage ? "h-32" : "h-24"
-        }
+        className={`btn btn-outline w-full h-24 flex-col gap-1 normal-case text-base font-semibold
              peer-checked:btn-primary peer-checked:font-bold peer-checked:text-lg
-             transition-all hover:scale-[1.02] peer-checked:scale-[1.03]`}
+             transition-all hover:scale-[1.02] peer-checked:scale-[1.03] ${
+               hasImage ? "h-32" : "h-24"
+             }`}
         htmlFor={option?.id}
       >
         <span className="relative flex w-full flex-col items-center gap-2">
