@@ -2,7 +2,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import invariant from "tiny-invariant";
 
-const bucket = process.env.S3_BUCKET;
+const bucket = process.env.S3_BUCKET_NAME;
 const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL;
 const region = process.env.AWS_REGION ?? "auto";
 const endpoint = process.env.AWS_ENDPOINT_URL_S3 ?? process.env.S3_ENDPOINT;
@@ -35,7 +35,7 @@ export const createPresignedUploadUrl = async ({
   key: string;
   contentType: string;
 }) => {
-  invariant(bucket, "S3_BUCKET is required");
+  invariant(bucket, "S3_BUCKET_NAME is required");
   invariant(accessKeyId, "AWS_ACCESS_KEY_ID is required");
   invariant(secretAccessKey, "AWS_SECRET_ACCESS_KEY is required");
 
