@@ -113,6 +113,22 @@ export const readSheetLeaders = async (
   `;
 };
 
+export const readOptionSelectionCounts = async (
+  sheetId: string
+): Promise<Record<string, number>> => {
+  const counts = await db.propositionSelection.groupBy({
+    by: ["optionId"],
+    _count: { _all: true },
+    where: {
+      submission: { sheetId },
+    },
+  });
+
+  return Object.fromEntries(
+    counts.map(({ optionId, _count }) => [optionId, _count._all])
+  );
+};
+
 export const readSheetSummary = async (
   id: string
 ): Promise<{ totalPropositions: number; answeredPropositions: number }> => {
