@@ -5,13 +5,17 @@ const TiebreakerCard = forwardRef<
   {
     tieBreakerQuestion: string | null;
     onTouch: () => void;
+    initialValue?: number;
   }
->(({ tieBreakerQuestion, onTouch }, ref) => {
+>(({ tieBreakerQuestion, onTouch, initialValue }, ref) => {
   // todo: get min and max from the sheet
   const MIN = -20;
   const MAX = 500;
-  const randBetween = Math.floor(Math.random() * (MAX - MIN + 1) + MIN);
-  const [value, setValue] = useState<number>(randBetween);
+  const randomBetween = () =>
+    Math.floor(Math.random() * (MAX - MIN + 1) + MIN);
+  const [value, setValue] = useState<number>(
+    () => initialValue ?? randomBetween()
+  );
 
   const handleChange = (value: number) => {
     onTouch();

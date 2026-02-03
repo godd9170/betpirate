@@ -12,6 +12,12 @@ type NewSubmission = {
   tieBreaker: number;
 };
 
+type UpdateSubmission = {
+  id: string;
+  selections: Selection[];
+  tieBreaker: number;
+};
+
 export type SubmissionWithPropositionSelections = Prisma.SubmissionGetPayload<{
   include: {
     sailor: true;
@@ -67,6 +73,23 @@ export const createSubmission = ({
     },
     include: {
       sheet: true,
+    },
+  });
+};
+
+export const updateSubmission = ({
+  id,
+  selections = [],
+  tieBreaker,
+}: UpdateSubmission) => {
+  return db.submission.update({
+    where: { id },
+    data: {
+      tieBreaker,
+      selections: {
+        deleteMany: {},
+        create: selections,
+      },
     },
   });
 };

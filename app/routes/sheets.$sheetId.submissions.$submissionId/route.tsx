@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import SubmissionTable from "./components/SubmissionTable";
 import {
@@ -50,10 +50,52 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function Submission() {
   const { sailorId, submission, submissionRank, sheetSummary } =
     useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const updated = searchParams.get("updated");
+  const editClosed = searchParams.get("edit") === "closed";
+  const isOwner = submission?.sailorId === sailorId;
+  const canEdit = isOwner && submission?.sheet?.status !== "CLOSED";
 
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-black">{`${submission?.sailor.username}'s Picks`}</h1>
+      <div className="w-full max-w-3xl mt-4 space-y-3">
+        {updated && (
+          <div className="alert alert-success shadow-lg">
+            <span className="text-sm">Picks updated successfully.</span>
+          </div>
+        )}
+        {isOwner && editClosed && (
+          <div className="alert alert-warning shadow-lg">
+            <span className="text-sm">
+              Submissions are closed — edits are no longer available.
+            </span>
+          </div>
+        )}
+        {isOwner &&
+          !editClosed &&
+          (canEdit ? (
+            <div className="alert alert-info shadow-lg">
+              <span className="text-sm">
+                You can edit your picks until submissions close.
+              </span>
+            </div>
+          ) : (
+            <div className="alert alert-warning shadow-lg">
+              <span className="text-sm">
+                Submissions are closed — edits are no longer available.
+              </span>
+            </div>
+          ))}
+        {canEdit && (
+          <Link
+            className="btn btn-primary w-full"
+            to={`/sheets/${submission.sheetId}/submissions/${submission.id}/edit`}
+          >
+            Edit Picks
+          </Link>
+        )}
+      </div>
       <SubmissionTotals
         sheetSummary={sheetSummary}
         submissionRank={submissionRank}
