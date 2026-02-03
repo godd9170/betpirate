@@ -56,7 +56,7 @@ export default function SubmissionsList({
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h2 className="card-title text-2xl font-black">
-                    Submission #{i + 1}
+                    {submission.nickname || `Submission ${i + 1}`}
                   </h2>
                   {submission.isPaid ? (
                     <div className="badge badge-success badge-lg gap-1 font-bold shadow-md">
