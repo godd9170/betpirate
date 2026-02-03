@@ -7,6 +7,7 @@ import sharp from "sharp";
  */
 export async function compressProfilePicture(buffer: Buffer): Promise<Buffer> {
   return await sharp(buffer)
+    .rotate()
     .resize(500, 500, {
       fit: "cover",
       position: "center",
