@@ -10,8 +10,10 @@ const PropositionCard = forwardRef<
     onSelection: Function;
     propositionIndex: number;
     optionCounts: Record<string, number>;
+    selectedOptionId?: string;
   }
->(({ proposition, onSelection, propositionIndex, optionCounts }, ref) => {
+>(
+  ({ proposition, onSelection, propositionIndex, optionCounts, selectedOptionId }, ref) => {
   const totalPicks = proposition.options.reduce(
     (sum, opt) => sum + (optionCounts[opt.id] ?? 0),
     0
@@ -67,6 +69,7 @@ const PropositionCard = forwardRef<
                         )
                       : null
                   }
+                  isSelected={selectedOptionId === option.id}
                 />
               </div>
             ))}

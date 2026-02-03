@@ -5,11 +5,13 @@ export default function PropositionCardOption({
   index,
   onChange,
   percentage,
+  isSelected,
 }: {
   option: any;
   index: number;
   onChange: ChangeEventHandler<HTMLInputElement>;
   percentage: number | null;
+  isSelected?: boolean;
 }) {
   const hasImage = Boolean(option?.imageUrl);
   return (
@@ -21,6 +23,7 @@ export default function PropositionCardOption({
         value={option?.id}
         className="peer absolute invisible"
         onChange={onChange}
+        defaultChecked={isSelected}
       />
       <label
         className={`btn btn-outline w-full h-24 flex-col gap-1 normal-case text-base font-semibold

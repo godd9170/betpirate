@@ -1,22 +1,20 @@
 import {
-  json,
-  LoaderFunctionArgs,
   ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
   redirect,
 } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
-import invariant from "tiny-invariant";
-import { readSheet, readOptionSelectionCounts } from "~/models/sheet.server";
-import { createSubmission } from "~/models/submission.server";
-import { authenticator } from "~/services/auth.server";
-import PropositionCard from "./components/PropositionCard";
-import { useRef, useState } from "react";
-import TiebreakerCard from "./components/TiebreakerCard";
-import ProgressBar from "./components/ProgressBar";
-import { z } from "zod";
+import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 import { parseWithZod } from "@conform-to/zod";
-import SheetInstructions from "./components/SheetInstructions";
-import { readSailor } from "~/models/sailor.server";
+import { z } from "zod";
+import invariant from "tiny-invariant";
+import { useRef, useState } from "react";
+import { authenticator } from "~/services/auth.server";
+import { readSheet, readOptionSelectionCounts } from "~/models/sheet.server";
+import { readSubmission, updateSubmission } from "~/models/submission.server";
+import ProgressBar from "~/routes/sheets.$sheetId.submissions.new/components/ProgressBar";
+import PropositionCard from "~/routes/sheets.$sheetId.submissions.new/components/PropositionCard";
+import TiebreakerCard from "~/routes/sheets.$sheetId.submissions.new/components/TiebreakerCard";
 
 export const schema = z.object({
   selections: z.array(z.object({ optionId: z.string() })),
@@ -27,61 +25,92 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-  invariant(!!sailorId, `sailorId is required`);
+  invariant(!!sailorId, "sailorId is required");
+  invariant(params.sheetId, "params.sheetId is required");
+  invariant(params.submissionId, "params.submissionId is required");
 
-  const sailor = await readSailor(sailorId);
+  const [sheet, submission] = await Promise.all([
+    readSheet(params.sheetId),
+    readSubmission(params.submissionId),
+  ]);
 
-  if (sailor === null) {
-    await authenticator.logout(request, { redirectTo: "/login" });
-    return;
+  if (
+    !sheet ||
+    !submission ||
+    submission.sheetId !== params.sheetId ||
+    submission.sailorId !== sailorId
+  ) {
+    throw new Response("Not found", { status: 404 });
   }
 
-  const sheetId = params.sheetId;
-  invariant(sheetId, `params.sheetId is required`);
+  if (sheet.status === "CLOSED") {
+    return redirect(
+      `/sheets/${params.sheetId}/submissions/${params.submissionId}?edit=closed`
+    );
+  }
 
-  const sheet = await readSheet(sheetId);
-  invariant(!!sheet, `no sheet found`);
+  const optionCounts = await readOptionSelectionCounts(params.sheetId);
 
-  if (sheet.status === "CLOSED") return redirect(`/sheets/${sheetId}`);
-
-  const optionCounts = await readOptionSelectionCounts(sheetId);
-
-  return json({ sheet, sailor, optionCounts });
+  return json({ sheet, submission, optionCounts });
 };
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
-  const sailorId = await authenticator.isAuthenticated(request);
-  invariant(sailorId != null, `login to submit yer sheet`);
-  invariant(params.sheetId, `params.sheetId is required`);
-  const form = await request.formData();
+  const sailorId = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  invariant(!!sailorId, "sailorId is required");
+  invariant(params.sheetId, "params.sheetId is required");
+  invariant(params.submissionId, "params.submissionId is required");
 
+  const submission = await readSubmission(params.submissionId);
+
+  if (
+    !submission ||
+    submission.sheetId !== params.sheetId ||
+    submission.sailorId !== sailorId
+  ) {
+    throw new Response("Not found", { status: 404 });
+  }
+
+  if (submission.sheet.status === "CLOSED") {
+    return redirect(
+      `/sheets/${params.sheetId}/submissions/${params.submissionId}?edit=closed`
+    );
+  }
+
+  const form = await request.formData();
   const submissionParse = parseWithZod(form, { schema });
 
   invariant(submissionParse.status === "success", "Missing selections");
 
-  const submission = await createSubmission({
-    sheetId: params.sheetId,
-    sailorId,
+  await updateSubmission({
+    id: submission.id,
     selections: submissionParse.value.selections,
     tieBreaker: submissionParse.value.tieBreaker,
   });
 
-  return redirect(`/sheets/${params.sheetId}/submissions`);
+  return redirect(
+    `/sheets/${params.sheetId}/submissions/${params.submissionId}?updated=1`
+  );
 };
 
-export default function Sheet() {
-  const { sheet, sailor, optionCounts } = useLoaderData<typeof loader>();
-  const [selections, setSelections] = useState<Record<string, string>>({});
-  const [hasStarted, setHasStarted] = useState(false);
-  const [tiebreakerTouched, setTiebreakerTouched] = useState(false);
+export default function EditSubmission() {
+  const { sheet, submission, optionCounts } = useLoaderData<typeof loader>();
+  const [selections, setSelections] = useState<Record<string, string>>(() => {
+    return Object.fromEntries(
+      submission.selections.map((selection) => [
+        selection.option.proposition.id,
+        selection.optionId,
+      ])
+    );
+  });
+  const [tiebreakerTouched, setTiebreakerTouched] = useState(true);
   const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
   const selectionCount = Object.keys(selections).length;
-  const isSubmitting =
-    navigation.formAction === `/sheets/${sheet.id}/submissions?index`;
+  const isSubmitting = navigation.state === "submitting";
   const allPropositionsSelected = propositionCount === selectionCount;
-  const disabled =
-    !allPropositionsSelected || !tiebreakerTouched || isSubmitting;
+  const disabled = !allPropositionsSelected || !tiebreakerTouched || isSubmitting;
   const propositionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tiebreakerRef = useRef<HTMLDivElement | null>(null);
 
@@ -105,20 +134,31 @@ export default function Sheet() {
     }
   };
 
-  const handleStart = () => {
-    setHasStarted(true);
-    // Small delay to allow the instructions card to dismiss before scrolling
-    setTimeout(() => scrollToProposition(0), 100);
-  };
-
   return (
     <div className="min-h-[100dvh] bg-base-200">
-      <SheetInstructions
-        sailor={sailor}
-        count={propositionCount}
-        hasStarted={hasStarted}
-        start={handleStart}
-      />
+      <div className="max-w-4xl mx-auto px-4 pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h1 className="text-3xl font-black mb-1">Edit Your Picks</h1>
+            <p className="opacity-70">
+              Changes are allowed until submissions close.
+            </p>
+          </div>
+          <Link
+            className="btn btn-outline"
+            to={`/sheets/${sheet.id}/submissions/${submission.id}`}
+          >
+            Back to Submission
+          </Link>
+        </div>
+
+        <div className="alert alert-info shadow-lg mb-6">
+          <span className="text-sm">
+            Save anytime before the deadline — your latest save replaces the
+            previous picks.
+          </span>
+        </div>
+      </div>
 
       <Form
         method="post"
@@ -130,7 +170,6 @@ export default function Sheet() {
           onPropositionClick={scrollToProposition}
         />
 
-        {/* Propositions container */}
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           {sheet?.propositions.map((proposition, index) => (
             <PropositionCard
@@ -147,7 +186,6 @@ export default function Sheet() {
                     [propositionId]: optionId,
                   };
 
-                  // Check if all propositions are now answered
                   if (Object.keys(updated).length === propositionCount) {
                     scrollToTiebreaker();
                   } else {
@@ -163,10 +201,10 @@ export default function Sheet() {
             ref={tiebreakerRef}
             tieBreakerQuestion={sheet.tieBreakerQuestion}
             onTouch={() => setTiebreakerTouched(true)}
+            initialValue={submission.tieBreaker}
           />
         </div>
 
-        {/* Sticky footer */}
         <footer className="fixed inset-x-0 bottom-0 z-30 bg-base-100 pt-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl">
           <div className="max-w-4xl mx-auto px-4">
             <button
@@ -179,14 +217,12 @@ export default function Sheet() {
               {isSubmitting ? (
                 <>
                   <span className="loading loading-spinner"></span>
-                  Hoisting the Colors...
+                  Saving Changes...
                 </>
               ) : !allPropositionsSelected ? (
                 `Pick ${propositionCount - selectionCount} More to Continue`
-              ) : !tiebreakerTouched ? (
-                "⚔️ Set Your Tie Breaker to Continue"
               ) : (
-                "⚓ Submit Your Picks & Set Sail!"
+                "Save Updated Picks"
               )}
             </button>
           </div>
