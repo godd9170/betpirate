@@ -10,6 +10,7 @@ type NewSubmission = {
   sailorId: string;
   selections: Selection[];
   tieBreaker: number;
+  nickname?: string;
 };
 
 type UpdateSubmission = {
@@ -56,17 +57,24 @@ export type SubmissionPreview = {
 
 // todo: use createMany when Postgres is used
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany-1
-export const createSubmission = ({
+export const createSubmission = async ({
   sheetId,
   sailorId,
   selections = [],
   tieBreaker,
+  nickname,
 }: NewSubmission) => {
+  const existingCount = await db.submission.count({
+    where: { sheetId, sailorId },
+  });
+  const resolvedNickname = nickname ?? `Submission ${existingCount + 1}`;
+
   return db.submission.create({
     data: {
       sheetId,
       sailorId,
       tieBreaker,
+      nickname: resolvedNickname,
       selections: {
         create: selections,
       },
@@ -168,7 +176,7 @@ export const readSheetSubmissions = (sheetId: string) => {
 };
 
 export const readSheetSubmissionsPreview = (
-  sheetId: string
+  sheetId: string,
 ): Promise<SubmissionPreview[]> => {
   return db.submission.findMany({
     where: { sheetId },
@@ -193,9 +201,8 @@ export const readSheetSubmissionsPreview = (
 
 export const readSheetSubmissionRanking = async (
   sheetId: string,
-  submissionId: string
+  submissionId: string,
 ) => {
-  console.log("SHEETIDL ", sheetId);
   let result: { correctCount: number; tieCount: number; rank: number }[] =
     (await db.$queryRaw`
   WITH SubmissionScores AS (
@@ -233,7 +240,6 @@ export const readSheetSubmissionRanking = async (
   if (result.length === 0) {
     result = [{ correctCount: 0, tieCount: 0, rank: 1 }];
   }
-  console.log(">>>>>>>>RESULT: ", result);
   return (
     result as { correctCount: number; tieCount: number; rank: number }[]
   )[0];
@@ -243,5 +249,59 @@ export const setSubmissionPaid = (id: string, isPaid: boolean) => {
   return db.submission.update({
     where: { id },
     data: { isPaid },
+  });
+};
+
+export const updateSubmissionSelection = async (
+  submissionId: string,
+  optionId: string,
+  sheetId: string,
+) => {
+  const option = await db.propositionOption.findUnique({
+    where: { id: optionId },
+    select: { propositionId: true, proposition: { select: { sheetId: true } } },
+  });
+
+  if (!option || option.proposition.sheetId !== sheetId) {
+    throw new Error("Option not found");
+  }
+
+  const existingSelection = await db.propositionSelection.findFirst({
+    where: {
+      submissionId,
+      option: { propositionId: option.propositionId },
+    },
+    select: { id: true },
+  });
+
+  if (existingSelection) {
+    return db.propositionSelection.update({
+      where: { id: existingSelection.id },
+      data: { optionId },
+    });
+  }
+
+  return db.propositionSelection.create({
+    data: {
+      submissionId,
+      optionId,
+    },
+  });
+};
+
+export const updateSubmissionTieBreaker = (id: string, tieBreaker: number) => {
+  return db.submission.update({
+    where: { id },
+    data: { tieBreaker },
+  });
+};
+
+export const updateSubmissionNickname = (
+  id: string,
+  nickname: string | null,
+) => {
+  return db.submission.update({
+    where: { id },
+    data: { nickname },
   });
 };
