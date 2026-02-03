@@ -28,6 +28,8 @@ const PropositionCard = forwardRef<
             src={proposition.imageUrl}
             alt={proposition?.shortTitle || ""}
             className="w-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
         </figure>
       )}

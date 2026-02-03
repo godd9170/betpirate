@@ -74,6 +74,7 @@ model PropositionOption {
   id         String  @id @default(cuid())
   title      String
   shortTitle String?
+  imageUrl   String?
 
   proposition   Proposition @relation(name: "options", fields: [propositionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   propositionId String

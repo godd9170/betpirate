@@ -11,6 +11,8 @@ export default function PropositionCardOption({
   onChange: ChangeEventHandler<HTMLInputElement>;
   percentage: number | null;
 }) {
+  const hasImage = Boolean(option?.imageUrl);
+  const optionTitle = option?.shortTitle || option?.title;
   return (
     <div className="w-full">
       <input
@@ -22,13 +24,24 @@ export default function PropositionCardOption({
         onChange={onChange}
       />
       <label
-        className="btn btn-outline w-full h-24 flex-col gap-1 normal-case text-base font-semibold
+        className={`btn btn-outline w-full normal-case text-base font-semibold ${
+          hasImage ? "h-32" : "h-24"
+        }
              peer-checked:btn-primary peer-checked:font-bold peer-checked:text-lg
-             transition-all hover:scale-[1.02] peer-checked:scale-[1.03]"
+             transition-all hover:scale-[1.02] peer-checked:scale-[1.03]`}
         htmlFor={option?.id}
       >
-        <span className="relative">
-          {option?.title}
+        <span className="relative flex w-full flex-col items-center gap-2">
+          {hasImage && (
+            <img
+              src={option.imageUrl}
+              alt={option?.shortTitle || option?.title}
+              className="h-16 w-full rounded-lg object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          <span>{optionTitle}</span>
           <span className="absolute -top-3 -right-6 opacity-0 peer-checked:opacity-100 transition-opacity text-2xl">
             ✓
           </span>

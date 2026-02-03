@@ -27,11 +27,28 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 export default function SheetEdit() {
   const { sheet, submissions } = useLoaderData<typeof loader>();
   return (
-    <div className="mx-2">
-      <StatusSelector sheet={sheet} />
-      {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
-      {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
-      {sheet.status !== "DRAFT" && <Submissions submissions={submissions} />}
+    <div className="min-h-[100dvh] bg-base-200">
+      <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div className="card bg-base-100 shadow-2xl">
+          <div className="card-body gap-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="text-3xl font-black">Sheet Admin</h1>
+                <p className="text-sm text-base-content/70">
+                  Build props, upload imagery, and manage submissions.
+                </p>
+              </div>
+              <div className="w-full md:w-64">
+                <StatusSelector sheet={sheet} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
+        {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
+        {sheet.status !== "DRAFT" && <Submissions submissions={submissions} />}
+      </div>
     </div>
   );
 }

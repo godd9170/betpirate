@@ -10,13 +10,15 @@ import invariant from "tiny-invariant";
 
 export const schema = z.object({
   title: z.string(),
-  subtitle: z.string(),
-  shortTitle: z.string(),
+  subtitle: z.string().optional(),
+  shortTitle: z.string().optional(),
+  imageUrl: z.string().optional(),
   options: z.array(
     z.object({
       id: z.string().optional(),
       title: z.string(),
-      shortTitle: z.string(),
+      shortTitle: z.string().optional(),
+      imageUrl: z.string().optional(),
     })
   ),
 });
@@ -32,15 +34,24 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   if (parsedForm.status !== 'success') {
     return json(parsedForm);
   }
-  const { options, ...proposition } = parsedForm.value;
-  await updateProposition(propositionId, proposition);
+  const { options, imageUrl, ...proposition } = parsedForm.value;
+  await updateProposition(propositionId, {
+    ...proposition,
+    imageUrl: imageUrl?.trim() ? imageUrl.trim() : null,
+  });
 
   // todo: there must be a way to do this nested, or we should
   // at least move this into the model
-  await options.forEach(async ({ id, ...option }) => {
-    if (!!id) await updatePropositionOption(id, option);
-    else await createPropositionOption(propositionId, option);
-  });
+  await Promise.all(
+    options.map(async ({ id, ...option }) => {
+      const payload = {
+        ...option,
+        imageUrl: option.imageUrl?.trim() ? option.imageUrl.trim() : null,
+      };
+      if (!!id) return updatePropositionOption(id, payload);
+      return createPropositionOption(propositionId, payload);
+    })
+  );
 
   return "success";
 };
