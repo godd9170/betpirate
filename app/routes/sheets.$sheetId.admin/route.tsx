@@ -6,6 +6,7 @@ import { authenticator } from "~/services/auth.server";
 import StatusSelector from "./components/StatusSelector";
 import EditSheet from "./components/EditSheet";
 import MarkSheet from "./components/MarkSheet";
+import SheetSchedule from "./components/SheetSchedule";
 import { readSailor } from "~/models/sailor.server";
 import Submissions from "./components/Submissions";
 import { readSheetSubmissions } from "~/models/submission.server";
@@ -44,6 +45,8 @@ export default function SheetEdit() {
             </div>
           </div>
         </div>
+
+        <SheetSchedule sheet={sheet} />
 
         {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
         {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
