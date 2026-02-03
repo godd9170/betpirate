@@ -41,8 +41,8 @@ export default function CreatePropositionCard({
                 showSuccess
                   ? "badge-success"
                   : isSubmitting
-                    ? "badge-warning"
-                    : "badge-outline badge-primary"
+                  ? "badge-warning"
+                  : "badge-outline badge-primary"
               }`}
             >
               {showSuccess ? "Saved" : isSubmitting ? "Saving" : "New"}
@@ -166,7 +166,11 @@ export default function CreatePropositionCard({
             </div>
           </div>
 
-          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Creating..." : "Create question"}
           </button>
         </div>
