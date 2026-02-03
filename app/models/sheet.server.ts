@@ -5,6 +5,7 @@ type UpdateSheet = {
   title?: string;
   subTitle?: string;
   status?: "DRAFT" | "OPEN" | "CLOSED";
+  closesAt?: Date | null;
 };
 
 export type SheetWithPropositions = Prisma.SheetGetPayload<{
