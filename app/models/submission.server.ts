@@ -38,6 +38,16 @@ export type SelectionWithPropositionOption =
     };
   }>;
 
+export type SubmissionPreview = {
+  id: string;
+  createdAt: Date;
+  isPaid: boolean;
+  sailor: {
+    id: string;
+    username: string | null;
+  };
+};
+
 // todo: use createMany when Postgres is used
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany-1
 export const createSubmission = ({
@@ -123,6 +133,30 @@ export const readSheetSubmissions = (sheetId: string) => {
               proposition: true,
             },
           },
+        },
+      },
+    },
+    orderBy: [
+      {
+        createdAt: "desc",
+      },
+    ],
+  });
+};
+
+export const readSheetSubmissionsPreview = (
+  sheetId: string
+): Promise<SubmissionPreview[]> => {
+  return db.submission.findMany({
+    where: { sheetId },
+    select: {
+      id: true,
+      createdAt: true,
+      isPaid: true,
+      sailor: {
+        select: {
+          id: true,
+          username: true,
         },
       },
     },
