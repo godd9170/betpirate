@@ -1,4 +1,5 @@
 import { useFetcher } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
 import ImageUploadField from "../ImageUploadField";
 
 export default function CreatePropositionCard({
@@ -6,9 +7,26 @@ export default function CreatePropositionCard({
 }: {
   sheetId: string;
 }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ ok?: boolean }>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [resetKey, setResetKey] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const isSubmitting = fetcher.state !== "idle";
+
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data?.ok) return;
+    formRef.current?.reset();
+    setResetKey((value) => value + 1);
+    setShowSuccess(true);
+    const timeout = setTimeout(() => setShowSuccess(false), 2500);
+    return () => clearTimeout(timeout);
+  }, [fetcher.state, fetcher.data]);
   return (
-    <fetcher.Form method="post" action={`/sheets/${sheetId}/propositions`}>
+    <fetcher.Form
+      method="post"
+      action={`/sheets/${sheetId}/propositions`}
+      ref={formRef}
+    >
       <div className="card w-full border border-dashed border-primary/40 bg-base-100 shadow-xl">
         <div className="card-body gap-4">
           <div className="flex items-start justify-between">
@@ -18,7 +36,17 @@ export default function CreatePropositionCard({
                 Add the next prop to this sheet.
               </p>
             </div>
-            <span className="badge badge-outline badge-primary">New</span>
+            <span
+              className={`badge ${
+                showSuccess
+                  ? "badge-success"
+                  : isSubmitting
+                    ? "badge-warning"
+                    : "badge-outline badge-primary"
+              }`}
+            >
+              {showSuccess ? "Saved" : isSubmitting ? "Saving" : "New"}
+            </span>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -58,6 +86,7 @@ export default function CreatePropositionCard({
           </label>
 
           <ImageUploadField
+            key={`question-${resetKey}`}
             sheetId={sheetId}
             name="imageUrl"
             label="Question image"
@@ -92,6 +121,7 @@ export default function CreatePropositionCard({
                   />
                 </label>
                 <ImageUploadField
+                  key={`option-a-${resetKey}`}
                   sheetId={sheetId}
                   name="options[0].imageUrl"
                   label="Option image"
@@ -125,6 +155,7 @@ export default function CreatePropositionCard({
                   />
                 </label>
                 <ImageUploadField
+                  key={`option-b-${resetKey}`}
                   sheetId={sheetId}
                   name="options[1].imageUrl"
                   label="Option image"
@@ -135,8 +166,8 @@ export default function CreatePropositionCard({
             </div>
           </div>
 
-          <button className="btn btn-primary" type="submit">
-            Create question
+          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create question"}
           </button>
         </div>
       </div>

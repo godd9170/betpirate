@@ -12,7 +12,6 @@ export default function PropositionCardOption({
   percentage: number | null;
 }) {
   const hasImage = Boolean(option?.imageUrl);
-  const optionTitle = option?.shortTitle || option?.title;
   return (
     <div className="w-full">
       <input
@@ -41,7 +40,7 @@ export default function PropositionCardOption({
               decoding="async"
             />
           )}
-          <span>{optionTitle}</span>
+          <span>{option?.title}</span>
           <span className="absolute -top-3 -right-6 opacity-0 peer-checked:opacity-100 transition-opacity text-2xl">
             ✓
           </span>

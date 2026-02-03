@@ -40,5 +40,5 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       imageUrl: option.imageUrl?.trim() ? option.imageUrl.trim() : null,
     })),
   });
-  return "success";
+  return json({ ok: true });
 };

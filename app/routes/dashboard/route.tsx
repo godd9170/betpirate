@@ -1,17 +1,20 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { readSheet, readSheetDashboard } from "~/models/sheet.server";
+import {
+  readLatestSheet,
+  readSheet,
+  readSheetDashboard,
+} from "~/models/sheet.server";
 import PropMatrix from "./components/PropMatrix";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  const sheetId = process.env.DEFAULT_SHEET_ID;
-  invariant(sheetId, `sheetId is required`);
-
-  const sheet = await readSheet(sheetId);
+  const latestSheet = await readLatestSheet();
+  invariant(latestSheet, "No sheet exists");
+  const sheet = await readSheet(latestSheet.id);
   invariant(!!sheet, "No sheet exists with this id");
 
-  const leaders = await readSheetDashboard(sheetId);
+  const leaders = await readSheetDashboard(latestSheet.id);
 
   return json({ sheet, leaders });
 };

@@ -11,6 +11,7 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 import ProfilePictureUpload from "~/components/ProfilePictureUpload";
 import { readSailor, updateSailor } from "~/models/sailor.server";
+import { readLatestSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 import { dataUrlToBuffer, compressProfilePicture } from "~/utils/image.server";
 
@@ -67,7 +68,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     profilePicture: profilePictureBuffer,
   });
 
-  return redirect(`/sheets/${process.env.DEFAULT_SHEET_ID}/submissions/new`);
+  const latestSheet = await readLatestSheet();
+  invariant(latestSheet, "No sheet exists");
+  return redirect(`/sheets/${latestSheet.id}/submissions/new`);
 };
 
 export default function OnBoard() {

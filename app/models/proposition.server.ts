@@ -122,12 +122,24 @@ export const reorderPropositions = async (
     orderedIds[index],
   ];
 
-  await db.$transaction(
-    orderedIds.map((id, orderIndex) =>
-      db.proposition.update({
-        where: { id },
-        data: { order: orderIndex + 1 },
-      })
-    )
-  );
+  await db.$transaction(async (tx) => {
+    // Two-phase update avoids hitting the (order, sheetId) unique constraint.
+    await Promise.all(
+      orderedIds.map((id, orderIndex) =>
+        tx.proposition.update({
+          where: { id },
+          data: { order: orderIndex + 1 + 1000 },
+        })
+      )
+    );
+
+    await Promise.all(
+      orderedIds.map((id, orderIndex) =>
+        tx.proposition.update({
+          where: { id },
+          data: { order: orderIndex + 1 },
+        })
+      )
+    );
+  });
 };
