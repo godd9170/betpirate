@@ -17,6 +17,7 @@ import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import SheetInstructions from "./components/SheetInstructions";
 import { readSailor } from "~/models/sailor.server";
+import { sendSubmissionConfirmationSMS } from "~/services/sms.server";
 
 export const schema = z.object({
   selections: z.array(z.object({ optionId: z.string() })),
@@ -65,6 +66,15 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     selections: submissionParse.value.selections,
     tieBreaker: submissionParse.value.tieBreaker,
   });
+
+  // Send confirmation SMS (failure does not block submission)
+  const sailor = await readSailor(sailorId);
+  if (sailor?.phone) {
+    await sendSubmissionConfirmationSMS({
+      phone: sailor.phone,
+      sheetName: submission.sheet.title,
+    });
+  }
 
   return redirect(`/sheets/${params.sheetId}/submissions`);
 };
