@@ -19,7 +19,7 @@ export const schema = z.object({
       title: z.string(),
       shortTitle: z.string().optional(),
       imageUrl: z.string().optional(),
-    })
+    }),
   ),
 });
 
@@ -27,17 +27,21 @@ export const schema = z.object({
 // type PropositionForm = z.infer<typeof schema>;
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
+  const normalizeImageUrl = (value?: string) =>
+    value === undefined ? undefined : value.trim() ? value.trim() : null;
+
   const { sheetId, propositionId } = params;
   invariant(!!propositionId, "missing proposition id");
   const formData = await request.formData();
   const parsedForm = parseWithZod(formData, { schema });
-  if (parsedForm.status !== 'success') {
+  if (parsedForm.status !== "success") {
     return json(parsedForm);
   }
   const { options, imageUrl, ...proposition } = parsedForm.value;
   await updateProposition(propositionId, {
     ...proposition,
-    imageUrl: imageUrl?.trim() ? imageUrl.trim() : null,
+    // Only update when the field is present; preserve existing value otherwise.
+    imageUrl: normalizeImageUrl(imageUrl),
   });
 
   // todo: there must be a way to do this nested, or we should
@@ -46,11 +50,11 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     options.map(async ({ id, ...option }) => {
       const payload = {
         ...option,
-        imageUrl: option.imageUrl?.trim() ? option.imageUrl.trim() : null,
+        imageUrl: normalizeImageUrl(option.imageUrl),
       };
       if (!!id) return updatePropositionOption(id, payload);
       return createPropositionOption(propositionId, payload);
-    })
+    }),
   );
 
   return "success";
