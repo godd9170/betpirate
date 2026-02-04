@@ -1,6 +1,6 @@
 import { Proposition, PropositionOption } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ImageUploadField from "../ImageUploadField";
 
 const MIN_OPTIONS = 2;
@@ -31,8 +31,8 @@ export default function EditPropositionCard({
   const action = `/sheets/${sheetId}/propositions/${proposition.id}`;
   const orderAction = `/sheets/${sheetId}/propositions/order`;
   const nextOptionKey = useRef(0);
-  const buildInitialOptions = () => {
-    const seeded = proposition.options.map((option) => ({
+  const buildInitialOptions = (): OptionItem[] => {
+    const seeded: OptionItem[] = proposition.options.map((option) => ({
       key: option.id,
       id: option.id,
       data: option,
@@ -44,6 +44,38 @@ export default function EditPropositionCard({
     return results;
   };
   const [options, setOptions] = useState<OptionItem[]>(buildInitialOptions);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const collapseAfterSave = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const isSubmitting = updateFetcher.state !== "idle";
+  const hasError = Boolean(
+    updateFetcher.data &&
+      updateFetcher.data !== "success" &&
+      typeof updateFetcher.data === "object"
+  );
+  const isSuccess = updateFetcher.data === "success";
+
+  // Handle success state with timeout, and collapse if requested
+  useEffect(() => {
+    if (updateFetcher.state !== "idle" || !isSuccess) return;
+    setShowSuccess(true);
+    setIsDirty(false);
+    if (collapseAfterSave.current) {
+      collapseAfterSave.current = false;
+      setIsExpanded(false);
+    }
+    const timeout = setTimeout(() => setShowSuccess(false), 2500);
+    return () => clearTimeout(timeout);
+  }, [updateFetcher.state, isSuccess]);
+
+  const handleSaveAndCollapse = () => {
+    if (!formRef.current) return;
+    collapseAfterSave.current = true;
+    formRef.current.requestSubmit();
+  };
 
   const addOption = () => {
     setOptions((current) => [
@@ -73,6 +105,74 @@ export default function EditPropositionCard({
     optionIndex < 26
       ? String.fromCharCode(65 + optionIndex)
       : `${optionIndex + 1}`;
+
+  // Collapsed view
+  if (!isExpanded) {
+    return (
+      <div className="card w-full bg-base-100 shadow-xl">
+        <div className="card-body gap-3 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="badge badge-primary badge-lg font-bold shrink-0">
+                #{index + 1}
+              </div>
+              {proposition.imageUrl && (
+                <div className="h-10 w-16 rounded-lg overflow-hidden border border-base-300 shrink-0">
+                  <img
+                    src={proposition.imageUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="font-semibold truncate">{proposition.title}</p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <orderFetcher.Form
+                method="post"
+                action={orderAction}
+                className="flex items-center gap-1"
+              >
+                <input
+                  type="hidden"
+                  name="propositionId"
+                  value={proposition.id}
+                />
+                <button
+                  type="submit"
+                  name="direction"
+                  value="up"
+                  className="btn btn-sm btn-ghost"
+                  disabled={index === 0}
+                >
+                  ↑
+                </button>
+                <button
+                  type="submit"
+                  name="direction"
+                  value="down"
+                  className="btn btn-sm btn-ghost"
+                  disabled={index === totalCount - 1}
+                >
+                  ↓
+                </button>
+              </orderFetcher.Form>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setIsExpanded(true)}
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Expanded view
   return (
     <div className="card w-full bg-base-100 shadow-xl">
       <div className="card-body gap-4">
@@ -84,42 +184,103 @@ export default function EditPropositionCard({
             <div>
               <p className="text-sm font-semibold">Question</p>
               <p className="text-xs text-base-content/60">
-                Use the arrows to reorder
+                Edit the question details below
               </p>
             </div>
+            {showSuccess && (
+              <span className="badge badge-success">Saved</span>
+            )}
+            {hasError && <span className="badge badge-error">Error</span>}
+            {isSubmitting && (
+              <span className="badge badge-warning">Saving...</span>
+            )}
           </div>
-          <orderFetcher.Form
-            method="post"
-            action={orderAction}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="hidden"
-              name="propositionId"
-              value={proposition.id}
-            />
-            <button
-              type="submit"
-              name="direction"
-              value="up"
-              className="btn btn-sm btn-ghost"
-              disabled={index === 0}
+          <div className="flex items-center gap-2">
+            <orderFetcher.Form
+              method="post"
+              action={orderAction}
+              className="flex items-center gap-2"
             >
-              ↑ Move up
-            </button>
-            <button
-              type="submit"
-              name="direction"
-              value="down"
-              className="btn btn-sm btn-ghost"
-              disabled={index === totalCount - 1}
-            >
-              ↓ Move down
-            </button>
-          </orderFetcher.Form>
+              <input
+                type="hidden"
+                name="propositionId"
+                value={proposition.id}
+              />
+              <button
+                type="submit"
+                name="direction"
+                value="up"
+                className="btn btn-sm btn-ghost"
+                disabled={index === 0}
+              >
+                ↑ Move up
+              </button>
+              <button
+                type="submit"
+                name="direction"
+                value="down"
+                className="btn btn-sm btn-ghost"
+                disabled={index === totalCount - 1}
+              >
+                ↓ Move down
+              </button>
+            </orderFetcher.Form>
+            {isDirty ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                onClick={handleSaveAndCollapse}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save & Collapse"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={() => setIsExpanded(false)}
+              >
+                Collapse
+              </button>
+            )}
+          </div>
         </div>
 
-        <updateFetcher.Form method="post" action={action} className="space-y-5">
+        {hasError && (
+          <div className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div className="flex flex-col gap-2">
+              <span className="font-semibold">Failed to save</span>
+              <pre className="text-xs bg-error/20 p-2 rounded overflow-x-auto max-w-full">
+                {JSON.stringify(
+                  (updateFetcher.data as { error?: unknown })?.error,
+                  null,
+                  2
+                )}
+              </pre>
+            </div>
+          </div>
+        )}
+
+        <updateFetcher.Form
+          ref={formRef}
+          method="post"
+          action={action}
+          className="space-y-5"
+          onChange={() => setIsDirty(true)}
+        >
           <div className="grid gap-4 md:grid-cols-2">
             <label className="form-control w-full">
               <div className="label">
@@ -255,8 +416,23 @@ export default function EditPropositionCard({
             ))}
           </div>
 
-          <button className="btn btn-secondary" type="submit">
-            Update question
+          <button
+            className={`btn w-full ${hasError ? "btn-error" : "btn-secondary"}`}
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="loading loading-spinner loading-xs"></span>
+                Saving...
+              </>
+            ) : showSuccess ? (
+              "Saved!"
+            ) : hasError ? (
+              "Retry Update"
+            ) : (
+              "Save"
+            )}
           </button>
         </updateFetcher.Form>
       </div>
