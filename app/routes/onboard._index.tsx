@@ -6,20 +6,19 @@ import {
   redirect,
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import ProfilePictureUpload from "~/components/ProfilePictureUpload";
 import { readSailor, updateSailor } from "~/models/sailor.server";
 import { readLatestSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
-import { dataUrlToBuffer, compressProfilePicture } from "~/utils/image.server";
 
 export const schema = z.object({
   username: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  profilePicture: z.string().optional(),
+  profilePictureUrl: z.string().optional(),
 });
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -29,17 +28,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sailor = await readSailor(sailorId);
   if (!sailor) return redirect("/login");
 
-  // Convert Buffer to base64 data URL for profile picture preview
-  let profilePictureDataUrl: string | null = null;
-  if (sailor.profilePicture) {
-    const base64 = sailor.profilePicture.toString("base64");
-    profilePictureDataUrl = `data:image/jpeg;base64,${base64}`;
-  }
-
   return json({
     sailor: {
       ...sailor,
-      profilePictureDataUrl,
+      profilePictureUrl: sailor.profilePictureUrl ?? null,
     },
   });
 };
@@ -54,18 +46,13 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
   invariant(sailorForm.status === "success", `missing required parameters`);
 
-  // Process profile picture if provided
-  let profilePictureBuffer: Buffer | undefined;
-  if (sailorForm.value.profilePicture) {
-    const imageBuffer = dataUrlToBuffer(sailorForm.value.profilePicture);
-    profilePictureBuffer = await compressProfilePicture(imageBuffer);
-  }
+  const profilePictureUrl = sailorForm.value.profilePictureUrl?.trim();
 
   await updateSailor(sailorId, {
     username: sailorForm.value.username,
     firstName: sailorForm.value.firstName,
     lastName: sailorForm.value.lastName,
-    profilePicture: profilePictureBuffer,
+    profilePictureUrl: profilePictureUrl ? profilePictureUrl : null,
   });
 
   const latestSheet = await readLatestSheet();
@@ -76,8 +63,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function OnBoard() {
   const { sailor } = useLoaderData<typeof loader>();
   const [username, setUsername] = useState<string>(sailor.username || "");
-  const [profilePicture, setProfilePicture] = useState<string | null>(
-    sailor.profilePictureDataUrl || null,
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    sailor.profilePictureUrl || null,
   );
 
   return (
@@ -93,13 +80,13 @@ export default function OnBoard() {
           </div>
 
           <ProfilePictureUpload
-            onImageChange={setProfilePicture}
-            currentImage={sailor.profilePictureDataUrl}
+            onImageChange={setProfilePictureUrl}
+            currentImage={sailor.profilePictureUrl}
           />
           <input
             type="hidden"
-            name="profilePicture"
-            value={profilePicture || ""}
+            name="profilePictureUrl"
+            value={profilePictureUrl || ""}
           />
 
           <fieldset className="flex w-full gap-2">

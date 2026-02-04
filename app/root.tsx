@@ -24,6 +24,7 @@ const emptySailor: Sailor = {
   phone: "",
   firstName: null,
   lastName: null,
+  profilePictureUrl: null,
   admin: false,
 };
 

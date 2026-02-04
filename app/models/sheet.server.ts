@@ -22,6 +22,7 @@ export type SheetLeader = {
   submissionId: string;
   sailorId: string;
   username: string;
+  profilePictureUrl: string | null;
   correct: number;
   ranking: number;
 };
@@ -100,6 +101,7 @@ export const readSheetLeaders = async (
     su.id as "submissionId",
     sa.id as "sailorId",
     sa.username as "username", 
+    sa."profilePictureUrl" as "profilePictureUrl",
     COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
     RANK () OVER ( 
       ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
@@ -110,7 +112,7 @@ export const readSheetLeaders = async (
     join "Submission" su on ps."submissionId" = su.id
     join "Sailor" sa on su."sailorId" = sa.id
     where su."sheetId" = ${sheetId}
-    group by su.id, sa.id, sa.username
+    group by su.id, sa.id, sa.username, sa."profilePictureUrl"
   `;
 };
 
@@ -165,6 +167,7 @@ export const readSheetDashboard = async (
     su.id as "submissionId",
     sa.id as "sailorId",
     sa.username as "username", 
+    sa."profilePictureUrl" as "profilePictureUrl",
     COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
     RANK () OVER ( 
       ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
@@ -175,7 +178,7 @@ export const readSheetDashboard = async (
     join "Submission" su on ps."submissionId" = su.id
     join "Sailor" sa on su."sailorId" = sa.id
     where su."sheetId" = ${sheetId}
-    group by su.id, sa.id, sa.username
+    group by su.id, sa.id, sa.username, sa."profilePictureUrl"
   `;
 
   const leaderIds = leaders.map((leader) => leader.submissionId);

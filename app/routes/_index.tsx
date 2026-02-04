@@ -15,7 +15,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return;
   }
 
-  if (!sailor.username || !sailor.profilePicture) return redirect("/onboard");
+  if (!sailor.username || !sailor.profilePictureUrl) {
+    return redirect("/onboard");
+  }
   const latestSheet = await readLatestSheet();
   invariant(latestSheet, "No sheet exists");
   return redirect(`/sheets/${latestSheet.id}`);
