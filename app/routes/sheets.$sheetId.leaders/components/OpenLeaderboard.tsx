@@ -178,6 +178,8 @@ export default function OpenLeaderboard({
                       <img
                         src={`/sailors/${submission.sailor.id}/profile-picture`}
                         alt={submission.sailor.username ?? "Sailor"}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
                       />
                       <div className="min-w-0">
@@ -218,6 +220,8 @@ export default function OpenLeaderboard({
                           <img
                             src={`/sailors/${submission.sailor.id}/profile-picture`}
                             alt={submission.sailor.username ?? "Sailor"}
+                            width={40}
+                            height={40}
                             className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
                           />
                           <div className="min-w-0">

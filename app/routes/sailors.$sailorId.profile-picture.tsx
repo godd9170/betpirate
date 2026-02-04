@@ -1,7 +1,5 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { readSailor } from "~/models/sailor.server";
-import fs from "node:fs/promises";
-import path from "node:path";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { sailorId } = params;
@@ -13,15 +11,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const sailor = await readSailor(sailorId);
 
   if (!sailor?.profilePicture) {
-    const fallbackPath = path.resolve(process.cwd(), "app/public/pirate.png");
-    const fallback = await fs.readFile(fallbackPath);
-
-    return new Response(fallback, {
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
+    return redirect("/fallback-avatar.svg");
   }
 
   return new Response(sailor.profilePicture, {
