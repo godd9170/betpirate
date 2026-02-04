@@ -46,7 +46,7 @@ export default function SheetEdit() {
           </div>
         </div>
 
-        <SheetSchedule sheet={sheet} />
+        {sheet.status !== "CLOSED" && <SheetSchedule sheet={sheet} />}
 
         {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
         {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}

@@ -1,5 +1,6 @@
 import { Proposition, PropositionOption } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
+import { useEffect, useMemo, useState } from "react";
 import ImageUploadField from "../ImageUploadField";
 
 export default function EditPropositionCard({
@@ -19,8 +20,38 @@ export default function EditPropositionCard({
   const orderFetcher = useFetcher({
     key: `${proposition.id}-order`,
   });
+  const [isExpanded, setIsExpanded] = useState(false);
   const action = `/sheets/${sheetId}/propositions/${proposition.id}`;
   const orderAction = `/sheets/${sheetId}/propositions/order`;
+  const submission = updateFetcher.data as
+    | {
+        status?: "error" | "success";
+        error?: Record<string, string[] | string | null> | null;
+      }
+    | undefined;
+
+  const updateErrors = useMemo(() => {
+    if (!submission || typeof submission !== "object" || !submission.error) {
+      return [];
+    }
+    const errors = Object.values(submission.error)
+      .flatMap((value) => {
+        if (!value) return [];
+        return Array.isArray(value) ? value : [value];
+      })
+      .filter((value) => value && value.trim());
+    return Array.from(new Set(errors));
+  }, [submission]);
+  const hasErrors =
+    !!submission &&
+    typeof submission === "object" &&
+    "error" in submission &&
+    !!submission.error;
+
+  useEffect(() => {
+    if (hasErrors) setIsExpanded(true);
+  }, [hasErrors]);
+
   return (
     <div className="card w-full bg-base-100 shadow-xl">
       <div className="card-body gap-4">
@@ -30,44 +61,113 @@ export default function EditPropositionCard({
               #{index + 1}
             </div>
             <div>
-              <p className="text-sm font-semibold">Question</p>
+              <p className="text-sm font-semibold">
+                {isExpanded
+                  ? "Question"
+                  : proposition.title || "Untitled question"}
+              </p>
               <p className="text-xs text-base-content/60">
                 Use the arrows to reorder
               </p>
             </div>
           </div>
-          <orderFetcher.Form
-            method="post"
-            action={orderAction}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="hidden"
-              name="propositionId"
-              value={proposition.id}
-            />
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              type="submit"
-              name="direction"
-              value="up"
-              className="btn btn-sm btn-ghost"
-              disabled={index === 0}
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={() => setIsExpanded((value) => !value)}
+              aria-expanded={isExpanded}
             >
-              ↑ Move up
+              {isExpanded ? "Collapse" : "Expand"}
             </button>
-            <button
-              type="submit"
-              name="direction"
-              value="down"
-              className="btn btn-sm btn-ghost"
-              disabled={index === totalCount - 1}
+            <orderFetcher.Form
+              method="post"
+              action={orderAction}
+              className="flex items-center gap-2"
             >
-              ↓ Move down
-            </button>
-          </orderFetcher.Form>
+              <input
+                type="hidden"
+                name="propositionId"
+                value={proposition.id}
+              />
+              <button
+                type="submit"
+                name="direction"
+                value="up"
+                className="btn btn-sm btn-ghost"
+                disabled={index === 0}
+              >
+                ↑ Move up
+              </button>
+              <button
+                type="submit"
+                name="direction"
+                value="down"
+                className="btn btn-sm btn-ghost"
+                disabled={index === totalCount - 1}
+              >
+                ↓ Move down
+              </button>
+            </orderFetcher.Form>
+          </div>
         </div>
 
-        <updateFetcher.Form method="post" action={action} className="space-y-5">
+        {hasErrors && (
+          <div className="alert alert-error text-sm">
+            <div className="space-y-1">
+              <p className="font-semibold">Unable to save question.</p>
+              {updateErrors.length > 0 ? (
+                <ul className="list-disc pl-5">
+                  {updateErrors.map((error) => (
+                    <li key={error}>{error}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Please review the fields and try again.</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!isExpanded && (
+          <div className="flex flex-col gap-3 rounded-lg border border-base-200 bg-base-200/40 p-4 md:flex-row md:items-center">
+            <div className="flex items-center gap-4">
+              <div className="avatar">
+                <div className="h-16 w-16 rounded">
+                  {proposition.imageUrl ? (
+                    <img
+                      src={proposition.imageUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center rounded bg-base-200 text-xs text-base-content/60">
+                      No image
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                {proposition.shortTitle ? (
+                  <p className="text-xs text-base-content/60">
+                    {proposition.shortTitle}
+                  </p>
+                ) : proposition.subtitle ? (
+                  <p className="text-xs text-base-content/60">
+                    {proposition.subtitle}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <updateFetcher.Form
+          method="post"
+          action={action}
+          className={isExpanded ? "space-y-5" : "hidden"}
+        >
           <div className="grid gap-4 md:grid-cols-2">
             <label className="form-control w-full">
               <div className="label">
