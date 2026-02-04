@@ -4,6 +4,7 @@ type PropositionOption = {
   title: string;
   shortTitle?: string;
   imageUrl?: string | null;
+  order?: number;
 };
 
 type Proposition = {
@@ -93,6 +94,31 @@ export const createPropositionOption = (
     data: {
       propositionId,
       ...data,
+    },
+  });
+};
+
+export const deletePropositionOptions = (ids: string[]) => {
+  if (ids.length === 0) return;
+  return db.propositionOption.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+};
+
+export const readPropositionOptionIds = (propositionId: string) => {
+  return db.proposition.findUnique({
+    where: { id: propositionId },
+    select: {
+      answerId: true,
+      options: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 };

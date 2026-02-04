@@ -14,7 +14,10 @@ const defaultSheet = {
         shortTitle: "Coin toss",
         order: 1,
         options: {
-          create: [{ title: "Heads" }, { title: "Tails" }],
+          create: [
+            { title: "Heads", order: 1 },
+            { title: "Tails", order: 2 },
+          ],
         },
       },
       {
@@ -22,7 +25,10 @@ const defaultSheet = {
         shortTitle: "First score",
         order: 2,
         options: {
-          create: [{ title: "Home" }, { title: "Away" }],
+          create: [
+            { title: "Home", order: 1 },
+            { title: "Away", order: 2 },
+          ],
         },
       },
       {
@@ -30,7 +36,11 @@ const defaultSheet = {
         shortTitle: "Halftime",
         order: 3,
         options: {
-          create: [{ title: "Home" }, { title: "Away" }, { title: "Tie" }],
+          create: [
+            { title: "Home", order: 1 },
+            { title: "Away", order: 2 },
+            { title: "Tie", order: 3 },
+          ],
         },
       },
       {
@@ -38,7 +48,10 @@ const defaultSheet = {
         shortTitle: "Overtime",
         order: 4,
         options: {
-          create: [{ title: "Yes" }, { title: "No" }],
+          create: [
+            { title: "Yes", order: 1 },
+            { title: "No", order: 2 },
+          ],
         },
       },
     ],

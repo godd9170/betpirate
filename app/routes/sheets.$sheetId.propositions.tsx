@@ -38,8 +38,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     order: nextOrder,
     imageUrl: imageUrl?.trim() ? imageUrl.trim() : null,
     ...propositionValue,
-    options: options.map((option) => ({
+    options: options.map((option, index) => ({
       ...option,
+      order: index + 1,
       imageUrl: option.imageUrl?.trim() ? option.imageUrl.trim() : null,
     })),
   });

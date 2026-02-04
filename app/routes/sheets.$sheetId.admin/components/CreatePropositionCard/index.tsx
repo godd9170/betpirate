@@ -1,6 +1,12 @@
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ImageUploadField from "../ImageUploadField";
+
+const MIN_OPTIONS = 2;
+
+type OptionItem = {
+  key: number;
+};
 
 export default function CreatePropositionCard({
   sheetId,
@@ -12,15 +18,50 @@ export default function CreatePropositionCard({
   const [resetKey, setResetKey] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const isSubmitting = fetcher.state !== "idle";
+  const nextOptionKey = useRef(0);
+
+  const buildInitialOptions = useCallback(() => {
+    nextOptionKey.current = MIN_OPTIONS;
+    return Array.from({ length: MIN_OPTIONS }, (_, index) => ({
+      key: index,
+    }));
+  }, []);
+
+  const [options, setOptions] = useState<OptionItem[]>(buildInitialOptions);
+
+  const addOption = () => {
+    setOptions((current) => [
+      ...current,
+      { key: nextOptionKey.current++ },
+    ]);
+  };
+
+  const moveOption = (index: number, direction: "up" | "down") => {
+    setOptions((current) => {
+      const next = [...current];
+      const swapWith = direction === "up" ? index - 1 : index + 1;
+      if (swapWith < 0 || swapWith >= next.length) return current;
+      [next[index], next[swapWith]] = [next[swapWith], next[index]];
+      return next;
+    });
+  };
+
+  const removeOption = (index: number) => {
+    setOptions((current) => current.filter((_, idx) => idx !== index));
+  };
+
+  const optionLabel = (index: number) =>
+    index < 26 ? String.fromCharCode(65 + index) : `${index + 1}`;
 
   useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data?.ok) return;
     formRef.current?.reset();
     setResetKey((value) => value + 1);
+    setOptions(buildInitialOptions());
     setShowSuccess(true);
     const timeout = setTimeout(() => setShowSuccess(false), 2500);
     return () => clearTimeout(timeout);
-  }, [fetcher.state, fetcher.data]);
+  }, [fetcher.state, fetcher.data, buildInitialOptions]);
   return (
     <fetcher.Form
       method="post"
@@ -94,76 +135,84 @@ export default function CreatePropositionCard({
             variant="wide"
           />
 
-          <div className="divider">Options</div>
+          <div className="flex items-center justify-between">
+            <div className="divider flex-1">Options</div>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={addOption}
+            >
+              + Add option
+            </button>
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="card bg-base-200/70">
-              <div className="card-body gap-3 p-4">
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Option A</span>
+            {options.map((option, index) => (
+              <div key={option.key} className="card bg-base-200/70">
+                <div className="card-body gap-3 p-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">
+                      Option {optionLabel(index)}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        className="btn btn-xs btn-ghost"
+                        onClick={() => moveOption(index, "up")}
+                        disabled={index === 0}
+                      >
+                        Up
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-xs btn-ghost"
+                        onClick={() => moveOption(index, "down")}
+                        disabled={index === options.length - 1}
+                      >
+                        Down
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-xs btn-ghost text-error"
+                        onClick={() => removeOption(index)}
+                        disabled={options.length <= MIN_OPTIONS}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    name="options[0].title"
-                    className="input input-bordered w-full"
-                    placeholder="Heads"
+                  <label className="form-control w-full">
+                    <div className="label">
+                      <span className="label-text">Title</span>
+                    </div>
+                    <input
+                      type="text"
+                      name={`options[${index}].title`}
+                      className="input input-bordered w-full"
+                      placeholder="Heads"
+                    />
+                  </label>
+                  <label className="form-control w-full">
+                    <div className="label">
+                      <span className="label-text">Short title</span>
+                    </div>
+                    <input
+                      type="text"
+                      name={`options[${index}].shortTitle`}
+                      className="input input-bordered w-full"
+                      placeholder="Heads"
+                    />
+                  </label>
+                  <ImageUploadField
+                    key={`option-${option.key}-${resetKey}`}
+                    sheetId={sheetId}
+                    name={`options[${index}].imageUrl`}
+                    label="Option image"
+                    helpText="Displayed inside the option button."
+                    variant="square"
                   />
-                </label>
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Short title</span>
-                  </div>
-                  <input
-                    type="text"
-                    name="options[0].shortTitle"
-                    className="input input-bordered w-full"
-                    placeholder="Heads"
-                  />
-                </label>
-                <ImageUploadField
-                  key={`option-a-${resetKey}`}
-                  sheetId={sheetId}
-                  name="options[0].imageUrl"
-                  label="Option image"
-                  helpText="Displayed inside the option button."
-                  variant="square"
-                />
+                </div>
               </div>
-            </div>
-            <div className="card bg-base-200/70">
-              <div className="card-body gap-3 p-4">
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Option B</span>
-                  </div>
-                  <input
-                    type="text"
-                    name="options[1].title"
-                    className="input input-bordered w-full"
-                    placeholder="Tails"
-                  />
-                </label>
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Short title</span>
-                  </div>
-                  <input
-                    type="text"
-                    name="options[1].shortTitle"
-                    className="input input-bordered w-full"
-                    placeholder="Tails"
-                  />
-                </label>
-                <ImageUploadField
-                  key={`option-b-${resetKey}`}
-                  sheetId={sheetId}
-                  name="options[1].imageUrl"
-                  label="Option image"
-                  helpText="Displayed inside the option button."
-                  variant="square"
-                />
-              </div>
-            </div>
+            ))}
           </div>
 
           <button
