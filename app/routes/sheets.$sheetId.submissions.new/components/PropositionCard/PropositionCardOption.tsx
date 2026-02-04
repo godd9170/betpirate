@@ -14,6 +14,11 @@ export default function PropositionCardOption({
   isSelected?: boolean;
 }) {
   const hasImage = Boolean(option?.imageUrl);
+  const heightClass = hasImage ? "min-h-32" : "min-h-24";
+  const textSizeClass = hasImage ? "text-sm" : "text-base";
+  const selectedTextClass = hasImage
+    ? "peer-checked:text-base"
+    : "peer-checked:text-lg";
   return (
     <div className="w-full">
       <input
@@ -26,25 +31,25 @@ export default function PropositionCardOption({
         defaultChecked={isSelected}
       />
       <label
-        className={`btn btn-outline w-full h-24 flex-col gap-1 normal-case text-base font-semibold
-             peer-checked:btn-primary peer-checked:font-bold peer-checked:text-lg
-             transition-all hover:scale-[1.02] peer-checked:scale-[1.03] ${
-               hasImage ? "h-32" : "h-24"
-             }`}
+        className={`btn btn-outline w-full h-auto ${heightClass} flex-col gap-1 normal-case ${textSizeClass} font-semibold leading-tight overflow-hidden
+             peer-checked:btn-primary peer-checked:font-bold ${selectedTextClass}
+             transition-all hover:scale-[1.02] peer-checked:scale-[1.03]`}
         htmlFor={option?.id}
       >
-        <span className="relative flex w-full flex-col items-center gap-2">
+        <span className="relative flex w-full flex-col items-center gap-2 text-center">
           {hasImage && (
-            <img
-              src={option.imageUrl}
-              alt={option?.shortTitle || option?.title}
-              className="h-16 w-full rounded-lg object-cover"
-              loading="lazy"
-              decoding="async"
-            />
+            <span className="w-full overflow-hidden rounded-lg">
+              <img
+                src={option.imageUrl}
+                alt={option?.shortTitle || option?.title}
+                className="h-14 w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
           )}
-          <span>{option?.title}</span>
-          <span className="absolute -top-3 -right-6 opacity-0 peer-checked:opacity-100 transition-opacity text-2xl">
+          <span className="leading-snug">{option?.title}</span>
+          <span className="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 transition-opacity text-xl">
             ✓
           </span>
         </span>
