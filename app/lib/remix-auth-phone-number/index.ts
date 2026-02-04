@@ -67,22 +67,16 @@ export class PhoneNumberStrategy<User> extends Strategy<
     const formData = await request.formData();
     const payload = parseWithZod(formData, { schema: payloadSchema });
 
-    const handleFailureRedirect = async (message: string) => {
-      if (!options.failureRedirect) {
-        throw new Error("failureRedirect is not defined");
-      }
-      session.flash("error", { message });
-      const cookie = await sessionStorage.commitSession(session);
-      throw redirect(options.failureRedirect, {
-        headers: { "Set-Cookie": cookie },
-      });
+    const handleFailureRedirect = async (
+      message: string
+    ): Promise<never> => {
+      return this.failure(message, request, sessionStorage, options);
     };
 
     // if the phone number is not present or validation failed, we failure redirect
-    if (payload.status !== 'success' || !payload.value.phone) {
+    if (payload.status !== "success" || !payload.value.phone) {
       console.log("No Phone or validation failed");
-      await handleFailureRedirect("No phone number provided");
-      throw new Error(""); // tell .ts that phone will be safe below
+      return handleFailureRedirect("No phone number provided");
     }
 
     const phone = payload.value.phone;
@@ -90,7 +84,7 @@ export class PhoneNumberStrategy<User> extends Strategy<
     // if the phone number is not a valid format, we failure redirect
     if (!isValidPhoneNumber(phone, "CA")) {
       console.log("Invaid Number: ", phone);
-      await handleFailureRedirect("Invalid phone number");
+      return handleFailureRedirect("Invalid phone number");
     }
 
     // todo: normalize phone number for storage

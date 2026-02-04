@@ -4,13 +4,21 @@ import { useState } from "react";
 import Logo from "~/components/Logo";
 import PhoneNumberInput from "~/components/PhoneNumberInput";
 
-export default function PhoneNumberForm({ error }: { error: any }) {
+export default function PhoneNumberForm({
+  error,
+}: {
+  error?: { message?: string } | null;
+}) {
   const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   return (
     <div className="card card-sm w-96">
       <div className="card-body">
         <div>
-          {JSON.stringify(error)}
+          {error?.message ? (
+            <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error.message}
+            </div>
+          ) : null}
           <Form
             action="/login?index"
             method="post"
