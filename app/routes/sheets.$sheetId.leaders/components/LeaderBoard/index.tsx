@@ -83,6 +83,8 @@ export default function LeaderBoard({
                       <img
                         src={`/sailors/${leader.sailorId}/profile-picture`}
                         alt={leader.username}
+                        width={64}
+                        height={64}
                         className="sm:w-20 sm:h-20 w-16 h-16 rounded-full object-cover ring-4 ring-base-300 bg-accent"
                       />
                       <div className="text-center w-full">
