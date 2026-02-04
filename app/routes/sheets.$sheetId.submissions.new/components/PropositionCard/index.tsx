@@ -18,24 +18,27 @@ const PropositionCard = forwardRef<
     (sum, opt) => sum + (optionCounts[opt.id] ?? 0),
     0
   );
+  const hasImage = Boolean(proposition?.imageUrl);
   return (
     <div
       id={proposition.id}
-      className="card card-bordered bg-base-100 shadow-xl hover:shadow-2xl transition-shadow scroll-mt-24"
+      className={`card card-bordered bg-base-100 shadow-xl hover:shadow-2xl transition-shadow scroll-mt-24 ${
+        hasImage ? "lg:flex-row" : ""
+      }`}
       ref={ref}
     >
-      {!!proposition?.imageUrl && (
-        <figure className="max-h-64">
+      {hasImage && (
+        <figure className="max-h-64 lg:max-h-none lg:w-5/12 lg:self-stretch lg:overflow-hidden lg:bg-base-200">
           <img
             src={proposition.imageUrl}
             alt={proposition?.shortTitle || ""}
-            className="w-full object-cover"
+            className="h-full w-full object-cover lg:object-contain"
             loading="lazy"
             decoding="async"
           />
         </figure>
       )}
-      <div className="card-body">
+      <div className={`card-body ${hasImage ? "lg:w-7/12" : ""}`}>
         <div className="flex items-start gap-3 mb-3">
           {/* <div className="badge badge-primary badge-lg font-bold text-lg px-4 py-4">
             #{proposition.order}

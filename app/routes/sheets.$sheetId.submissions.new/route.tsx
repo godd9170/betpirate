@@ -132,7 +132,7 @@ export default function Sheet() {
 
       <Form
         method="post"
-        className="relative pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
+        className="relative pb-[calc(5rem+env(safe-area-inset-bottom))]"
       >
         <ProgressBar
           propositions={sheet.propositions}
@@ -158,11 +158,16 @@ export default function Sheet() {
                   };
 
                   // Check if all propositions are now answered
-                  if (Object.keys(updated).length === propositionCount) {
-                    scrollToTiebreaker();
-                  } else {
-                    scrollToProposition(index + 1);
-                  }
+                  const shouldScrollToTiebreaker =
+                    Object.keys(updated).length === propositionCount;
+                  const nextIndex = index + 1;
+                  window.setTimeout(() => {
+                    if (shouldScrollToTiebreaker) {
+                      scrollToTiebreaker();
+                    } else {
+                      scrollToProposition(nextIndex);
+                    }
+                  }, 200);
 
                   return updated;
                 });
@@ -177,7 +182,7 @@ export default function Sheet() {
         </div>
 
         {/* Sticky footer */}
-        <footer className="fixed inset-x-0 bottom-0 z-30 bg-base-100 pt-8 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl">
+        <footer className="fixed inset-x-0 bottom-0 z-30 bg-base-100 pt-2 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-2xl">
           <div className="max-w-4xl mx-auto px-4">
             <button
               className={`btn btn-lg w-full shadow-xl text-lg font-bold ${
