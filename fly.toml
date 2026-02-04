@@ -8,7 +8,10 @@ processes = []
 
 [env]
 PORT = "8080"
-DEFAULT_SHEET_ID = "cbcd608098dabc661"
+AWS_ENDPOINT_URL_S3 = "https://fly.storage.tigris.dev"
+AWS_REGION = "auto"
+S3_PUBLIC_BASE_URL = "https://delicate-wood-6197.t3.storage.dev"
+S3_BUCKET_NAME = "delicate-wood-6197"
 
 [experimental]
 auto_rollback = true
