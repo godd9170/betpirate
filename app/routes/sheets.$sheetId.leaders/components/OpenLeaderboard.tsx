@@ -176,7 +176,10 @@ export default function OpenLeaderboard({
                       className="flex items-center gap-3 p-3 rounded-lg bg-base-200"
                     >
                       <img
-                        src={`/sailors/${submission.sailor.id}/profile-picture`}
+                        src={
+                          submission.sailor.profilePictureUrl ??
+                          "/fallback-avatar.svg"
+                        }
                         alt={submission.sailor.username ?? "Sailor"}
                         width={40}
                         height={40}
@@ -218,7 +221,10 @@ export default function OpenLeaderboard({
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <img
-                            src={`/sailors/${submission.sailor.id}/profile-picture`}
+                            src={
+                              submission.sailor.profilePictureUrl ??
+                              "/fallback-avatar.svg"
+                            }
                             alt={submission.sailor.username ?? "Sailor"}
                             width={40}
                             height={40}

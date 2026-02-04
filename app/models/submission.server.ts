@@ -52,6 +52,7 @@ export type SubmissionPreview = {
   sailor: {
     id: string;
     username: string | null;
+    profilePictureUrl: string | null;
   };
 };
 
@@ -188,6 +189,7 @@ export const readSheetSubmissionsPreview = (
         select: {
           id: true,
           username: true,
+          profilePictureUrl: true,
         },
       },
     },

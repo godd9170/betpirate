@@ -10,7 +10,7 @@ type UpdateSailor = {
   phone?: string;
   firstName?: string;
   lastName?: string;
-  profilePicture?: Buffer;
+  profilePictureUrl?: string | null;
 };
 
 export const createSailor = (data: NewSailor) => {

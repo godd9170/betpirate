@@ -81,7 +81,9 @@ export default function LeaderBoard({
                       className="flex flex-col items-center gap-3 p-4 rounded-lg bg-base-200 hover:bg-base-300 transition-all hover:scale-105 cursor-pointer shadow-md hover:shadow-xl"
                     >
                       <img
-                        src={`/sailors/${leader.sailorId}/profile-picture`}
+                        src={
+                          leader.profilePictureUrl ?? "/fallback-avatar.svg"
+                        }
                         alt={leader.username}
                         width={64}
                         height={64}

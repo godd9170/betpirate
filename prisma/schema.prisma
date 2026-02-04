@@ -24,7 +24,7 @@ model Sailor {
   phone          String       @unique
   firstName      String?
   lastName       String?
-  profilePicture Bytes?
+  profilePictureUrl String?
   submissions    Submission[]
   admin          Boolean      @default(false)
 }
