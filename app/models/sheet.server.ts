@@ -56,7 +56,9 @@ export const readSheet = (id: string) => {
           order: "asc",
         },
         include: {
-          options: true,
+          options: {
+            orderBy: [{ order: "asc" }, { id: "asc" }],
+          },
         },
       },
     },
@@ -86,7 +88,9 @@ export const readSheetWithSubmissions = (id: string) => {
       },
       propositions: {
         include: {
-          options: true,
+          options: {
+            orderBy: [{ order: "asc" }, { id: "asc" }],
+          },
         },
       },
     },
