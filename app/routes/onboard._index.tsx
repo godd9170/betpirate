@@ -68,8 +68,8 @@ export default function OnBoard() {
   );
 
   return (
-    <div className="container mx-auto">
-      <div className="card card-sm">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="card card-sm w-96 max-w-[90vw]">
         <Form
           className="flex flex-col space-y-4 card-body"
           action="/onboard?index"
@@ -90,34 +90,34 @@ export default function OnBoard() {
           />
 
           <fieldset className="flex w-full gap-2">
-            <label className="w-full">
+            <label className="w-full text-sm font-semibold">
               First Name
               <input
                 name="firstName"
                 type="text"
-                className="input input-bordered w-full"
-                placeholder="Jamaal"
+                className="input input-bordered w-full placeholder:text-base-content/40 placeholder:italic"
+                placeholder="First name"
                 defaultValue={sailor.firstName || ""}
               />
             </label>
-            <label className="w-full">
+            <label className="w-full text-sm font-semibold">
               Last Name
               <input
                 name="lastName"
                 type="text"
-                className="input input-bordered w-full"
-                placeholder="Williams"
+                className="input input-bordered w-full placeholder:text-base-content/40 placeholder:italic"
+                placeholder="Last name"
                 defaultValue={sailor.lastName || ""}
               />
             </label>
           </fieldset>
-          <label className="w-full">
+          <label className="w-full text-sm font-semibold">
             Pirate Name - This be yer name on the leaderboard
             <input
               name="username"
               type="text"
-              className="input input-bordered w-full"
-              placeholder="barnmucker69"
+              className="input input-bordered w-full placeholder:text-base-content/40 placeholder:italic"
+              placeholder="Pirate name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
