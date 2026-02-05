@@ -160,54 +160,7 @@ export default function OpenLeaderboard({
           </div>
         </div>
 
-        <div className="grid gap-6 mt-8 lg:grid-cols-[1.6fr_1fr]">
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <div className="flex items-center justify-between">
-                <h2 className="card-title">Current Fleet</h2>
-                <span className="badge badge-outline">
-                  {submissions.length} entries
-                </span>
-              </div>
-
-              {submissions.length === 0 ? (
-                <div className="text-center py-10 opacity-70">
-                  No submissions yet. Be the first to chart a course.
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[520px] overflow-y-auto pr-1">
-                  {submissions.map((submission, index) => (
-                    <div
-                      key={submission.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-base-200"
-                    >
-                      <div className="relative shrink-0">
-                        <img
-                          src={
-                            submission.sailor.profilePictureUrl ??
-                            "/fallback-avatar.svg"
-                          }
-                          alt={submission.sailor.username ?? "Sailor"}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
-                        />
-                        {submission.sailor.id === sailor.id && (
-                          <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">you</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-bold text-sm">
-                          {displayName(submission.sailor.username, index)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
+        <div className="mt-8">
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">
               <h2 className="card-title">Recent Submissions</h2>
