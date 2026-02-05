@@ -14,7 +14,11 @@ const InputComponent = forwardRef(
     inputProps: DefaultInputComponentProps,
     ref: LegacyRef<HTMLInputElement>
   ) => (
-    <input ref={ref} className="input w-full input-bordered" {...inputProps} />
+    <input
+      ref={ref}
+      className="input w-full input-bordered placeholder:text-base-content/40 placeholder:italic"
+      {...inputProps}
+    />
   )
 );
 
