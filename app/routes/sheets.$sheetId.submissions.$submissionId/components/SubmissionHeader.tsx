@@ -16,7 +16,7 @@ export default function SubmissionHeader({
         <div className="alert shadow-lg mb-4">
           <span className="text-sm">
             {canEdit
-              ? "Choose any option to update your pick."
+              ? "Choose any option to update your pick, then tap Save at the bottom."
               : "Submissions are closed - picks are now locked."}
           </span>
         </div>

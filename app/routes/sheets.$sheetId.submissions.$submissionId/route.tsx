@@ -25,7 +25,12 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 }) => {
   if (formMethod?.toLowerCase() === "post") {
     const intent = formData?.get("intent");
-    if (intent === "option" || intent === "tieBreaker" || intent === "nickname") {
+    if (
+      intent === "option" ||
+      intent === "selections" ||
+      intent === "tieBreaker" ||
+      intent === "nickname"
+    ) {
       return false;
     }
   }
@@ -125,6 +130,19 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         submissionId,
         parsed.value.optionId,
         sheetId
+      );
+      return json({ ok: true });
+    }
+
+    if (intent === "selections") {
+      const optionIds = form.getAll("optionId").map(String);
+      const parsed = z.array(z.string().min(1)).min(1).safeParse(optionIds);
+      invariant(parsed.success, "Missing selections");
+
+      await Promise.all(
+        parsed.data.map((optionId) =>
+          updateSubmissionSelection(submissionId, optionId, sheetId)
+        )
       );
       return json({ ok: true });
     }
