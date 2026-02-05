@@ -111,39 +111,45 @@ export default function OpenLeaderboard({
         </div>
 
         <div className="stats stats-vertical lg:stats-horizontal shadow bg-base-100 w-full">
-          <div className="stat">
+          <div className="stat min-w-0">
             <div className="stat-figure text-primary">
               <IoBoatOutline size={26} />
             </div>
             <div className="stat-title">Entries</div>
             <div className="stat-value">{submissions.length}</div>
-            <div className="stat-desc">across {sheet.title}</div>
+            <div className="stat-desc whitespace-normal break-words">
+              across {sheet.title}
+            </div>
           </div>
-          <div className="stat">
+          <div className="stat min-w-0">
             <div className="stat-figure text-primary">
               <IoPeopleOutline size={26} />
             </div>
             <div className="stat-title">Sailors</div>
             <div className="stat-value">{uniqueSailors}</div>
-            <div className="stat-desc">unique captains so far</div>
+            <div className="stat-desc whitespace-normal break-words">
+              unique captains so far
+            </div>
           </div>
-          <div className="stat">
+          <div className="stat min-w-0">
             <div className="stat-figure text-primary">
               <IoBoatOutline size={26} />
             </div>
             <div className="stat-title">Your Entries</div>
             <div className="stat-value">{myEntries}</div>
-            <div className="stat-desc">your submissions on deck</div>
+            <div className="stat-desc whitespace-normal break-words">
+              your submissions on deck
+            </div>
           </div>
-          <div className="stat">
+          <div className="stat min-w-0">
             <div className="stat-figure text-primary">
               <IoTimeOutline size={26} />
             </div>
             <div className="stat-title">Closes In</div>
-            <div className="stat-value text-2xl">
+            <div className="stat-value text-xl sm:text-2xl">
               {formatTimeLeft(timeLeft)}
             </div>
-            <div className="stat-desc">
+            <div className="stat-desc whitespace-normal break-words">
               {closesAt
                 ? closesAt.toLocaleString("en-CA", {
                     dateStyle: "medium",
