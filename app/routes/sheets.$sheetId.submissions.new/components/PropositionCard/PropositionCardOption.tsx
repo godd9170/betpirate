@@ -15,9 +15,9 @@ export default function PropositionCardOption({
 }) {
   const hasImage = Boolean(option?.imageUrl);
   const heightClass = hasImage ? "min-h-32" : "min-h-24";
-  const textSizeClass = hasImage ? "text-sm" : "text-base";
+  const textSizeClass = hasImage ? "text-xs" : "text-base";
   const selectedTextClass = hasImage
-    ? "peer-checked:text-base"
+    ? "peer-checked:text-sm"
     : "peer-checked:text-lg";
   return (
     <div className="w-full">
