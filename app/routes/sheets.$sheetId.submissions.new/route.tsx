@@ -17,7 +17,10 @@ import { z } from "zod";
 import { parseWithZod } from "@conform-to/zod";
 import SheetInstructions from "./components/SheetInstructions";
 import { readSailor } from "~/models/sailor.server";
-import { sendSubmissionConfirmationSMS } from "~/services/sms.server";
+import {
+  sendSubmissionConfirmationSMS,
+  sendSubmissionPaymentReminderSMS,
+} from "~/services/sms.server";
 
 export const schema = z.object({
   selections: z.array(z.object({ optionId: z.string() })),
@@ -73,6 +76,11 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     await sendSubmissionConfirmationSMS({
       phone: sailor.phone,
       sheetName: submission.sheet.title,
+    });
+    await sendSubmissionPaymentReminderSMS({
+      phone: sailor.phone,
+      sheetName: submission.sheet.title,
+      sheetOpensAt: submission.sheet.closesAt,
     });
   }
 
