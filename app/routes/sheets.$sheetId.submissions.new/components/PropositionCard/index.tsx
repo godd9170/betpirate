@@ -9,15 +9,9 @@ const PropositionCard = forwardRef<
     proposition: Proposition & { options: PropositionOption[] };
     onSelection: Function;
     propositionIndex: number;
-    optionCounts: Record<string, number>;
     selectedOptionId?: string;
   }
->(
-  ({ proposition, onSelection, propositionIndex, optionCounts, selectedOptionId }, ref) => {
-  const totalPicks = proposition.options.reduce(
-    (sum, opt) => sum + (optionCounts[opt.id] ?? 0),
-    0
-  );
+>(({ proposition, onSelection, propositionIndex, selectedOptionId }, ref) => {
   const hasImage = Boolean(proposition?.imageUrl);
   return (
     <div
@@ -65,13 +59,6 @@ const PropositionCard = forwardRef<
                   option={option}
                   onChange={() => onSelection(proposition?.id, option?.id)}
                   index={propositionIndex}
-                  percentage={
-                    totalPicks > 0
-                      ? Math.round(
-                          ((optionCounts[option.id] ?? 0) / totalPicks) * 100
-                        )
-                      : null
-                  }
                   isSelected={selectedOptionId === option.id}
                 />
               </div>
