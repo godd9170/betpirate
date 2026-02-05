@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSailor } from "~/models/sailor.server";
@@ -23,6 +23,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   invariant(!!sheet, "No sheet exists with this id");
 
   return json({ sheet, sailor });
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: data?.sheet?.title ?? "Bet Pirate" }];
 };
 
 export default function Sheet() {
