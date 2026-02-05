@@ -181,27 +181,26 @@ export default function OpenLeaderboard({
                       key={submission.id}
                       className="flex items-center gap-3 p-3 rounded-lg bg-base-200"
                     >
-                      <img
-                        src={
-                          submission.sailor.profilePictureUrl ??
-                          "/fallback-avatar.svg"
-                        }
-                        alt={submission.sailor.username ?? "Sailor"}
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
-                      />
-                      <div className="min-w-0">
-                        <div className="font-bold text-sm truncate">
+                      <div className="relative shrink-0">
+                        <img
+                          src={
+                            submission.sailor.profilePictureUrl ??
+                            "/fallback-avatar.svg"
+                          }
+                          alt={submission.sailor.username ?? "Sailor"}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
+                        />
+                        {submission.sailor.id === sailor.id && (
+                          <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">you</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-sm">
                           {displayName(submission.sailor.username, index)}
                         </div>
-                        <div className="text-xs opacity-60">
-                          Entry {submissions.length - index}
-                        </div>
                       </div>
-                      {submission.sailor.id === sailor.id && (
-                        <span className="badge badge-primary">you</span>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -223,9 +222,9 @@ export default function OpenLeaderboard({
                     return (
                       <div
                         key={submission.id}
-                        className="flex items-center justify-between gap-3"
+                        className="flex items-center gap-3"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative shrink-0">
                           <img
                             src={
                               submission.sailor.profilePictureUrl ??
@@ -236,18 +235,18 @@ export default function OpenLeaderboard({
                             height={40}
                             className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
                           />
-                          <div className="min-w-0">
-                            <div className="font-semibold text-sm truncate">
-                              {displayName(submission.sailor.username, index)}
-                            </div>
-                            <div className="text-xs opacity-60">
-                              {formatRelativeTime(createdAt)}
-                            </div>
+                          {submission.sailor.id === sailor.id && (
+                            <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">you</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm">
+                            {displayName(submission.sailor.username, index)}
+                          </div>
+                          <div className="text-xs opacity-60">
+                            {formatRelativeTime(createdAt)}
                           </div>
                         </div>
-                        {submission.sailor.id === sailor.id && (
-                          <span className="badge badge-primary">you</span>
-                        )}
                       </div>
                     );
                   })}

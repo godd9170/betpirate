@@ -73,31 +73,31 @@ export default function LeaderBoard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
                   {group.leaders.map((leader) => (
                     <Link
                       key={leader.submissionId}
                       to={`/sheets/${sheet.id}/submissions/${leader.submissionId}`}
                       className="flex flex-col items-center gap-3 p-4 rounded-lg bg-base-200 hover:bg-base-300 transition-all hover:scale-105 cursor-pointer shadow-md hover:shadow-xl"
                     >
-                      <img
-                        src={
-                          leader.profilePictureUrl ?? "/fallback-avatar.svg"
-                        }
-                        alt={leader.username}
-                        width={64}
-                        height={64}
-                        className="sm:w-20 sm:h-20 w-16 h-16 rounded-full object-cover ring-4 ring-base-300 bg-accent"
-                      />
+                      <div className="relative">
+                        <img
+                          src={
+                            leader.profilePictureUrl ?? "/fallback-avatar.svg"
+                          }
+                          alt={leader.username}
+                          width={64}
+                          height={64}
+                          className="sm:w-20 sm:h-20 w-16 h-16 rounded-full object-cover ring-4 ring-base-300 bg-accent"
+                        />
+                        {sailor.id === leader.sailorId && (
+                          <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">you</span>
+                        )}
+                      </div>
                       <div className="text-center w-full">
-                        <div className="font-bold text-xs sm:text-sm truncate">
+                        <div className="font-bold text-xs sm:text-sm">
                           {leader.username}
                         </div>
-                        {sailor.id === leader.sailorId && (
-                          <div className="text-xs text-primary font-black">
-                            (you)
-                          </div>
-                        )}
                       </div>
                     </Link>
                   ))}
