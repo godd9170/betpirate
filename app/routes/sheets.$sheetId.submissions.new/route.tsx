@@ -43,6 +43,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sheet = await readSheet(sheetId);
   invariant(!!sheet, `no sheet found`);
 
+  if (sheet.status === "DRAFT") {
+    return redirect(`/sheets/${sheetId}/submissions`);
+  }
+
   if (sheet.status === "CLOSED") return redirect(`/sheets/${sheetId}`);
 
   const optionCounts = await readOptionSelectionCounts(sheetId);
@@ -54,6 +58,17 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request);
   invariant(sailorId != null, `login to submit yer sheet`);
   invariant(params.sheetId, `params.sheetId is required`);
+  const sheet = await readSheet(params.sheetId);
+  invariant(!!sheet, `no sheet found`);
+
+  if (sheet.status === "DRAFT") {
+    return redirect(`/sheets/${params.sheetId}/submissions`);
+  }
+
+  if (sheet.status === "CLOSED") {
+    return redirect(`/sheets/${params.sheetId}`);
+  }
+
   const form = await request.formData();
 
   const submissionParse = parseWithZod(form, { schema });
