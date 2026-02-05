@@ -1,4 +1,9 @@
-import { json, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  json,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -15,6 +20,20 @@ import { themeBootstrapScript } from "~/utils/theme";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
+
+type MatchData = {
+  sheet?: {
+    title?: string | null;
+  };
+};
+
+export const meta: MetaFunction = ({ matches }) => {
+  const sheetTitle = matches
+    .map((match) => match.data as MatchData | undefined)
+    .find((data) => data?.sheet?.title)?.sheet?.title;
+
+  return [{ title: sheetTitle ?? "Bet Pirate" }];
+};
 
 const emptySailor: Sailor = {
   id: "",
@@ -47,7 +66,6 @@ export default function Root() {
           name="viewport"
           content="width=device-width,minimum-scale=1,viewport-fit=cover"
         />
-        <title>Bet Pirate - Superbowl LIX Prop Sheet</title>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
         <Meta />
         <Links />

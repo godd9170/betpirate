@@ -6,8 +6,10 @@ import PhoneNumberInput from "~/components/PhoneNumberInput";
 
 export default function PhoneNumberForm({
   error,
+  sheetTitle,
 }: {
   error?: { message?: string } | null;
+  sheetTitle?: string | null;
 }) {
   const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   return (
@@ -30,9 +32,11 @@ export default function PhoneNumberForm({
             <div className="text-center text-2xl font-extrabold">
               Welcome to BetPirate!
             </div>
-            <div className="text-center text-lg font-extrabold">
-              Superbowl LIX Prop Sheet
-            </div>
+            {sheetTitle ? (
+              <div className="text-center text-lg font-extrabold">
+                {sheetTitle}
+              </div>
+            ) : null}
             <div className="divider" />
             <p className="text-center">Enter your phone number to get started</p>
             <label className="mt-2 block text-sm font-semibold">
