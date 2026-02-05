@@ -307,3 +307,71 @@ export const updateSubmissionNickname = (
     data: { nickname },
   });
 };
+
+export type PaginatedSubmissionsResult = {
+  submissions: Awaited<ReturnType<typeof readSheetSubmissions>>;
+  total: number;
+  paidCount: number;
+};
+
+export type SubmissionsQueryParams = {
+  sheetId: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+};
+
+export const readSheetSubmissionsPaginated = async ({
+  sheetId,
+  search,
+  page = 1,
+  pageSize = 25,
+}: SubmissionsQueryParams): Promise<PaginatedSubmissionsResult> => {
+  const skip = (page - 1) * pageSize;
+
+  // Build the where clause for filtering
+  const baseWhere = { sheetId };
+  const searchWhere = search
+    ? {
+        sheetId,
+        OR: [
+          { sailor: { username: { contains: search, mode: "insensitive" } } },
+          { sailor: { firstName: { contains: search, mode: "insensitive" } } },
+          { sailor: { lastName: { contains: search, mode: "insensitive" } } },
+          { sailor: { phone: { contains: search, mode: "insensitive" } } },
+          ...(search.toLowerCase() === "paid" ? [{ isPaid: true }] : []),
+          ...(search.toLowerCase() === "unpaid" ? [{ isPaid: false }] : []),
+        ],
+      }
+    : baseWhere;
+
+  // Run queries in parallel
+  const [submissions, total, paidCount] = await Promise.all([
+    db.submission.findMany({
+      where: searchWhere as Parameters<typeof db.submission.findMany>[0]["where"],
+      include: {
+        sailor: true,
+        selections: {
+          include: {
+            option: {
+              include: {
+                proposition: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ createdAt: "desc" }],
+      skip,
+      take: pageSize,
+    }),
+    db.submission.count({
+      where: searchWhere as Parameters<typeof db.submission.count>[0]["where"],
+    }),
+    db.submission.count({
+      where: { sheetId, isPaid: true },
+    }),
+  ]);
+
+  return { submissions, total, paidCount };
+};
