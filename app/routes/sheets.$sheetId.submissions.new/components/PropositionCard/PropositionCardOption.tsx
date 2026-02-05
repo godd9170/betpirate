@@ -36,7 +36,7 @@ export default function PropositionCardOption({
       >
         <span className="relative flex w-full flex-col items-center gap-2 text-center">
           {hasImage && (
-            <span className="w-full overflow-hidden rounded-lg">
+            <span className="flex w-full justify-center overflow-hidden rounded-lg">
               <img
                 src={option.imageUrl}
                 alt={option?.shortTitle || option?.title}
