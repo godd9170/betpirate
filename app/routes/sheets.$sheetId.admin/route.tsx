@@ -9,7 +9,7 @@ import MarkSheet from "./components/MarkSheet";
 import SheetSchedule from "./components/SheetSchedule";
 import { readSailor } from "~/models/sailor.server";
 import Submissions from "./components/Submissions";
-import { readSheetSubmissions } from "~/models/submission.server";
+import { readSheetSubmissionsPaginated } from "~/models/submission.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -19,14 +19,43 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailor = await readSailor(sailorId);
   if (!sailor || !sailor.admin) return redirect("/");
   const sheet = await readSheet(params.sheetId);
-  const submissions = await readSheetSubmissions(params.sheetId);
   invariant(!!sheet, "No such sheet");
-  return json({ sheet, submissions });
+
+  // Parse URL search params for pagination and search
+  const url = new URL(request.url);
+  const search = url.searchParams.get("search") || "";
+  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10));
+  const pageSize = Math.min(
+    100,
+    Math.max(10, parseInt(url.searchParams.get("pageSize") || "25", 10))
+  );
+
+  const { submissions, total, paidCount } = await readSheetSubmissionsPaginated(
+    {
+      sheetId: params.sheetId,
+      search: search || undefined,
+      page,
+      pageSize,
+    }
+  );
+
+  return json({
+    sheet,
+    submissions,
+    pagination: {
+      page,
+      pageSize,
+      total,
+      paidCount,
+      totalPages: Math.ceil(total / pageSize),
+      search,
+    },
+  });
 };
 
 // Allows designated 'admin' sailors to alter the sheet
 export default function SheetEdit() {
-  const { sheet, submissions } = useLoaderData<typeof loader>();
+  const { sheet, submissions, pagination } = useLoaderData<typeof loader>();
   return (
     <div className="min-h-[100dvh] bg-base-200">
       <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
@@ -50,7 +79,9 @@ export default function SheetEdit() {
 
         {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
         {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
-        {sheet.status !== "DRAFT" && <Submissions submissions={submissions} />}
+        {sheet.status !== "DRAFT" && (
+          <Submissions submissions={submissions} pagination={pagination} />
+        )}
       </div>
     </div>
   );
