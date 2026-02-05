@@ -40,7 +40,7 @@ export default function PropositionCardOption({
               <img
                 src={option.imageUrl}
                 alt={option?.shortTitle || option?.title}
-                className="h-14 w-full object-cover"
+                className="max-h-16 w-auto max-w-full object-contain"
                 loading="lazy"
                 decoding="async"
               />
