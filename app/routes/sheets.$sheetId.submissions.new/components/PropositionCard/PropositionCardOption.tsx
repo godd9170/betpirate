@@ -4,13 +4,11 @@ export default function PropositionCardOption({
   option,
   index,
   onChange,
-  percentage,
   isSelected,
 }: {
   option: any;
   index: number;
   onChange: ChangeEventHandler<HTMLInputElement>;
-  percentage: number | null;
   isSelected?: boolean;
 }) {
   const hasImage = Boolean(option?.imageUrl);
@@ -53,11 +51,6 @@ export default function PropositionCardOption({
             ✓
           </span>
         </span>
-        {percentage !== null && (
-          <span className="text-xs font-normal opacity-50">
-            {percentage}% picked this
-          </span>
-        )}
       </label>
     </div>
   );
