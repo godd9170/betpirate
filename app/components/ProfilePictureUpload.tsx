@@ -142,7 +142,6 @@ export default function ProfilePictureUpload({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={handleFileChange}
         className="hidden"
         disabled={isUploading}
