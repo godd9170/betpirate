@@ -153,6 +153,37 @@ export const readSheetSubmission = (sheetId: string, sailorId: string) => {
   });
 };
 
+export const readSheetSailorSubmissions = (
+  sheetId: string,
+  sailorId: string
+) => {
+  return db.submission.findMany({
+    where: { sheetId, sailorId },
+    include: {
+      sailor: true,
+      selections: {
+        orderBy: {
+          option: {
+            proposition: {
+              order: "asc",
+            },
+          },
+        },
+        include: {
+          option: {
+            include: {
+              proposition: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const readSheetSubmissions = (sheetId: string) => {
   return db.submission.findMany({
     where: { sheetId },

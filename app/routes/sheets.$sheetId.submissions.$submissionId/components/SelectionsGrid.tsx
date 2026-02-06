@@ -1,14 +1,35 @@
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { IoCheckmark, IoClose } from "react-icons/io5";
-import type { SubmissionWithPropositionSelections } from "~/models/submission.server";
-import type { SheetWithPropositions } from "~/models/sheet.server";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
-const toSelectionMap = (
-  selections: SubmissionWithPropositionSelections["selections"]
-) =>
+interface PropositionOption {
+  id: string;
+  title: string;
+  shortTitle: string | null;
+}
+
+interface Proposition {
+  id: string;
+  title: string;
+  shortTitle: string | null;
+  subtitle: string | null;
+  options: PropositionOption[];
+}
+
+interface Sheet {
+  propositions: Proposition[];
+}
+
+interface Selection {
+  id?: string;
+  optionId: string;
+  option: {
+    proposition: Proposition;
+  };
+}
+
+const toSelectionMap = (selections: Selection[]) =>
   Object.fromEntries(
     selections.map((selection) => [
       selection.option.proposition.id,
@@ -19,11 +40,9 @@ const toSelectionMap = (
 export default function SelectionsGrid({
   sheet,
   selections: initialSelections,
-  canEdit,
 }: {
-  sheet: SheetWithPropositions;
-  selections: SubmissionWithPropositionSelections["selections"];
-  canEdit: boolean;
+  sheet: Sheet;
+  selections: Selection[];
 }) {
   const fetcher = useFetcher();
   const initialMap = useMemo(
@@ -46,17 +65,12 @@ export default function SelectionsGrid({
       const selectedOption = proposition.options.find(
         (option) => option.id === selectedOptionId
       );
-      const isCorrect =
-        sheet.status === "CLOSED" && proposition.answerId
-          ? selectedOptionId === proposition.answerId
-          : null;
       return {
         proposition,
         selectedOption,
-        isCorrect,
       };
     });
-  }, [sheet.propositions, selections, sheet.status]);
+  }, [sheet.propositions, selections]);
 
   const pendingCount = useMemo(() => {
     let count = 0;
@@ -71,7 +85,7 @@ export default function SelectionsGrid({
   }, [selections, sheet.propositions, baseSelections]);
 
   const hasPendingChanges = pendingCount > 0;
-  const showSaveBanner = canEdit && (hasPendingChanges || saveState !== "idle");
+  const showSaveBanner = hasPendingChanges || saveState !== "idle";
   const isSaving = saveState === "saving";
 
   // Sync with server data only when initialMap actually changes (e.g., navigation, revalidation)
@@ -89,7 +103,8 @@ export default function SelectionsGrid({
     if (saveRequestId.current === handledRequestId.current) return;
 
     handledRequestId.current = saveRequestId.current;
-    if (fetcher.data?.ok) {
+    const data = fetcher.data as { ok?: boolean } | undefined;
+    if (data?.ok) {
       setBaseSelections(pendingSnapshotRef.current ?? { ...selections });
       pendingSnapshotRef.current = null;
       setSaveState("saved");
@@ -108,7 +123,7 @@ export default function SelectionsGrid({
   }, [saveState]);
 
   const handleOptionSelect = (propositionId: string, optionId: string) => {
-    if (!canEdit || isSaving) return;
+    if (isSaving) return;
 
     setSelections((prev) => ({
       ...prev,
@@ -120,7 +135,7 @@ export default function SelectionsGrid({
   };
 
   const handleSave = () => {
-    if (!canEdit || isSaving || !hasPendingChanges) return;
+    if (isSaving || !hasPendingChanges) return;
 
     const optionIds: string[] = [];
     for (const proposition of sheet.propositions) {
@@ -150,7 +165,7 @@ export default function SelectionsGrid({
       }`}
     >
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        {selectionDetails.map(({ proposition, selectedOption, isCorrect }) => (
+        {selectionDetails.map(({ proposition, selectedOption }) => (
           <div
             key={proposition.id}
             className="card card-bordered bg-base-100 shadow-md"
@@ -171,47 +186,26 @@ export default function SelectionsGrid({
                 </p>
               )}
 
-              {canEdit ? (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {proposition.options.map((option) => {
-                    const isSelected =
-                      selections[proposition.id] === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        className={`btn btn-xs ${
-                          isSelected ? "btn-primary font-bold" : "btn-outline"
-                        }`}
-                        onClick={() =>
-                          handleOptionSelect(proposition.id, option.id)
-                        }
-                        disabled={isSaving}
-                      >
-                        {option.shortTitle || option.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : sheet.status === "CLOSED" ? (
-                <div className="mt-3 text-xs font-semibold">
-                  {isCorrect === true && (
-                    <span className="text-success inline-flex items-center gap-1">
-                      <IoCheckmark />
-                      Correct
-                    </span>
-                  )}
-                  {isCorrect === false && (
-                    <span className="text-error inline-flex items-center gap-1">
-                      <IoClose />
-                      Incorrect
-                    </span>
-                  )}
-                  {isCorrect === null && (
-                    <span className="opacity-60">Pending</span>
-                  )}
-                </div>
-              ) : null}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {proposition.options.map((option) => {
+                  const isSelected = selections[proposition.id] === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`btn btn-xs ${
+                        isSelected ? "btn-primary font-bold" : "btn-outline"
+                      }`}
+                      onClick={() =>
+                        handleOptionSelect(proposition.id, option.id)
+                      }
+                      disabled={isSaving}
+                    >
+                      {option.shortTitle || option.title}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         ))}
