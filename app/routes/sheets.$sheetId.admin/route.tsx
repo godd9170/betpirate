@@ -10,6 +10,7 @@ import SheetSchedule from "./components/SheetSchedule";
 import { readSailor } from "~/models/sailor.server";
 import Submissions from "./components/Submissions";
 import { readSheetSubmissionsPaginated } from "~/models/submission.server";
+import ClosedViewToggle from "./components/ClosedViewToggle";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -29,6 +30,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     100,
     Math.max(10, parseInt(url.searchParams.get("pageSize") || "25", 10))
   );
+  const view = url.searchParams.get("view") || "answerKey"; // Default to answer key view
 
   const { submissions, total, paidCount } = await readSheetSubmissionsPaginated(
     {
@@ -50,12 +52,16 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       totalPages: Math.ceil(total / pageSize),
       search,
     },
+    view,
   });
 };
 
 // Allows designated 'admin' sailors to alter the sheet
 export default function SheetEdit() {
-  const { sheet, submissions, pagination } = useLoaderData<typeof loader>();
+  const { sheet, submissions, pagination, view } = useLoaderData<typeof loader>();
+  const isClosed = sheet.status === "CLOSED";
+  const showAnswerKey = view === "answerKey";
+
   return (
     <div className="min-h-[100dvh] bg-base-200">
       <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
@@ -72,14 +78,24 @@ export default function SheetEdit() {
                 <StatusSelector sheet={sheet} />
               </div>
             </div>
+
+            {/* View Toggle for CLOSED status */}
+            {isClosed && <ClosedViewToggle currentView={view} />}
           </div>
         </div>
 
         {sheet.status === "DRAFT" && <SheetSchedule sheet={sheet} />}
 
         {sheet.status === "DRAFT" && <EditSheet sheet={sheet} />}
-        {sheet.status === "CLOSED" && <MarkSheet sheet={sheet} />}
-        {sheet.status !== "DRAFT" && (
+
+        {/* For CLOSED status, show either Answer Key or Submissions based on toggle */}
+        {isClosed && showAnswerKey && <MarkSheet sheet={sheet} />}
+        {isClosed && !showAnswerKey && (
+          <Submissions submissions={submissions} pagination={pagination} />
+        )}
+
+        {/* For OPEN status, show only Submissions */}
+        {sheet.status === "OPEN" && (
           <Submissions submissions={submissions} pagination={pagination} />
         )}
       </div>
