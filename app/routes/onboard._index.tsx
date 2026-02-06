@@ -9,16 +9,13 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import invariant from "tiny-invariant";
 import { z } from "zod";
-import ProfilePictureUpload from "~/components/ProfilePictureUpload";
 import { readSailor, updateSailor } from "~/models/sailor.server";
-import { readLatestSheet } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 
 export const schema = z.object({
   username: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  profilePictureUrl: z.string().optional(),
 });
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -29,14 +26,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!sailor) return redirect("/login");
 
   return json({
-    sailor: {
-      ...sailor,
-      profilePictureUrl: sailor.profilePictureUrl ?? null,
-    },
+    sailor,
   });
 };
 
-export const action = async ({ params, request }: ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
@@ -46,26 +40,18 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
   invariant(sailorForm.status === "success", `missing required parameters`);
 
-  const profilePictureUrl = sailorForm.value.profilePictureUrl?.trim();
-
   await updateSailor(sailorId, {
     username: sailorForm.value.username,
     firstName: sailorForm.value.firstName,
     lastName: sailorForm.value.lastName,
-    profilePictureUrl: profilePictureUrl ? profilePictureUrl : null,
   });
 
-  const latestSheet = await readLatestSheet();
-  invariant(latestSheet, "No sheet exists");
-  return redirect(`/sheets/${latestSheet.id}/submissions/new`);
+  return redirect("/onboard/picture");
 };
 
 export default function OnBoard() {
   const { sailor } = useLoaderData<typeof loader>();
   const [username, setUsername] = useState<string>(sailor.username || "");
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
-    sailor.profilePictureUrl || null,
-  );
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -78,16 +64,6 @@ export default function OnBoard() {
           <div className="pt-6 text-center text-xl font-extrabold">
             We be needin' some details before we set sail Matey
           </div>
-
-          <ProfilePictureUpload
-            onImageChange={setProfilePictureUrl}
-            currentImage={sailor.profilePictureUrl}
-          />
-          <input
-            type="hidden"
-            name="profilePictureUrl"
-            value={profilePictureUrl || ""}
-          />
 
           <fieldset className="flex w-full gap-2">
             <label className="w-full text-sm font-semibold">
@@ -127,7 +103,7 @@ export default function OnBoard() {
             className="btn btn-primary w-full"
             disabled={!username}
           >
-            Let's go!
+            Now add a picture
           </button>
         </Form>
       </div>
