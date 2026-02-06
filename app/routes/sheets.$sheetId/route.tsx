@@ -39,11 +39,18 @@ export default function Sheet() {
       <header className="w-full flex items-center justify-between p-4">
         <div className="w-12">
           <Link to={`/sheets/${sheet.id}`}>
-            <Logo size={"38px"} />
+            <div className="w-10 h-10 rounded-full overflow-hidden ring ring-primary ring-offset-base-100 ring-offset-1">
+              <img
+                src={sailor?.profilePictureUrl || "/fallback-avatar.svg"}
+                alt={sailor?.username || "User"}
+                className="w-full h-full object-cover"
+              />
+            </div>
           </Link>
         </div>
-        <Link to={`/sheets/${sheet.id}`}>
-          <h1 className="text-2xl font-black text-center">{sheet.title}</h1>
+        <Link to={`/sheets/${sheet.id}`} className="flex items-center">
+          <Logo size={"48px"} />
+          <h1 className="text-xl font-black uppercase pr-2">Betpirate</h1>
         </Link>
         <div className="w-12">
           <ThemeToggle />
