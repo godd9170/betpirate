@@ -136,7 +136,7 @@ export default function Submissions({
           {/* Preserve pageSize in search form */}
           <input type="hidden" name="pageSize" value={pageSize} />
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-accent">
               <IoSearch size={20} />
             </span>
             <input
@@ -253,7 +253,9 @@ export default function Submissions({
             <div className="join">
               <a
                 href={page > 1 ? buildUrl({ page: page - 1 }) : undefined}
-                className={`btn btn-sm join-item ${page === 1 ? "btn-disabled" : ""}`}
+                className={`btn btn-sm join-item ${
+                  page === 1 ? "btn-disabled" : ""
+                }`}
                 aria-label="Previous page"
                 aria-disabled={page === 1}
               >
@@ -279,13 +281,15 @@ export default function Submissions({
                   >
                     {pageNum}
                   </a>
-                )
+                ),
               )}
               <a
                 href={
                   page < totalPages ? buildUrl({ page: page + 1 }) : undefined
                 }
-                className={`btn btn-sm join-item ${page === totalPages ? "btn-disabled" : ""}`}
+                className={`btn btn-sm join-item ${
+                  page === totalPages ? "btn-disabled" : ""
+                }`}
                 aria-label="Next page"
                 aria-disabled={page === totalPages}
               >
