@@ -5,6 +5,7 @@ import {
   deleteSubmission,
   readSheetSubmissionRanking,
   readSubmission,
+  readSheetSailorSubmissions,
   updateSubmissionSelection,
   updateSubmissionNickname,
   updateSubmissionTieBreaker,
@@ -15,8 +16,10 @@ import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import SelectionsGrid from "./components/SelectionsGrid";
 import SubmissionHeader from "./components/SubmissionHeader";
-import TieBreakerCard from "./components/TieBreakerCard";
-import TotalsCard from "./components/TotalsCard";
+import SubmissionTitle from "./components/SubmissionTitle";
+import SubmissionProgressBars from "./components/SubmissionProgressBars";
+import SubmissionComparison from "./components/SubmissionComparison";
+import SubmissionSelector from "./components/SubmissionSelector";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
   formMethod,
@@ -58,10 +61,32 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sheetSummary = await readSheetSummary(sheetId);
   const submissionRank = await readSheetSubmissionRanking(
     sheetId,
-    submissionId
+    submissionId,
   );
 
-  return json({ sailorId, submission, submissionRank, sheetSummary, sheet });
+  // If viewing another sailor's submission, fetch active sailor's submissions for comparison
+  const activeSailorSubmissions =
+    submission.sailorId !== sailorId
+      ? await readSheetSailorSubmissions(sheetId, sailorId)
+      : [];
+
+  // Get the selected comparison submission from query params, or use the most recent
+  const url = new URL(request.url);
+  const compareSubmissionId = url.searchParams.get("compare");
+  const activeSailorSubmission =
+    activeSailorSubmissions.find((s) => s.id === compareSubmissionId) ||
+    activeSailorSubmissions[0] ||
+    null;
+
+  return json({
+    sailorId,
+    submission,
+    submissionRank,
+    sheetSummary,
+    sheet,
+    activeSailorSubmission,
+    activeSailorSubmissions,
+  });
 };
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
@@ -100,10 +125,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       });
       invariant(parsed.status === "success", "Missing tie breaker");
 
-      await updateSubmissionTieBreaker(
-        submissionId,
-        parsed.value.tieBreaker
-      );
+      await updateSubmissionTieBreaker(submissionId, parsed.value.tieBreaker);
       return json({ ok: true });
     }
 
@@ -129,7 +151,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       await updateSubmissionSelection(
         submissionId,
         parsed.value.optionId,
-        sheetId
+        sheetId,
       );
       return json({ ok: true });
     }
@@ -141,8 +163,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
       await Promise.all(
         parsed.data.map((optionId) =>
-          updateSubmissionSelection(submissionId, optionId, sheetId)
-        )
+          updateSubmissionSelection(submissionId, optionId, sheetId),
+        ),
       );
       return json({ ok: true });
     }
@@ -154,8 +176,15 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 };
 
 export default function Submission() {
-  const { sailorId, submission, submissionRank, sheetSummary, sheet } =
-    useLoaderData<typeof loader>();
+  const {
+    sailorId,
+    submission,
+    submissionRank,
+    sheetSummary,
+    sheet,
+    activeSailorSubmission,
+    activeSailorSubmissions,
+  } = useLoaderData<typeof loader>();
   const isOwner = submission?.sailorId === sailorId;
   const canEdit = isOwner && sheet.status === "OPEN";
   const submissionLabel = new Date(submission.createdAt).toLocaleString(
@@ -167,7 +196,7 @@ export default function Submission() {
       hour: "numeric",
       minute: "numeric",
       hour12: true,
-    }
+    },
   );
 
   return (
@@ -175,25 +204,52 @@ export default function Submission() {
       <div className="max-w-4xl mx-auto px-4 py-6">
         <SubmissionHeader
           username={submission?.sailor.username ?? null}
+          profilePictureUrl={submission?.sailor.profilePictureUrl ?? null}
           isOwner={isOwner}
           canEdit={canEdit}
         />
-        <TotalsCard
-          show={sheet.status !== "OPEN"}
-          sheetSummary={sheetSummary}
-          submissionRank={submissionRank}
-        />
-        <TieBreakerCard
+
+        {/* Show submission selector when viewing another sailor and active sailor has multiple submissions */}
+        {!isOwner && activeSailorSubmissions.length > 0 && (
+          <SubmissionSelector
+            submissions={activeSailorSubmissions as any}
+            selectedSubmissionId={activeSailorSubmission?.id || null}
+          />
+        )}
+
+        <SubmissionTitle
           submissionLabel={`Submitted ${submissionLabel}`}
           nickname={submission.nickname}
           initialValue={submission.tieBreaker}
           canEdit={canEdit}
+          submissionRank={submissionRank}
+          showRank={sheet.status !== "OPEN"}
         />
-        <SelectionsGrid
-          sheet={sheet}
-          selections={submission.selections}
-          canEdit={canEdit}
-        />
+
+        {/* Show progress bars when viewing another sailor or when sheet is closed */}
+        {!canEdit && (
+          <SubmissionProgressBars
+            viewedSubmission={submission as any}
+            activeSailorSubmission={activeSailorSubmission as any}
+          />
+        )}
+
+        {/* Show SelectionsGrid only when owner is editing their own submission */}
+        {canEdit && (
+          <SelectionsGrid
+            sheet={sheet as any}
+            selections={submission.selections as any}
+          />
+        )}
+
+        {/* Show SubmissionComparison when viewing another sailor or when sheet is closed */}
+        {!canEdit && (
+          <SubmissionComparison
+            sheet={sheet as any}
+            viewedSubmission={submission as any}
+            activeSailorSubmission={activeSailorSubmission as any}
+          />
+        )}
       </div>
     </div>
   );
