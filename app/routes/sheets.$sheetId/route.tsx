@@ -37,8 +37,8 @@ export default function Sheet() {
   return (
     <div className="flex flex-col">
       <header className="w-full flex items-center justify-between p-4">
-        <div className="w-12">
-          <Link to={`/sheets/${sheet.id}`}>
+        <div className="w-12 flex items-center justify-center">
+          <Link to="/profile">
             <div className="w-10 h-10 rounded-full overflow-hidden ring ring-primary ring-offset-base-100 ring-offset-1">
               <img
                 src={sailor?.profilePictureUrl || "/fallback-avatar.svg"}
@@ -50,9 +50,9 @@ export default function Sheet() {
         </div>
         <Link to={`/sheets/${sheet.id}`} className="flex items-center">
           <Logo size={"48px"} />
-          <h1 className="text-xl font-black uppercase pr-2">Betpirate</h1>
+          <h1 className="text-xl font-black uppercase pr-4">Betpirate</h1>
         </Link>
-        <div className="w-12">
+        <div className="w-12 flex items-center justify-center">
           <ThemeToggle />
         </div>
       </header>
