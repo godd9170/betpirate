@@ -2,12 +2,32 @@ import { Sailor, Sheet } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import {
   IoBoatOutline,
+  IoCashOutline,
   IoPeopleOutline,
   IoSparklesOutline,
   IoTimeOutline,
   IoTrophyOutline,
 } from "react-icons/io5";
 import type { SubmissionPreview } from "~/models/submission.server";
+
+const calculatePrizePool = (paidCount: number) => {
+  const ENTRY_FEE = 10;
+  const RAKE = 0.2;
+  const WINNER_SHARE = 0.9;
+  const LOSER_SHARE = 0.1;
+
+  const totalPot = paidCount * ENTRY_FEE;
+  const afterRake = totalPot * (1 - RAKE);
+  const winnerPrize = afterRake * WINNER_SHARE;
+  const loserPrize = afterRake * LOSER_SHARE;
+
+  return {
+    totalPot,
+    afterRake,
+    winnerPrize,
+    loserPrize,
+  };
+};
 
 type TimeLeft = {
   total: number;
@@ -58,14 +78,16 @@ export default function OpenLeaderboard({
   sailor,
   sheet,
   submissions,
+  paidCount,
 }: {
   sailor: Sailor;
   sheet: Sheet;
   submissions: SubmissionPreview[];
+  paidCount: number;
 }) {
   const closesAt = sheet.closesAt ? new Date(sheet.closesAt) : null;
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    buildTimeLeft(closesAt)
+    buildTimeLeft(closesAt),
   );
 
   useEffect(() => {
@@ -76,23 +98,23 @@ export default function OpenLeaderboard({
     return () => clearInterval(timer);
   }, [sheet.closesAt]);
 
-  const { uniqueSailors, myEntries, recentSubmissions } = useMemo(() => {
-    const unique = new Set(submissions.map((submission) => submission.sailor.id));
+  const { uniqueSailors, recentSubmissions } = useMemo(() => {
+    const unique = new Set(
+      submissions.map((submission) => submission.sailor.id),
+    );
     return {
       uniqueSailors: unique.size,
-      myEntries: submissions.filter(
-        (submission) => submission.sailor.id === sailor.id
-      ).length,
       recentSubmissions: submissions.slice(0, 5),
     };
   }, [sailor.id, submissions]);
+
+  const prizePool = calculatePrizePool(paidCount);
 
   return (
     <div className="min-h-screen bg-base-200">
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-black mb-2 flex items-center gap-3">
-            <IoTrophyOutline className="text-primary" />
             Live Leaderboard Preview
           </h1>
           <p className="opacity-70">
@@ -133,16 +155,6 @@ export default function OpenLeaderboard({
           </div>
           <div className="stat min-w-0">
             <div className="stat-figure text-primary">
-              <IoBoatOutline size={26} />
-            </div>
-            <div className="stat-title">Your Entries</div>
-            <div className="stat-value">{myEntries}</div>
-            <div className="stat-desc whitespace-normal break-words">
-              your submissions on deck
-            </div>
-          </div>
-          <div className="stat min-w-0">
-            <div className="stat-figure text-primary">
               <IoTimeOutline size={26} />
             </div>
             <div className="stat-title">Closes In</div>
@@ -156,6 +168,19 @@ export default function OpenLeaderboard({
                     timeStyle: "short",
                   })
                 : "Closing time not set"}
+            </div>
+          </div>
+          <div className="stat min-w-0">
+            <div className="stat-figure text-success">
+              <IoCashOutline size={26} />
+            </div>
+            <div className="stat-title">Prize Pool</div>
+            <div className="stat-value text-success text-xl sm:text-2xl">
+              ${prizePool.afterRake.toFixed(0)}
+            </div>
+            <div className="stat-desc whitespace-normal break-words">
+              1st: ${prizePool.winnerPrize.toFixed(0)} • Last: $
+              {prizePool.loserPrize.toFixed(0)}
             </div>
           </div>
         </div>
@@ -189,7 +214,9 @@ export default function OpenLeaderboard({
                             className="w-10 h-10 rounded-full object-cover ring-2 ring-base-300 bg-accent"
                           />
                           {submission.sailor.id === sailor.id && (
-                            <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">you</span>
+                            <span className="badge badge-primary badge-xs absolute -bottom-1.5 -right-1.5">
+                              you
+                            </span>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
