@@ -330,8 +330,8 @@ export const readSheetSubmissionsPaginated = async ({
   const skip = (page - 1) * pageSize;
 
   // Build the where clause for filtering
-  const baseWhere = { sheetId };
-  const searchWhere = search
+  const baseWhere: Prisma.SubmissionWhereInput = { sheetId };
+  const searchWhere: Prisma.SubmissionWhereInput = search
     ? {
         sheetId,
         OR: [
@@ -348,7 +348,7 @@ export const readSheetSubmissionsPaginated = async ({
   // Run queries in parallel
   const [submissions, total, paidCount] = await Promise.all([
     db.submission.findMany({
-      where: searchWhere as Parameters<typeof db.submission.findMany>[0]["where"],
+      where: searchWhere,
       include: {
         sailor: true,
         selections: {
@@ -366,7 +366,7 @@ export const readSheetSubmissionsPaginated = async ({
       take: pageSize,
     }),
     db.submission.count({
-      where: searchWhere as Parameters<typeof db.submission.count>[0]["where"],
+      where: searchWhere,
     }),
     db.submission.count({
       where: { sheetId, isPaid: true },

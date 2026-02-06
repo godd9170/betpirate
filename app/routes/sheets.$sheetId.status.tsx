@@ -8,10 +8,14 @@ export const schema = z.object({
   status: z.enum(["DRAFT", "OPEN", "CLOSED"]).optional(),
   closesAt: z.preprocess(
     (value) => {
-      if (value === "" || value === null || value === undefined) return null;
+      // Field not in form data → don't update
+      if (value === null || value === undefined) return undefined;
+      // Explicitly empty → clear the field
+      if (value === "") return null;
+      // Parse date string
       if (typeof value === "string") {
         const parsed = new Date(value);
-        return Number.isNaN(parsed.getTime()) ? null : parsed;
+        return Number.isNaN(parsed.getTime()) ? undefined : parsed;
       }
       return value;
     },
@@ -27,6 +31,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   if (sheet.status !== "success") {
     return json(sheet);
   }
-  await updateSheet(sheetId, sheet.value);
+  // Filter out undefined values so Prisma doesn't update those fields
+  const updateData = Object.fromEntries(
+    Object.entries(sheet.value).filter(([_, value]) => value !== undefined)
+  );
+  await updateSheet(sheetId, updateData);
   return "success";
 };
