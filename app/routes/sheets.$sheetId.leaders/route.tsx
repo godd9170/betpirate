@@ -7,6 +7,7 @@ import { readSailorWithSubmissions } from "~/models/sailor.server";
 import { readSheet, readSheetLeaders } from "~/models/sheet.server";
 import { authenticator } from "~/services/auth.server";
 import { readSheetSubmissionsPreview } from "~/models/submission.server";
+import { db } from "~/utils/db.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sailorId = await authenticator.isAuthenticated(request, {
@@ -31,12 +32,19 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const previewSubmissions =
     sheet.status === "OPEN" ? await readSheetSubmissionsPreview(sheetId) : [];
 
-  return json({ sailor, sheet, leaders, previewSubmissions });
+  // Calculate paid submissions for prize pool
+  // For OPEN sheets, use previewSubmissions; for CLOSED, query directly
+  const paidCount =
+    sheet.status === "OPEN"
+      ? previewSubmissions.filter((s) => s.isPaid).length
+      : await db.submission.count({ where: { sheetId, isPaid: true } });
+
+  return json({ sailor, sheet, leaders, previewSubmissions, paidCount });
 };
 
 // A leaderboard of all the submissions for the sheet
 export default function Leaders() {
-  const { sailor, sheet, leaders, previewSubmissions } =
+  const { sailor, sheet, leaders, previewSubmissions, paidCount } =
     useLoaderData<typeof loader>();
   if (sheet.status === "OPEN") {
     return (
@@ -44,6 +52,7 @@ export default function Leaders() {
         sailor={sailor}
         sheet={sheet}
         submissions={previewSubmissions}
+        paidCount={paidCount}
       />
     );
   }
@@ -59,5 +68,12 @@ export default function Leaders() {
       </div>
     );
   }
-  return <LeaderBoard sailor={sailor} sheet={sheet} leaders={leaders} />;
+  return (
+    <LeaderBoard
+      sailor={sailor}
+      sheet={sheet}
+      leaders={leaders}
+      paidCount={paidCount}
+    />
+  );
 }
