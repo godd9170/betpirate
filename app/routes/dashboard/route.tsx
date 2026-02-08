@@ -9,7 +9,6 @@ import {
 } from "~/models/sheet.server";
 import PropMatrix from "./components/PropMatrix";
 import RaceView from "./components/RaceView";
-import RaceToBottom from "./components/RaceToBottom";
 import { IoGrid, IoBarChart } from "react-icons/io5";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -49,9 +48,6 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-
-        {/* Race to Bottom Widget - show in both views */}
-        <RaceToBottom leaders={leaders} />
 
         {/* Conditional View Rendering */}
         {viewMode === "race" ? (
