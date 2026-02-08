@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { IoTrophy, IoMedal, IoRibbon } from "react-icons/io5";
 import Ordinal from "~/components/Ordinal";
 
@@ -76,75 +75,11 @@ export default function PropMatrix({
     return acc;
   }, {} as Record<string, any>);
 
-  const stats = useMemo(() => {
-    const totalProps = sheet.propositions.length;
-    const answeredProps = sheet.propositions.filter((p: any) => p.answerId).length;
-    const totalParticipants = leaders.length;
-    const progress = totalProps > 0 ? (answeredProps / totalProps) * 100 : 0;
-    const topScore = leaders.length > 0 ? leaders[0].correct : 0;
-
-    return {
-      totalProps,
-      answeredProps,
-      totalParticipants,
-      progress,
-      topScore
-    };
-  }, [sheet, leaders]);
-
-  const topRanking = leaders.length > 0 ? leaders[0].ranking : 0;
-  const topLeaders = leaders.filter((l: any) => l.ranking === topRanking);
-
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="card bg-base-100 shadow-2xl">
-        <div className="card-body">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                {sheet.title}
-              </h1>
-              {sheet.subtitle && (
-                <p className="text-xl text-base-content/70 mt-2">{sheet.subtitle}</p>
-              )}
-            </div>
-
-            <div className="stats shadow-lg">
-              <div className="stat place-items-center">
-                <div className="stat-title text-xs">Participants</div>
-                <div className="stat-value text-3xl text-primary">{stats.totalParticipants}</div>
-              </div>
-
-              <div className="stat place-items-center">
-                <div className="stat-title text-xs">Progress</div>
-                <div className="stat-value text-3xl text-secondary">
-                  {stats.answeredProps}/{stats.totalProps}
-                </div>
-                <div className="stat-desc">
-                  <progress
-                    className="progress progress-secondary w-20"
-                    value={stats.progress}
-                    max="100"
-                  ></progress>
-                </div>
-              </div>
-
-              <div className="stat place-items-center">
-                <div className="stat-title text-xs">Top Score</div>
-                <div className="stat-value text-3xl text-accent">{stats.topScore}</div>
-                <div className="stat-desc">
-                  {topLeaders.length > 1 ? `${topLeaders.length} tied` : "Leading"}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="space-y-4">
       {/* Leaderboard Matrix */}
-      <div className="card bg-base-100 shadow-2xl overflow-hidden">
-        <div className="card-body p-0 max-h-[calc(100vh-300px)] overflow-auto">
+      <div className="card bg-base-100 shadow-xl overflow-hidden">
+        <div className="card-body p-0 max-h-[calc(100vh-200px)] overflow-auto">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead>
               <tr className="bg-base-300">
