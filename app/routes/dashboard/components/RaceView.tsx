@@ -70,11 +70,16 @@ export default function RaceView({
                       />
                     </div>
 
-                    {/* Username */}
+                    {/* Username/Nickname */}
                     <div className="w-32 flex-shrink-0">
                       <span className="font-semibold text-xs text-base-content truncate block">
-                        {leader.username}
+                        {leader.nickname || leader.username}
                       </span>
+                      {leader.nickname && (
+                        <span className="text-[10px] opacity-60 truncate block">
+                          @{leader.username}
+                        </span>
+                      )}
                     </div>
 
                     {/* Bar Container */}
