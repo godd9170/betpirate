@@ -96,7 +96,7 @@ export default function OpenLeaderboard({
               <IoBoatOutline size={26} />
             </div>
             <div className="stat-title">Paid Entries</div>
-            <div className="stat-value">{submissions.length}</div>
+            <div className="stat-value">{paidCount}</div>
             <div className="stat-desc whitespace-normal break-words">
               across {sheet.title}
             </div>
@@ -169,8 +169,13 @@ export default function OpenLeaderboard({
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold text-sm">
-                            {displayName(submission.sailor.username, index)}
+                            {submission.nickname || displayName(submission.sailor.username, index)}
                           </div>
+                          {submission.nickname && (
+                            <div className="text-xs opacity-60">
+                              @{displayName(submission.sailor.username, index)}
+                            </div>
+                          )}
                           <div className="text-xs opacity-60">
                             {formatRelativeTime(createdAt)}
                           </div>

@@ -22,6 +22,7 @@ export type SheetLeader = {
   submissionId: string;
   sailorId: string;
   username: string;
+  nickname: string | null;
   profilePictureUrl: string | null;
   correct: number;
   ranking: number;
@@ -101,22 +102,23 @@ export const readSheetLeaders = async (
   sheetId: string
 ): Promise<SheetLeader[]> => {
   return db.$queryRaw<SheetLeader[]>`
-    select 
+    select
     su.id as "submissionId",
     sa.id as "sailorId",
-    sa.username as "username", 
+    sa.username as "username",
+    su.nickname as "nickname",
     sa."profilePictureUrl" as "profilePictureUrl",
     COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
-    RANK () OVER ( 
+    RANK () OVER (
       ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
     )::integer ranking
-    from "PropositionSelection" ps
-    join "PropositionOption" po on ps."optionId" = po.id
-    join "Proposition" p on po."propositionId" = p.id
-    join "Submission" su on ps."submissionId" = su.id
+    from "Submission" su
     join "Sailor" sa on su."sailorId" = sa.id
-    where su."sheetId" = ${sheetId}
-    group by su.id, sa.id, sa.username, sa."profilePictureUrl"
+    left join "PropositionSelection" ps on ps."submissionId" = su.id
+    left join "PropositionOption" po on ps."optionId" = po.id
+    left join "Proposition" p on po."propositionId" = p.id AND p."sheetId" = ${sheetId}
+    where su."sheetId" = ${sheetId} AND su."isPaid" = true
+    group by su.id, sa.id, sa.username, su.nickname, sa."profilePictureUrl"
   `;
 };
 
@@ -151,22 +153,23 @@ export const readSheetDashboard = async (
   })[]
 > => {
   const leaders = await db.$queryRaw<SheetLeader[]>`
-    select 
+    select
     su.id as "submissionId",
     sa.id as "sailorId",
-    sa.username as "username", 
+    sa.username as "username",
+    su.nickname as "nickname",
     sa."profilePictureUrl" as "profilePictureUrl",
     COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0)::integer as "correct",
-    RANK () OVER ( 
+    RANK () OVER (
       ORDER BY COALESCE(sum(CASE WHEN ps."optionId" = p."answerId" THEN 1 ELSE 0 END),0) DESC
     )::integer ranking
-    from "PropositionSelection" ps
-    join "PropositionOption" po on ps."optionId" = po.id
-    join "Proposition" p on po."propositionId" = p.id
-    join "Submission" su on ps."submissionId" = su.id
+    from "Submission" su
     join "Sailor" sa on su."sailorId" = sa.id
-    where su."sheetId" = ${sheetId}
-    group by su.id, sa.id, sa.username, sa."profilePictureUrl"
+    left join "PropositionSelection" ps on ps."submissionId" = su.id
+    left join "PropositionOption" po on ps."optionId" = po.id
+    left join "Proposition" p on po."propositionId" = p.id AND p."sheetId" = ${sheetId}
+    where su."sheetId" = ${sheetId} AND su."isPaid" = true
+    group by su.id, sa.id, sa.username, su.nickname, sa."profilePictureUrl"
   `;
 
   const leaderIds = leaders.map((leader) => leader.submissionId);

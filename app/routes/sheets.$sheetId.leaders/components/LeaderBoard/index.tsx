@@ -175,8 +175,13 @@ export default function LeaderBoard({
                       </div>
                       <div className="text-center w-full">
                         <div className="font-bold text-xs sm:text-sm">
-                          {leader.username}
+                          {leader.nickname || leader.username}
                         </div>
+                        {leader.nickname && (
+                          <div className="text-xs opacity-60">
+                            @{leader.username}
+                          </div>
+                        )}
                       </div>
                     </Link>
                   ))}

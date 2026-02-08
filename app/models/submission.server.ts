@@ -49,6 +49,7 @@ export type SubmissionPreview = {
   id: string;
   createdAt: Date;
   isPaid: boolean;
+  nickname: string | null;
   sailor: {
     id: string;
     username: string | null;
@@ -216,6 +217,7 @@ export const readSheetSubmissionsPreview = (
       id: true,
       createdAt: true,
       isPaid: true,
+      nickname: true,
       sailor: {
         select: {
           id: true,
