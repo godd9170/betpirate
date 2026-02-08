@@ -35,30 +35,32 @@ export default function Sheet() {
   const SUBMISSIONS_LINK = `/sheets/${sheet.id}/submissions`;
   const LEADERBOARD_LINK = `/sheets/${sheet.id}/leaders`;
   return (
-    <div className="flex flex-col">
-      <header className="w-full flex items-center justify-between p-4">
-        <div className="w-12 flex items-center justify-center">
-          <Link to="/profile">
-            <div className="w-10 h-10 rounded-full overflow-hidden ring ring-primary ring-offset-base-100 ring-offset-1">
-              <img
-                src={sailor?.profilePictureUrl || "/fallback-avatar.svg"}
-                alt={sailor?.username || "User"}
-                className="w-full h-full object-cover"
-              />
-            </div>
+    <>
+      <div className="flex flex-col">
+        <header className="w-full flex items-center justify-between p-4">
+          <div className="w-12 flex items-center justify-center">
+            <Link to="/profile">
+              <div className="w-10 h-10 rounded-full overflow-hidden ring ring-primary ring-offset-base-100 ring-offset-1">
+                <img
+                  src={sailor?.profilePictureUrl || "/fallback-avatar.svg"}
+                  alt={sailor?.username || "User"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </Link>
+          </div>
+          <Link to={`/sheets/${sheet.id}`} className="flex items-center">
+            <Logo size={"48px"} />
+            <h1 className="text-xl font-black uppercase pr-4">Betpirate</h1>
           </Link>
-        </div>
-        <Link to={`/sheets/${sheet.id}`} className="flex items-center">
-          <Logo size={"48px"} />
-          <h1 className="text-xl font-black uppercase pr-4">Betpirate</h1>
-        </Link>
-        <div className="w-12 flex items-center justify-center">
-          <ThemeToggle />
-        </div>
-      </header>
-      <main className="pb-16 min-h-[calc(100vh-4rem)] container mx-auto">
-        <Outlet />
-      </main>
+          <div className="w-12 flex items-center justify-center">
+            <ThemeToggle />
+          </div>
+        </header>
+        <main className="pb-16 min-h-[calc(100vh-4rem)] container mx-auto">
+          <Outlet />
+        </main>
+      </div>
       {!location.pathname.includes("new") && (
         <nav className="dock">
           <Link
@@ -83,6 +85,6 @@ export default function Sheet() {
           )}
         </nav>
       )}
-    </div>
+    </>
   );
 }
