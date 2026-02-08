@@ -75,8 +75,8 @@ const defaultSheet = {
         order: 1,
         options: {
           create: [
-            { title: "Heads", order: 1 },
-            { title: "Tails", order: 2 },
+            { title: "Heads", shortTitle: "H", order: 1 },
+            { title: "Tails", shortTitle: "T", order: 2 },
           ],
         },
       },
@@ -86,8 +86,8 @@ const defaultSheet = {
         order: 2,
         options: {
           create: [
-            { title: "Home", order: 1 },
-            { title: "Away", order: 2 },
+            { title: "Home", shortTitle: "Home", order: 1 },
+            { title: "Away", shortTitle: "Away", order: 2 },
           ],
         },
       },
@@ -97,9 +97,9 @@ const defaultSheet = {
         order: 3,
         options: {
           create: [
-            { title: "Home", order: 1 },
-            { title: "Away", order: 2 },
-            { title: "Tie", order: 3 },
+            { title: "Home", shortTitle: "Home", order: 1 },
+            { title: "Away", shortTitle: "Away", order: 2 },
+            { title: "Tie", shortTitle: "Tie", order: 3 },
           ],
         },
       },
@@ -109,8 +109,251 @@ const defaultSheet = {
         order: 4,
         options: {
           create: [
-            { title: "Yes", order: 1 },
-            { title: "No", order: 2 },
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total touchdowns in the game",
+        shortTitle: "Total TDs",
+        order: 5,
+        options: {
+          create: [
+            { title: "Over 6.5", shortTitle: "Over", order: 1 },
+            { title: "Under 6.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a safety?",
+        shortTitle: "Safety",
+        order: 6,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "First score type",
+        shortTitle: "1st score",
+        order: 7,
+        options: {
+          create: [
+            { title: "Touchdown", shortTitle: "TD", order: 1 },
+            { title: "Field Goal", shortTitle: "FG", order: 2 },
+            { title: "Safety", shortTitle: "Saf", order: 3 },
+          ],
+        },
+      },
+      {
+        title: "Winning team total points",
+        shortTitle: "Winner pts",
+        order: 8,
+        options: {
+          create: [
+            { title: "Over 27.5", shortTitle: "Over", order: 1 },
+            { title: "Under 27.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Longest touchdown",
+        shortTitle: "Long TD",
+        order: 9,
+        options: {
+          create: [
+            { title: "Over 45.5 yards", shortTitle: "Over", order: 1 },
+            { title: "Under 45.5 yards", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a missed field goal?",
+        shortTitle: "Missed FG",
+        order: 10,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total field goals made",
+        shortTitle: "FGs made",
+        order: 11,
+        options: {
+          create: [
+            { title: "Over 3.5", shortTitle: "Over", order: 1 },
+            { title: "Under 3.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a punt return touchdown?",
+        shortTitle: "Punt ret TD",
+        order: 12,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a kickoff return touchdown?",
+        shortTitle: "KO ret TD",
+        order: 13,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total turnovers in the game",
+        shortTitle: "Turnovers",
+        order: 14,
+        options: {
+          create: [
+            { title: "Over 2.5", shortTitle: "Over", order: 1 },
+            { title: "Under 2.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a defensive touchdown?",
+        shortTitle: "Def TD",
+        order: 15,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Largest lead in the game",
+        shortTitle: "Max lead",
+        order: 16,
+        options: {
+          create: [
+            { title: "Over 13.5 points", shortTitle: "Over", order: 1 },
+            { title: "Under 13.5 points", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Fourth quarter total points",
+        shortTitle: "4th Q pts",
+        order: 17,
+        options: {
+          create: [
+            { title: "Over 13.5", shortTitle: "Over", order: 1 },
+            { title: "Under 13.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a successful two-point conversion?",
+        shortTitle: "2pt conv",
+        order: 18,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total sacks in the game",
+        shortTitle: "Sacks",
+        order: 19,
+        options: {
+          create: [
+            { title: "Over 5.5", shortTitle: "Over", order: 1 },
+            { title: "Under 5.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will the game be decided by 3 points or fewer?",
+        shortTitle: "Close game",
+        order: 20,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total passing touchdowns",
+        shortTitle: "Pass TDs",
+        order: 21,
+        options: {
+          create: [
+            { title: "Over 3.5", shortTitle: "Over", order: 1 },
+            { title: "Under 3.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total rushing touchdowns",
+        shortTitle: "Rush TDs",
+        order: 22,
+        options: {
+          create: [
+            { title: "Over 1.5", shortTitle: "Over", order: 1 },
+            { title: "Under 1.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Longest field goal made",
+        shortTitle: "Long FG",
+        order: 23,
+        options: {
+          create: [
+            { title: "Over 47.5 yards", shortTitle: "Over", order: 1 },
+            { title: "Under 47.5 yards", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will there be a successful challenge?",
+        shortTitle: "Challenge",
+        order: 24,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Total penalties called",
+        shortTitle: "Penalties",
+        order: 25,
+        options: {
+          create: [
+            { title: "Over 10.5", shortTitle: "Over", order: 1 },
+            { title: "Under 10.5", shortTitle: "Under", order: 2 },
+          ],
+        },
+      },
+      {
+        title: "Will the winning team score in all four quarters?",
+        shortTitle: "Score 4Qs",
+        order: 26,
+        options: {
+          create: [
+            { title: "Yes", shortTitle: "Yes", order: 1 },
+            { title: "No", shortTitle: "No", order: 2 },
           ],
         },
       },
