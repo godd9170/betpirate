@@ -6,7 +6,7 @@ function AvatarImage({ profilePictureUrl, username }: { profilePictureUrl: strin
       <img
         src={profilePictureUrl}
         alt={username}
-        className="w-7 h-7 rounded-full object-cover border-2 border-base-100 shadow-md"
+        className="w-9 h-9 rounded-full object-cover border-2 border-base-100 shadow-md"
       />
     );
   }
@@ -14,7 +14,7 @@ function AvatarImage({ profilePictureUrl, username }: { profilePictureUrl: strin
   // Fallback avatar with first letter
   const initial = username.charAt(0).toUpperCase();
   return (
-    <div className="w-7 h-7 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm border-2 border-base-100 shadow-md">
+    <div className="w-9 h-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-base border-2 border-base-100 shadow-md">
       {initial}
     </div>
   );
@@ -73,11 +73,11 @@ export default function RaceView({
                     {/* Username/Nickname */}
                     <div className="w-32 flex-shrink-0">
                       <span className="font-semibold text-xs text-base-content truncate block">
-                        {leader.nickname || leader.username}
+                        {leader.username}
                       </span>
                       {leader.nickname && (
                         <span className="text-[10px] opacity-60 truncate block">
-                          @{leader.username}
+                          {leader.nickname}
                         </span>
                       )}
                     </div>
@@ -85,7 +85,7 @@ export default function RaceView({
                     {/* Bar Container */}
                     <div className="flex-1 relative">
                       {/* Background bar */}
-                      <div className="h-7 bg-base-200/50 rounded-md overflow-hidden relative">
+                      <div className="h-9 bg-base-200/50 rounded-md overflow-hidden relative">
                         {/* Progress bar */}
                         <div
                           className={`h-full ${barColor} transition-all duration-500 ease-out shadow-md`}

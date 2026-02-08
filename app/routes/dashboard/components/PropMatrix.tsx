@@ -1,6 +1,26 @@
 import { IoTrophy, IoMedal, IoRibbon } from "react-icons/io5";
 import Ordinal from "~/components/Ordinal";
 
+function AvatarImage({ profilePictureUrl, username }: { profilePictureUrl: string | null; username: string }) {
+  if (profilePictureUrl) {
+    return (
+      <img
+        src={profilePictureUrl}
+        alt={username}
+        className="w-9 h-9 rounded-full object-cover border-2 border-base-100 shadow-md"
+      />
+    );
+  }
+
+  // Fallback avatar with first letter
+  const initial = username.charAt(0).toUpperCase();
+  return (
+    <div className="w-9 h-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-base border-2 border-base-100 shadow-md">
+      {initial}
+    </div>
+  );
+}
+
 function PropCell({ option, isWinning }: any) {
   const isAnswered = !!option.answerId;
   const isCorrect = option.answerId === option.id;
@@ -10,13 +30,13 @@ function PropCell({ option, isWinning }: any) {
   if (isAnswered) {
     if (isCorrect) {
       cellClass += isWinning
-        ? "bg-success text-success-content shadow-inner"
-        : "bg-success/70 text-success-content";
+        ? "bg-success text-success-content shadow-inner font-semibold"
+        : "bg-success/80 text-success-content";
     } else {
-      cellClass += "bg-error/60 text-error-content";
+      cellClass += "bg-error/80 text-error-content";
     }
   } else {
-    cellClass += "bg-base-100/50";
+    cellClass += "bg-base-200/60 text-base-content/50";
   }
 
   return (
@@ -76,123 +96,114 @@ export default function PropMatrix({
   }, {} as Record<string, any>);
 
   return (
-    <div className="space-y-4">
-      {/* Leaderboard Matrix */}
-      <div className="card bg-base-100 shadow-xl overflow-hidden">
-        <div className="card-body p-0 max-h-[calc(100vh-200px)] overflow-auto">
-          <table className="table table-xs table-pin-rows table-pin-cols">
-            <thead>
-              <tr className="bg-base-300">
-                <th className="bg-base-300 z-20 text-center w-[90px] sticky left-0">
-                  <div className="text-xs font-bold">Sailor</div>
+    <div className="card bg-base-100 shadow-xl overflow-hidden">
+      <div className="card-body p-0 max-h-[calc(100vh-200px)] overflow-auto">
+        <table className="table table-xs table-pin-rows table-pin-cols">
+          <thead>
+            <tr className="bg-base-300">
+              <th className="bg-base-300 z-20 text-center w-[130px] sticky left-0">
+                <div className="text-xs font-bold">Sailor</div>
+              </th>
+              <th className="bg-base-300 z-20 text-center w-[60px] sticky left-[130px]">
+                <div className="text-xs font-bold">Rank</div>
+              </th>
+              {sheet.propositions.map((proposition: any, index: number) => (
+                <th
+                  key={index}
+                  className="bg-base-300 text-xs p-0.5 w-[55px]"
+                  title={proposition.title}
+                >
+                  <div className="flex items-center justify-center h-20">
+                    <div
+                      className="font-medium text-center text-[9px]"
+                      style={{
+                        transform: "rotate(-55deg)",
+                        whiteSpace: "nowrap",
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      {proposition.shortTitle || proposition.title}
+                    </div>
+                  </div>
                 </th>
-                <th className="bg-base-300 z-20 text-center w-[60px] sticky left-[90px]">
-                  <div className="text-xs font-bold">Rank</div>
-                </th>
-                {sheet.propositions.map((proposition: any, index: number) => (
-                  <th
-                    key={index}
-                    className="bg-base-300 text-xs p-0.5 w-[55px]"
-                    title={proposition.title}
-                  >
-                    <div className="flex items-center justify-center h-20">
-                      <div
-                        className="font-medium text-center text-[9px]"
-                        style={{
-                          transform: "rotate(-55deg)",
-                          whiteSpace: "nowrap",
-                          transformOrigin: "center center",
-                        }}
-                      >
-                        {proposition.shortTitle || proposition.title}
+              ))}
+              <th className="bg-base-300 text-center w-[50px] sticky right-0">
+                <div className="text-xs font-bold">Score</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaders.map((leader: any, rIndex: number) => {
+              const isTopThree = leader.ranking <= 3;
+              const rowClass = isTopThree
+                ? "bg-base-200/50 hover:bg-base-200"
+                : "hover:bg-base-100";
+
+              return (
+                <tr key={rIndex} className={rowClass}>
+                  <td className="font-semibold bg-base-200/80 z-10 sticky left-0">
+                    <div className="flex items-center gap-1 px-1 py-0.5">
+                      {/* Avatar */}
+                      <div className="flex-shrink-0">
+                        <AvatarImage
+                          profilePictureUrl={leader.profilePictureUrl}
+                          username={leader.username}
+                        />
+                      </div>
+                      {/* Username and Nickname */}
+                      <div className="flex flex-col gap-0 min-w-0 flex-1">
+                        <div className="flex items-center gap-0.5">
+                          {leader.ranking === 1 && (
+                            <IoTrophy className="text-warning flex-shrink-0" size={10} />
+                          )}
+                          {leader.ranking === 2 && (
+                            <IoMedal className="text-info flex-shrink-0" size={10} />
+                          )}
+                          {leader.ranking === 3 && (
+                            <IoRibbon className="text-accent flex-shrink-0" size={10} />
+                          )}
+                          <span className="text-[10px] truncate">{leader.username}</span>
+                        </div>
+                        {leader.nickname && (
+                          <span className="text-[8px] opacity-60 truncate">
+                            {leader.nickname}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </th>
-                ))}
-                <th className="bg-base-300 text-center w-[50px] sticky right-0">
-                  <div className="text-xs font-bold">Score</div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaders.map((leader: any, rIndex: number) => {
-                const isTopThree = leader.ranking <= 3;
-                const rowClass = isTopThree
-                  ? "bg-base-200/50 hover:bg-base-200"
-                  : "hover:bg-base-100";
+                  </td>
+                  <td className="text-center bg-base-200/80 z-10 sticky left-[130px]">
+                    <RankBadge ranking={leader.ranking} />
+                  </td>
+                  {sheet.propositions.map((proposition: any, aIndex: number) => {
+                    // Find the selection for this proposition
+                    const selection = leader.selections.find((sel: any) =>
+                      options[sel.optionId]?.propositionId === proposition.id
+                    );
+                    const option = selection ? options[selection.optionId] : null;
 
-                return (
-                  <tr key={rIndex} className={rowClass}>
-                    <td className="font-semibold bg-base-200/80 z-10 sticky left-0">
-                      <div className="flex items-center gap-0.5 px-1">
-                        {leader.ranking === 1 && (
-                          <IoTrophy className="text-warning" size={12} />
-                        )}
-                        {leader.ranking === 2 && (
-                          <IoMedal className="text-info" size={12} />
-                        )}
-                        {leader.ranking === 3 && (
-                          <IoRibbon className="text-accent" size={12} />
-                        )}
-                        <span className="text-[10px] truncate">{leader.username}</span>
-                      </div>
-                    </td>
-                    <td className="text-center bg-base-200/80 z-10 sticky left-[90px]">
-                      <RankBadge ranking={leader.ranking} />
-                    </td>
-                    {sheet.propositions.map((proposition: any, aIndex: number) => {
-                      // Find the selection for this proposition
-                      const selection = leader.selections.find((sel: any) =>
-                        options[sel.optionId]?.propositionId === proposition.id
-                      );
-                      const option = selection ? options[selection.optionId] : null;
-
-                      return option ? (
-                        <PropCell
-                          key={aIndex}
-                          option={option}
-                          isWinning={leader.ranking === 1}
-                        />
-                      ) : (
-                        <td key={aIndex} className="p-0.5 text-center bg-base-100/50">
-                          <span className="text-[9px] opacity-30">—</span>
-                        </td>
-                      );
-                    })}
-                    <td className="text-center font-bold bg-base-200/80 sticky right-0 p-0.5">
-                      <div className="badge badge-xs badge-primary font-bold">
-                        {leader.correct}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Footer with Legend */}
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body py-4">
-          <div className="flex items-center justify-center gap-8 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="badge badge-success">
-                Correct
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="badge badge-error">
-                Incorrect
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="badge badge-ghost">
-                Not Yet Answered
-              </div>
-            </div>
-          </div>
-        </div>
+                    return option ? (
+                      <PropCell
+                        key={aIndex}
+                        option={option}
+                        isWinning={leader.ranking === 1}
+                      />
+                    ) : (
+                      <td key={aIndex} className="p-0.5 text-center bg-base-100/50">
+                        <span className="text-[9px] opacity-30">—</span>
+                      </td>
+                    );
+                  })}
+                  <td className="text-center font-bold bg-base-200/80 sticky right-0 p-0.5">
+                    <div className="badge badge-xs badge-primary font-bold">
+                      {leader.correct}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
