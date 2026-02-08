@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { IoTrophy, IoMedal, IoRibbon, IoCheckmarkCircle, IoCloseCircle, IoHelpCircle } from "react-icons/io5";
+import { IoTrophy, IoMedal, IoRibbon } from "react-icons/io5";
 import Ordinal from "~/components/Ordinal";
 
 function PropCell({ option, isWinning }: any) {
@@ -7,29 +7,22 @@ function PropCell({ option, isWinning }: any) {
   const isCorrect = option.answerId === option.id;
 
   let cellClass = "p-0.5 text-center text-[9px] font-medium transition-colors ";
-  let icon = null;
 
   if (isAnswered) {
     if (isCorrect) {
       cellClass += isWinning
         ? "bg-success text-success-content shadow-inner"
         : "bg-success/70 text-success-content";
-      icon = <IoCheckmarkCircle className="inline mr-0.5" size={10} />;
     } else {
       cellClass += "bg-error/60 text-error-content";
-      icon = <IoCloseCircle className="inline mr-0.5 opacity-50" size={8} />;
     }
   } else {
     cellClass += "bg-base-100/50";
-    icon = <IoHelpCircle className="inline mr-0.5 opacity-30" size={8} />;
   }
 
   return (
     <td className={cellClass}>
-      <div className="flex items-center justify-center gap-0.5">
-        {icon}
-        <span className="truncate max-w-[45px]">{option.shortTitle}</span>
-      </div>
+      <span className="truncate block">{option.shortTitle}</span>
     </td>
   );
 }
@@ -249,20 +242,17 @@ export default function PropMatrix({
         <div className="card-body py-4">
           <div className="flex items-center justify-center gap-8 text-xs">
             <div className="flex items-center gap-2">
-              <div className="badge badge-success gap-1">
-                <IoCheckmarkCircle size={14} />
+              <div className="badge badge-success">
                 Correct
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="badge badge-error badge-outline gap-1">
-                <IoCloseCircle size={14} />
+              <div className="badge badge-error">
                 Incorrect
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="badge badge-ghost gap-1">
-                <IoHelpCircle size={14} />
+              <div className="badge badge-ghost">
                 Not Yet Answered
               </div>
             </div>
