@@ -117,10 +117,10 @@ export default function RaceView({
                 <div key={index} className="relative group">
                   <div className="flex items-center gap-2">
                     {/* Rank Badge */}
-                    <div className="w-10 text-center flex-shrink-0">
-                      {leader.ranking === 1 && <IoTrophy className="inline text-warning" size={18} />}
-                      {leader.ranking === 2 && <IoMedal className="inline text-info" size={18} />}
-                      {leader.ranking === 3 && <IoRibbon className="inline text-accent" size={18} />}
+                    <div className="w-8 text-center flex-shrink-0">
+                      {leader.ranking === 1 && <IoTrophy className="inline text-warning" size={16} />}
+                      {leader.ranking === 2 && <IoMedal className="inline text-info" size={16} />}
+                      {leader.ranking === 3 && <IoRibbon className="inline text-accent" size={16} />}
                       {leader.ranking > 3 && (
                         <span className="text-xs font-semibold text-base-content/70">
                           {leader.ranking}
@@ -128,33 +128,35 @@ export default function RaceView({
                       )}
                     </div>
 
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <AvatarImage
+                        profilePictureUrl={leader.profilePictureUrl}
+                        username={leader.username}
+                      />
+                    </div>
+
+                    {/* Username */}
+                    <div className="w-32 flex-shrink-0">
+                      <span className="font-semibold text-xs text-base-content truncate block">
+                        {leader.username}
+                      </span>
+                    </div>
+
                     {/* Bar Container */}
                     <div className="flex-1 relative">
                       {/* Background bar */}
-                      <div className="h-9 bg-base-200/50 rounded-md overflow-hidden relative">
+                      <div className="h-7 bg-base-200/50 rounded-md overflow-hidden relative">
                         {/* Progress bar */}
                         <div
-                          className={`h-full ${barColor} transition-all duration-500 ease-out flex items-center justify-end pr-1.5 shadow-md`}
-                          style={{ width: `${Math.max(barWidth, 8)}%` }}
-                        >
-                          {/* Avatar at the tip */}
-                          <div className="transform group-hover:scale-110 transition-transform">
-                            <AvatarImage
-                              profilePictureUrl={leader.profilePictureUrl}
-                              username={leader.username}
-                            />
-                          </div>
-                        </div>
+                          className={`h-full ${barColor} transition-all duration-500 ease-out shadow-md`}
+                          style={{ width: `${barWidth}%` }}
+                        />
 
-                        {/* Name and score overlay */}
-                        <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
-                          <span className="font-semibold text-sm text-base-content drop-shadow-md">
-                            {leader.username}
-                          </span>
-                          <span className="font-bold text-sm">
-                            <span className="badge badge-sm badge-primary font-bold">
-                              {leader.correct}/{stats.totalProps}
-                            </span>
+                        {/* Score overlay */}
+                        <div className="absolute inset-0 flex items-center justify-end px-2 pointer-events-none">
+                          <span className="badge badge-xs badge-primary font-bold">
+                            {leader.correct}/{stats.totalProps}
                           </span>
                         </div>
                       </div>
