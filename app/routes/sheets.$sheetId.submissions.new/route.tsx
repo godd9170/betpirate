@@ -7,7 +7,10 @@ import {
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheet } from "~/models/sheet.server";
-import { createSubmission } from "~/models/submission.server";
+import {
+  createSubmission,
+  readSheetSubmission,
+} from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
 import PropositionCard from "./components/PropositionCard";
 import { useRef, useState } from "react";
@@ -67,6 +70,15 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     return redirect(`/sheets/${params.sheetId}`);
   }
 
+  // Check if user already has a submission - prevent duplicates
+  const existingSubmission = await readSheetSubmission(
+    params.sheetId,
+    sailorId
+  );
+  if (existingSubmission) {
+    return redirect(`/sheets/${params.sheetId}/submissions`);
+  }
+
   const form = await request.formData();
 
   const submissionParse = parseWithZod(form, { schema });
@@ -100,8 +112,7 @@ export default function Sheet() {
   const navigation = useNavigation();
   const propositionCount = sheet.propositions.length;
   const selectionCount = Object.keys(selections).length;
-  const isSubmitting =
-    navigation.formAction === `/sheets/${sheet.id}/submissions?index`;
+  const isSubmitting = navigation.state !== "idle";
   const allPropositionsSelected = propositionCount === selectionCount;
   const disabled =
     !allPropositionsSelected || !tiebreakerTouched || isSubmitting;
