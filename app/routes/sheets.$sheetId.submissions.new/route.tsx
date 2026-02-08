@@ -7,11 +7,9 @@ import {
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { readSheet } from "~/models/sheet.server";
-import {
-  createSubmission,
-  readSheetSubmission,
-} from "~/models/submission.server";
+import { createSubmission } from "~/models/submission.server";
 import { authenticator } from "~/services/auth.server";
+import { db } from "~/utils/db.server";
 import PropositionCard from "./components/PropositionCard";
 import { useRef, useState } from "react";
 import TiebreakerCard from "./components/TiebreakerCard";
@@ -70,12 +68,17 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     return redirect(`/sheets/${params.sheetId}`);
   }
 
-  // Check if user already has a submission - prevent duplicates
-  const existingSubmission = await readSheetSubmission(
-    params.sheetId,
-    sailorId
-  );
-  if (existingSubmission) {
+  // Prevent spam-clicking: check if user submitted very recently (within 5 seconds)
+  const recentSubmission = await db.submission.findFirst({
+    where: {
+      sheetId: params.sheetId,
+      sailorId,
+      createdAt: {
+        gte: new Date(Date.now() - 5000), // 5 seconds ago
+      },
+    },
+  });
+  if (recentSubmission) {
     return redirect(`/sheets/${params.sheetId}/submissions`);
   }
 
