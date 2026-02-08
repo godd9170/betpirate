@@ -1,5 +1,5 @@
 import { Sailor, Sheet } from "@prisma/client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   IoBoatOutline,
   IoCashOutline,
@@ -8,6 +8,7 @@ import {
   IoTimeOutline,
   IoTrophyOutline,
 } from "react-icons/io5";
+import Countdown from "~/components/Countdown";
 import type { SubmissionPreview } from "~/models/submission.server";
 
 const calculatePrizePool = (paidCount: number) => {
@@ -27,38 +28,6 @@ const calculatePrizePool = (paidCount: number) => {
     winnerPrize,
     loserPrize,
   };
-};
-
-type TimeLeft = {
-  total: number;
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-};
-
-const buildTimeLeft = (target: Date | null): TimeLeft | null => {
-  if (!target) return null;
-  const total = target.getTime() - Date.now();
-  const clamped = Math.max(total, 0);
-
-  return {
-    total,
-    days: Math.floor(clamped / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((clamped / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((clamped / (1000 * 60)) % 60),
-    seconds: Math.floor((clamped / 1000) % 60),
-  };
-};
-
-const formatTimeLeft = (timeLeft: TimeLeft | null) => {
-  if (!timeLeft) return "TBD";
-  if (timeLeft.total <= 0) return "Closing";
-
-  const parts = [] as string[];
-  if (timeLeft.days > 0) parts.push(`${timeLeft.days}d`);
-  parts.push(`${timeLeft.hours}h`, `${timeLeft.minutes}m`);
-  return parts.join(" ");
 };
 
 const formatRelativeTime = (date: Date) => {
@@ -86,17 +55,6 @@ export default function OpenLeaderboard({
   paidCount: number;
 }) {
   const closesAt = sheet.closesAt ? new Date(sheet.closesAt) : null;
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    buildTimeLeft(closesAt),
-  );
-
-  useEffect(() => {
-    if (!closesAt) return;
-    const timer = setInterval(() => {
-      setTimeLeft(buildTimeLeft(closesAt));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [sheet.closesAt]);
 
   const { uniqueSailors, recentSubmissions } = useMemo(() => {
     const unique = new Set(
@@ -137,20 +95,10 @@ export default function OpenLeaderboard({
             <div className="stat-figure text-primary">
               <IoBoatOutline size={26} />
             </div>
-            <div className="stat-title">Entries</div>
+            <div className="stat-title">Paid Entries</div>
             <div className="stat-value">{submissions.length}</div>
             <div className="stat-desc whitespace-normal break-words">
               across {sheet.title}
-            </div>
-          </div>
-          <div className="stat min-w-0">
-            <div className="stat-figure text-primary">
-              <IoPeopleOutline size={26} />
-            </div>
-            <div className="stat-title">Sailors</div>
-            <div className="stat-value">{uniqueSailors}</div>
-            <div className="stat-desc whitespace-normal break-words">
-              unique captains so far
             </div>
           </div>
           <div className="stat min-w-0">
@@ -159,7 +107,7 @@ export default function OpenLeaderboard({
             </div>
             <div className="stat-title">Closes In</div>
             <div className="stat-value text-xl sm:text-2xl">
-              {formatTimeLeft(timeLeft)}
+              {closesAt ? <Countdown closesAt={closesAt} /> : "TBD"}
             </div>
             <div className="stat-desc whitespace-normal break-words">
               {closesAt
