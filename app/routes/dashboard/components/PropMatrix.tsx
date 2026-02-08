@@ -6,7 +6,7 @@ function PropCell({ option, isWinning }: any) {
   const isAnswered = !!option.answerId;
   const isCorrect = option.answerId === option.id;
 
-  let cellClass = "p-2 text-center text-xs font-medium transition-colors ";
+  let cellClass = "p-1 text-center text-[10px] font-medium transition-colors ";
   let icon = null;
 
   if (isAnswered) {
@@ -14,21 +14,21 @@ function PropCell({ option, isWinning }: any) {
       cellClass += isWinning
         ? "bg-success text-success-content shadow-inner"
         : "bg-success/70 text-success-content";
-      icon = <IoCheckmarkCircle className="inline mr-1" size={14} />;
+      icon = <IoCheckmarkCircle className="inline mr-0.5" size={12} />;
     } else {
       cellClass += "bg-error/60 text-error-content";
-      icon = <IoCloseCircle className="inline mr-1 opacity-50" size={12} />;
+      icon = <IoCloseCircle className="inline mr-0.5 opacity-50" size={10} />;
     }
   } else {
     cellClass += "bg-base-100/50";
-    icon = <IoHelpCircle className="inline mr-1 opacity-30" size={12} />;
+    icon = <IoHelpCircle className="inline mr-0.5 opacity-30" size={10} />;
   }
 
   return (
     <td className={cellClass}>
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex items-center justify-center gap-0.5">
         {icon}
-        <span className="truncate max-w-[80px]">{option.shortTitle}</span>
+        <span className="truncate max-w-[70px]">{option.shortTitle}</span>
       </div>
     </td>
   );
@@ -37,28 +37,28 @@ function PropCell({ option, isWinning }: any) {
 function RankBadge({ ranking }: { ranking: number }) {
   if (ranking === 1) {
     return (
-      <div className="badge badge-warning badge-lg gap-1 font-bold shadow-lg">
-        <IoTrophy size={18} />
+      <div className="badge badge-warning badge-sm gap-0.5 font-bold shadow-md">
+        <IoTrophy size={14} />
         1st
       </div>
     );
   } else if (ranking === 2) {
     return (
-      <div className="badge badge-info badge-lg gap-1 font-semibold shadow-md">
-        <IoMedal size={18} />
+      <div className="badge badge-info badge-sm gap-0.5 font-semibold shadow-sm">
+        <IoMedal size={14} />
         2nd
       </div>
     );
   } else if (ranking === 3) {
     return (
-      <div className="badge badge-accent badge-lg gap-1 font-semibold shadow-md">
-        <IoRibbon size={18} />
+      <div className="badge badge-accent badge-sm gap-0.5 font-semibold shadow-sm">
+        <IoRibbon size={14} />
         3rd
       </div>
     );
   } else {
     return (
-      <div className="badge badge-ghost badge-lg font-medium">
+      <div className="badge badge-ghost badge-sm font-medium">
         <Ordinal number={ranking} />
       </div>
     );
@@ -72,8 +72,8 @@ export default function PropMatrix({
   sheet: any;
   leaders: any;
 }) {
-  const options = sheet.propositions.reduce((acc, proposition) => {
-    proposition.options.forEach((option) => {
+  const options = sheet.propositions.reduce((acc: any, proposition: any) => {
+    proposition.options.forEach((option: any) => {
       acc[option.id] = {
         ...option,
         propositionId: proposition.id,
@@ -81,11 +81,11 @@ export default function PropMatrix({
       };
     });
     return acc;
-  }, {});
+  }, {} as Record<string, any>);
 
   const stats = useMemo(() => {
     const totalProps = sheet.propositions.length;
-    const answeredProps = sheet.propositions.filter(p => p.answerId).length;
+    const answeredProps = sheet.propositions.filter((p: any) => p.answerId).length;
     const totalParticipants = leaders.length;
     const progress = totalProps > 0 ? (answeredProps / totalProps) * 100 : 0;
     const topScore = leaders.length > 0 ? leaders[0].correct : 0;
@@ -100,7 +100,7 @@ export default function PropMatrix({
   }, [sheet, leaders]);
 
   const topRanking = leaders.length > 0 ? leaders[0].ranking : 0;
-  const topLeaders = leaders.filter(l => l.ranking === topRanking);
+  const topLeaders = leaders.filter((l: any) => l.ranking === topRanking);
 
   return (
     <div className="space-y-6">
@@ -150,26 +150,26 @@ export default function PropMatrix({
       </div>
 
       {/* Leaderboard Matrix */}
-      <div className="card bg-base-100 shadow-2xl overflow-x-auto">
-        <div className="card-body p-0">
-          <table className="table table-sm table-pin-rows table-pin-cols">
+      <div className="card bg-base-100 shadow-2xl overflow-hidden">
+        <div className="card-body p-0 max-h-[calc(100vh-300px)] overflow-auto">
+          <table className="table table-xs table-pin-rows table-pin-cols">
             <thead>
               <tr className="bg-base-300">
-                <th className="bg-base-300 z-20 text-center min-w-[140px]">
-                  <div className="text-sm font-bold">Sailor</div>
+                <th className="bg-base-300 z-20 text-center min-w-[120px] sticky left-0">
+                  <div className="text-xs font-bold">Sailor</div>
                 </th>
-                <th className="bg-base-300 z-20 text-center min-w-[100px]">
-                  <div className="text-sm font-bold">Rank</div>
+                <th className="bg-base-300 z-20 text-center min-w-[80px] sticky left-[120px]">
+                  <div className="text-xs font-bold">Rank</div>
                 </th>
-                {sheet.propositions.map((proposition, index) => (
+                {sheet.propositions.map((proposition: any, index: number) => (
                   <th
                     key={index}
-                    className="bg-base-300 text-xs p-2 min-w-[120px]"
+                    className="bg-base-300 text-xs p-1 min-w-[100px]"
                     title={proposition.title}
                   >
-                    <div className="flex items-center justify-center h-32">
+                    <div className="flex items-center justify-center h-24">
                       <div
-                        className="font-medium text-center"
+                        className="font-medium text-center text-[10px]"
                         style={{
                           transform: "rotate(-55deg)",
                           whiteSpace: "nowrap",
@@ -181,13 +181,13 @@ export default function PropMatrix({
                     </div>
                   </th>
                 ))}
-                <th className="bg-base-300 text-center min-w-[80px]">
-                  <div className="text-sm font-bold">Score</div>
+                <th className="bg-base-300 text-center min-w-[70px] sticky right-0">
+                  <div className="text-xs font-bold">Score</div>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {leaders.map((leader, rIndex) => {
+              {leaders.map((leader: any, rIndex: number) => {
                 const isTopThree = leader.ranking <= 3;
                 const rowClass = isTopThree
                   ? "bg-base-200/50 hover:bg-base-200"
@@ -195,32 +195,44 @@ export default function PropMatrix({
 
                 return (
                   <tr key={rIndex} className={rowClass}>
-                    <td className="font-semibold bg-base-200/80 z-10">
-                      <div className="flex items-center gap-2 px-2">
+                    <td className="font-semibold bg-base-200/80 z-10 sticky left-0">
+                      <div className="flex items-center gap-1 px-2">
                         {leader.ranking === 1 && (
-                          <IoTrophy className="text-warning" size={20} />
+                          <IoTrophy className="text-warning" size={16} />
                         )}
                         {leader.ranking === 2 && (
-                          <IoMedal className="text-info" size={20} />
+                          <IoMedal className="text-info" size={16} />
                         )}
                         {leader.ranking === 3 && (
-                          <IoRibbon className="text-accent" size={20} />
+                          <IoRibbon className="text-accent" size={16} />
                         )}
-                        <span className="text-sm">{leader.username}</span>
+                        <span className="text-xs">{leader.username}</span>
                       </div>
                     </td>
-                    <td className="text-center bg-base-200/80 z-10">
+                    <td className="text-center bg-base-200/80 z-10 sticky left-[120px]">
                       <RankBadge ranking={leader.ranking} />
                     </td>
-                    {leader.selections.map((selection, aIndex) => (
-                      <PropCell
-                        key={aIndex}
-                        option={options[selection.optionId]}
-                        isWinning={leader.ranking === 1}
-                      />
-                    ))}
-                    <td className="text-center font-bold bg-base-200/80">
-                      <div className="badge badge-lg badge-primary font-bold">
+                    {sheet.propositions.map((proposition: any, aIndex: number) => {
+                      // Find the selection for this proposition
+                      const selection = leader.selections.find((sel: any) =>
+                        options[sel.optionId]?.propositionId === proposition.id
+                      );
+                      const option = selection ? options[selection.optionId] : null;
+
+                      return option ? (
+                        <PropCell
+                          key={aIndex}
+                          option={option}
+                          isWinning={leader.ranking === 1}
+                        />
+                      ) : (
+                        <td key={aIndex} className="p-1 text-center bg-base-100/50">
+                          <span className="text-[10px] opacity-30">—</span>
+                        </td>
+                      );
+                    })}
+                    <td className="text-center font-bold bg-base-200/80 sticky right-0">
+                      <div className="badge badge-sm badge-primary font-bold">
                         {leader.correct}
                       </div>
                     </td>
