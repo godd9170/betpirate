@@ -7,7 +7,7 @@ function AvatarImage({ profilePictureUrl, username }: { profilePictureUrl: strin
       <img
         src={profilePictureUrl}
         alt={username}
-        className="w-10 h-10 rounded-full object-cover border-2 border-base-100 shadow-lg"
+        className="w-7 h-7 rounded-full object-cover border-2 border-base-100 shadow-md"
       />
     );
   }
@@ -15,7 +15,7 @@ function AvatarImage({ profilePictureUrl, username }: { profilePictureUrl: strin
   // Fallback avatar with first letter
   const initial = username.charAt(0).toUpperCase();
   return (
-    <div className="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-lg border-2 border-base-100 shadow-lg">
+    <div className="w-7 h-7 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm border-2 border-base-100 shadow-md">
       {initial}
     </div>
   );
@@ -46,7 +46,6 @@ export default function RaceView({
 
   const topRanking = leaders.length > 0 ? leaders[0].ranking : 0;
   const topLeaders = leaders.filter((l: any) => l.ranking === topRanking);
-  const maxCorrect = Math.max(...leaders.map((l: any) => l.correct), 1);
 
   return (
     <div className="space-y-6">
@@ -99,9 +98,10 @@ export default function RaceView({
       <div className="card bg-base-100 shadow-2xl">
         <div className="card-body">
           <h2 className="text-2xl font-bold mb-4">Race View</h2>
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {leaders.map((leader: any, index: number) => {
-              const barWidth = maxCorrect > 0 ? (leader.correct / maxCorrect) * 100 : 0;
+              // Calculate bar width based on total questions, not max correct
+              const barWidth = stats.totalProps > 0 ? (leader.correct / stats.totalProps) * 100 : 0;
               const isTopThree = leader.ranking <= 3;
 
               let barColor = "bg-gradient-to-r from-primary/60 to-primary/40";
@@ -115,14 +115,14 @@ export default function RaceView({
 
               return (
                 <div key={index} className="relative group">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     {/* Rank Badge */}
-                    <div className="w-12 text-center flex-shrink-0">
-                      {leader.ranking === 1 && <IoTrophy className="inline text-warning" size={24} />}
-                      {leader.ranking === 2 && <IoMedal className="inline text-info" size={24} />}
-                      {leader.ranking === 3 && <IoRibbon className="inline text-accent" size={24} />}
+                    <div className="w-10 text-center flex-shrink-0">
+                      {leader.ranking === 1 && <IoTrophy className="inline text-warning" size={18} />}
+                      {leader.ranking === 2 && <IoMedal className="inline text-info" size={18} />}
+                      {leader.ranking === 3 && <IoRibbon className="inline text-accent" size={18} />}
                       {leader.ranking > 3 && (
-                        <span className="text-sm font-semibold text-base-content/70">
+                        <span className="text-xs font-semibold text-base-content/70">
                           {leader.ranking}
                         </span>
                       )}
@@ -131,11 +131,11 @@ export default function RaceView({
                     {/* Bar Container */}
                     <div className="flex-1 relative">
                       {/* Background bar */}
-                      <div className="h-14 bg-base-200/50 rounded-lg overflow-hidden relative">
+                      <div className="h-9 bg-base-200/50 rounded-md overflow-hidden relative">
                         {/* Progress bar */}
                         <div
-                          className={`h-full ${barColor} transition-all duration-500 ease-out flex items-center justify-end pr-2 shadow-lg`}
-                          style={{ width: `${Math.max(barWidth, 10)}%` }}
+                          className={`h-full ${barColor} transition-all duration-500 ease-out flex items-center justify-end pr-1.5 shadow-md`}
+                          style={{ width: `${Math.max(barWidth, 8)}%` }}
                         >
                           {/* Avatar at the tip */}
                           <div className="transform group-hover:scale-110 transition-transform">
@@ -147,13 +147,13 @@ export default function RaceView({
                         </div>
 
                         {/* Name and score overlay */}
-                        <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-                          <span className="font-semibold text-base-content drop-shadow-md">
+                        <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
+                          <span className="font-semibold text-sm text-base-content drop-shadow-md">
                             {leader.username}
                           </span>
-                          <span className="font-bold text-lg">
-                            <span className="badge badge-lg badge-primary font-bold">
-                              {leader.correct}
+                          <span className="font-bold text-sm">
+                            <span className="badge badge-sm badge-primary font-bold">
+                              {leader.correct}/{stats.totalProps}
                             </span>
                           </span>
                         </div>
