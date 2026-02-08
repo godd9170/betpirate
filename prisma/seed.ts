@@ -423,7 +423,7 @@ const seed = async () => {
       data: {
         sheetId: seedSheet.id,
         sailorId: sailor.id,
-        nickname: `${firstName} ${lastName}`,
+        nickname: `${firstName}_${Math.random().toString(36).substring(2, 9)}`,
         tieBreaker: Math.floor(10 + Math.random() * 91),
         selections: { create: selections },
       },
