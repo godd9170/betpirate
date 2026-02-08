@@ -36,7 +36,7 @@ type SendConfirmationSMSOptions = {
 export let sendSubmissionConfirmationSMS = async (
   options: SendConfirmationSMSOptions,
 ) => {
-  const body = `Ahoy! Your picks for "${options.sheetName}" have been received. Good luck, matey!\n\nReminder: eTransfer $10 to hayz_149@hotmail.com before the sheet opens for your submission to be valid.\n\nFollow along live at https://betpirate.ca`;
+  const body = `Ahoy! Your picks for "${options.sheetName}" have been received. Good luck, matey!\n\nReminder: eTransfer $10 to hayz_149@hotmail.com before the sheet closes for your submission to be valid.\n\nFollow along live at https://betpirate.ca`;
   try {
     if (isProduction) {
       const response = await sendTwilioSMS(options.phone, body);
