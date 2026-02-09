@@ -18,7 +18,7 @@ export default function SearchBar({
       <div className="relative flex items-center">
         <IoSearch
           size={16}
-          className="absolute left-3 text-base-content/60 pointer-events-none"
+          className="absolute left-3 text-primary pointer-events-none z-10"
         />
         <input
           type="text"
