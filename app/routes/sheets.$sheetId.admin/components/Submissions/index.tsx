@@ -136,7 +136,7 @@ export default function Submissions({
           {/* Preserve pageSize in search form */}
           <input type="hidden" name="pageSize" value={pageSize} />
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-accent">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary z-10">
               <IoSearch size={20} />
             </span>
             <input
